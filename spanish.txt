@@ -1,0 +1,239 @@
+
+
+---------------
+login page
+---------------
+
+===============
+progress
+===============
+
+Progreso
+
+===============
+title
+===============
+
+Percepción del Discurso Hablado Significado
+
+===============
+error blank name
+===============
+
+Por favor, introduzca un nombre de usuario para continuar.
+
+===============
+experiment header
+===============
+
+El siguiente experimento se realizó utilizando
+
+================
+user name text
+================
+
+AL EXPERIMENTADOR:
+<br /> <br />
+
+En el texto de abajo, introduce una <u>única </u>, identificando el nombre o número para este tema. Por favor, no use espacios (en lugar uso subraya "_"). Pulse el botón "enviar" cuando esté listo para el objeto de iniciar el experimento.
+
+===============
+back button warning
+===============
+
+<font color="red"> Tenga en cuenta que al pulsar 'back' o 'refresh' se anula esta sesión de prueba.</font>
+
+===============
+error user name exists
+===============
+
+<font color="red"> ERROR: Nombre de usuario '%s' ya existe o no es válido. Por favor elija otro nombre. </font>
+
+
+------------------
+Consent
+------------------
+
+===============
+error consent or dissent
+===============
+
+Para continuar usted debe elegir /consentimiento/ o /disenso/.
+
+===============
+consent query
+===============
+
+¿Usted da su consentimiento para participar en este estudio?
+
+===============
+consent
+===============
+
+Consentimiento
+
+===============
+dissent
+===============
+
+Disidencia
+
+===============
+consent opt out
+===============
+
+Usted ha optado por no participar en este estudio. Gracias por su tiempo.
+<br /> <br />
+
+Informe al experimentador que haya terminado.
+
+==============
+consent title
+==============
+
+Consentimiento Online
+
+==============
+consent text
+==============
+
+Usted está invitado a participar en un estudio de investigación sobre cómo los hablantes perciben importancia y los límites en Inglés. El propósito del estudio es avanzar en el conocimiento científico sobre cómo la gente usa el lenguaje. Este estudio es realizado por Jennifer Cole del Departamento de Lingüística de la Universidad de Illinois en Urbana Champaign. <br /> <br />
+
+Este estudio se llevará a unos 5 minutos de su tiempo. Se le pedirá para anotar las transcripciones de un conjunto de archivos de sonido asociados. <br /> <br />
+
+Su decisión de participar o rechazar la participación en este estudio es completamente voluntaria y usted tiene el derecho de cancelar su participación en cualquier momento sin penalización. Si desea no desea completar esta encuesta simplemente cierre su navegador. <br /> <br />
+
+Si usted está afiliado a la Universidad de Illinois, en cualquier calidad, su decisión de participar, rechazar o dejar de participar no tendrá ningún efecto en su estado actual o futuro de las relaciones con la Universidad de Illinois. <br /> <br />
+
+Su participación en esta investigación será completamente confidencial y los datos se promedian y se informó en conjunto. Las posibles salidas de difusión pueden ser conferencias académicas y publicaciones del diario. A pesar de su participación en esta investigación puede no beneficiarse personalmente, que le ayudará a entender los aspectos de percepción del lenguaje. <br /> <br />
+
+No hay riesgos para las personas que participan en este estudio más allá de las que existen en la vida cotidiana. <br /> <br />
+
+Si tiene alguna duda sobre este proyecto, puede comunicarse con Jennifer Cole [jscole@illinois.edu, 217-244-3057], el Departamento de Lingüística de la Universidad de Illinois, Urbana, IL 61801 Si tiene alguna pregunta sobre sus derechos como participante en este estudio o cualquier inquietud o queja, por favor póngase en contacto con la Universidad de la Junta de Revisión Institucional de Illinois en 217-333-2670 (llamadas a cobro revertido serán aceptadas si se identifica a sí mismo como participante en una investigación) o por correo electrónico a irb@illinois.edu. <br /> <br />
+
+Por favor imprima una copia de este formulario de consentimiento para sus archivos, si así lo desea. <br /> <br />
+
+Yo he leído y entendido el consentimiento anterior, certifico que tengo 18 años de edad o más y, haciendo clic en el botón de enviar para entrar en el estudio, indico mi voluntad de participar voluntariamente en el estudio. <br /> <br />
+
+
+
+-------------
+prominence instructions
+-------------
+
+=============
+prominence instructions title
+=============
+
+Parte I: La prominencia
+
+==============
+prominence instructions
+==============
+
+Se le escucha fragmentos del discurso de las conversaciones grabadas. Usted será la identificación de palabras que son importantes para el oyente de entender o que presente nueva información. <br /> <br />
+
+Cada página contendrá un archivo de audio y la transcripción de un archivo de audio, donde cada palabra tiene una casilla debajo de ella. Para cada una de estas expresiones, marque cada palabra que usted considere importante o presenta información nueva basada en la forma en que el orador dijo que la palabra. <br /> <br />
+
+En cada frase, usted será capaz de seleccionar tantos como te sientes aplicar. Escuche el audio de cerca, ya que sólo se reproduce dos veces. <br /> <br />
+
+Hay <b> dos elementos </b> en esta sección.
+
+=============
+prominence instructions short
+=============
+
+Para el siguiente enunciado, por favor marque cada palabra que usted piensa es <b>importante</b>.
+
+
+
+-------------
+boundary instructions
+-------------
+
+=============
+boundary instructions title
+=============
+
+Parte II: Límites 
+
+==============
+boundary instructions
+==============
+
+Se le escucha fragmentos del discurso de las conversaciones grabadas. Usted será la identificación de palabras que son importantes para el oyente de entender o que presente nueva información. <br /> <br />
+
+Cada página contendrá un archivo de audio y la transcripción de un archivo de audio, donde cada palabra tiene una casilla debajo de ella. Para cada una de estas expresiones, marque cada palabra que usted considere importante o presenta información nueva basada en la forma en que el orador dijo que la palabra. <br /> <br />
+
+En cada frase, usted será capaz de seleccionar tantos como te sientes aplicar. Escuche el audio de cerca, ya que sólo se reproduce dos veces. <br /> <br />
+
+Hay <b> dos elementos </ b> en esta sección.
+
+==============
+boundary instructions short
+==============
+
+Para el siguiente enunciado, por favor marque cada palabra para el que piensa que un <b>límite</b> se produce después de ella.
+
+==============
+prominence post boundary instructions short
+==============
+
+Ahora que ha marcado los límites, escuchar el audio de nuevo, y marcar cada palabra que usted cree que es <b>importante</b>. Tenga en cuenta que sus marcas anteriores límites son todavía visibles.
+
+
+
+---------------
+AXB
+---------------
+
+===============
+axb query
+===============
+
+Es (A) más cerca de (X) o es (b) más cerca de (X)?
+
+===============
+a
+===============
+
+A
+
+===============
+b
+===============
+
+B
+
+===============
+error select a or b
+===============
+
+Debe seleccionar A o B.
+
+
+
+--------------
+section finished
+----------------
+
+==================
+section finished
+==================
+
+Ya ha terminado la sección que estaba trabajando. Usted tiene la opción de tomar un breve descanso antes de pasar a la sección siguiente (s). 
+
+
+---------------
+test complete
+---------------
+
+=================
+test complete
+=================
+
+Ha llegado al final de este estudio. Gracias por su participación.
+<br /> <br />
+
+Informe al experimenter que haya terminado. 
+

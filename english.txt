@@ -1,0 +1,239 @@
+
+
+---------------
+login page
+---------------
+
+===============
+progress
+===============
+
+Progress
+
+===============
+title
+===============
+
+Perception of Spoken Discourse Meaning
+
+===============
+error blank name
+===============
+
+Please enter a user name to continue.
+
+===============
+experiment header
+===============
+
+The following experiment was made using
+
+================
+user name text
+================
+
+TO THE EXPERIMENTOR:
+<br /><br />
+
+In the textbox below, please enter a <u>unique</u>, identifying name or number for this subject. Please do not use spaces (instead use underscores "_"). Press "submit" when you are ready for the subject to begin the experiment.
+
+===============
+back button warning
+===============
+
+<font color="red">Please note that pressing 'back' or 'refresh' will invalidate this experiment session.</font>
+
+===============
+error user name exists
+===============
+
+<font color="red"> ERROR: Username '%s' already exists or is invalid. Please choose another name. </font>
+
+
+------------------
+Consent
+------------------
+
+===============
+error consent or dissent
+===============
+
+To continue you must either choose either /consent/ or /dissent/.
+
+===============
+consent query
+===============
+
+Do you consent to participate in this study?
+
+===============
+consent
+===============
+
+Consent
+
+===============
+dissent
+===============
+
+Dissent
+
+===============
+consent opt out
+===============
+
+You have opted not to participate in this study. Thank you for your time. 
+<br /><br />
+
+Please inform the experimenter that you are finished. 
+
+==============
+consent title
+==============
+
+Online Consent 
+
+==============
+consent text
+==============
+
+You are invited to participate in a research study on how speakers perceive prominence and boundaries in English. The purpose of the study is to advance scientific knowledge about how people use language. This study is conducted by Jennifer Cole of the Linguistics Department from the University of Illinois Urbana Champaign.<br /><br />
+
+This study will take approximately 5 minutes of your time. You will be asked to annotate the transcripts for a set of associated sound files.<br /><br />
+
+Your decision to participate or decline participation in this study is completely voluntary and you have the right to terminate your participation at any time without penalty. If you want do not wish to complete this survey just close your browser. <br /><br />
+
+If you are affiliated with the University of Illinois in any capacity, your decision to participate, decline, or withdraw from participation will have no effect on your current status or future relations with the University of Illinois.<br /><br />
+
+Your participation in this research will be completely confidential and data will be averaged and reported in aggregate. Possible outlets of dissemination may be academic conferences and journal publications. Although your participation in this research may not benefit you personally, it will help us understand aspects of language perception.<br /><br />
+
+There are no risks to individuals participating in this survey beyond those that exist in daily life.<br /><br />
+
+If you have questions about this project, you may contact Jennifer Cole [jscole@illinois.edu, 217-244-3057]; Department of Linguistics, University of Illinois, Urbana, IL 61801 If you have any questions about your rights as a participant in this study or any concerns or complaints, please contact the University of Illinois Institutional Review Board at 217-333-2670 (collect calls will be accepted if you identify yourself as a research participant) or via email at irb@illinois.edu.<br /><br />
+
+Please print a copy of this consent form for your records, if you so desire. <br /><br />
+
+I have read and understand the above consent form, I certify that I am 18 years old or older and, by clicking the submit button to enter the survey, I indicate my willingness to voluntarily take part in the study.<br /><br />
+
+
+
+-------------
+prominence instructions
+-------------
+
+=============
+prominence instructions title
+=============
+
+Part I: Prominence 
+
+==============
+prominence instructions
+==============
+
+You will be listening to excerpts of speech of recorded conversations. You will be identifying words that are important for the listener to understand or that present new information. <br /><br />
+
+Each page will contain an audio file and the transcript for the audio file, where each word has a checkbox underneath it. For each of these utterances, mark each word that you feel is important or presents new information based on the way that the speaker said the word. <br /><br />
+
+In each utterance, you will be able to select as many as you feel apply. Listen to the audio closely, as it can only be played twice.<br /><br />
+
+There are <b>two items</b> in this section.
+
+=============
+prominence instructions short
+=============
+
+For the following utterance, please mark each word that you think is <b>prominent</b>.
+
+
+
+-------------
+boundary instructions
+-------------
+
+=============
+boundary instructions title
+=============
+
+Part II: Boundary 
+
+==============
+boundary instructions
+==============
+
+You will be listening to excerpts of speech of recorded conversations. You will be identifying words that are important for the listener to understand or that present new information. <br /><br />
+
+Each page will contain an audio file and the transcript for the audio file, where each word has a checkbox underneath it. For each of these utterances, mark each word that you feel is important or presents new information based on the way that the speaker said the word. <br /><br />
+
+In each utterance, you will be able to select as many as you feel apply. Listen to the audio closely, as it can only be played twice.<br /><br />
+
+There are <b>two items</b> in this section.
+
+==============
+boundary instructions short
+==============
+
+For the following utterance, please mark each word for which you think a <b>boundary</b> occurs after it.
+
+==============
+prominence post boundary instructions short
+==============
+
+Now that you have marked boundaries, listen to the audio again, and mark each word that you think is <b>prominent</b>.  Note that your previous boundary markings are still visible. 
+
+
+
+---------------
+AXB
+---------------
+
+===============
+axb query
+===============
+
+Is (A) closer to (X) or is (B) closer to (X)?
+
+===============
+a
+===============
+
+A
+
+===============
+b
+===============
+
+B
+
+===============
+error select a or b
+===============
+
+You must select either A or B.
+
+
+
+--------------
+section finished
+----------------
+
+==================
+section finished
+==================
+
+You have now finished the section you were working on. You have the option to take a short rest before moving on to the next section(s). 
+
+
+---------------
+test complete
+---------------
+
+=================
+test complete
+=================
+
+You have reached the end of this study. Thank you for your participation. 
+<br /><br />
+
+Please inform the experimente0r that you are finished. 
+

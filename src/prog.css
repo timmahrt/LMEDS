@@ -1,0 +1,154 @@
+
+/* Progress Bar */
+
+dl.progress,
+dl.progress *
+    { margin: 0; padding: 0; 
+    margin-left:auto;
+    margin-right:auto;}
+
+dl.progress {
+    padding: 1px; border: 1px solid #ddd;
+    height: 20px; width: 300px; }
+
+.progress dt
+    { width: 0; height: 0; overflow: hidden; }
+
+.progress .done,
+.progress .left
+    { height: 100%; float: left; }
+
+.progress .done
+    { background-color: #7f85ff; }
+
+/* End Progress Bar */
+
+
+#title {
+text-align:center;
+width:300px;
+padding:10px;
+border:5px solid black;
+margin:30px;
+font-weight:bold;
+display:inline-block;
+}
+
+#longText {
+width:500px;
+margin-left:auto;
+margin-right:auto;
+text-align: left;
+}
+
+#main {
+text-align: center;
+margin-left:auto;
+margin-right:auto;
+width:70%;
+}
+
+/* This causes the custom checkboxes to disappear
+form.submit,
+form.submit * {
+ margin: 0; padding: 0; 
+}
+*/
+
+table.center {
+margin-left:auto;
+margin-right:auto;
+}
+
+
+td {
+text-align:center;
+padding:3px 7px 2px 7px;
+}
+
+
+/* The below code is to get checkboxes to work */
+
+img { border: none; }
+p
+{
+	font-size: 1em;
+	margin: 0 0 1em 0;
+}
+
+fieldset
+{
+	margin: 1em;
+	padding: 20px;
+}	
+fieldset p
+{
+	display: block;
+	position: relative;
+	overflow: hidden;
+}
+fieldset input[type=text],
+fieldset input[type=email]
+{
+	border: 1px solid #ccc;
+	line-height: 20px;
+	padding: 3px;
+	width: 200px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+}
+
+label + p,
+input + p
+{
+	margin-top: 20px;
+}
+
+p > input
+{
+	padding: 0;
+	margin: 0;
+	height: 10px;
+	width: 10px;
+	float: left;
+	position: absolute;
+	left: 0;
+	opacity: 0;
+}
+p > label 
+{ 
+	float: left; 
+	line-height: 50px; 
+	color: #fff; 
+	padding: 0 0 0 50px;
+}
+
+
+p:not(#foo) > input[type=checkbox] + label { background: url('../imgs/off.png') 0 0 no-repeat; }
+p:not(#foo) > input[type=radio] + label { background: url('../imgs/off.png') 0 0 no-repeat; }
+
+
+/* Checked styles */
+p:not(#foo) > input[type=checkbox]:checked + label 							{ background: url('../imgs/choice.png') 0 0 no-repeat; }
+p:not(#foo) > input[type=checkbox]:hover:checked + label,
+p:not(#foo) > input[type=checkbox]:focus:checked + label,
+p:not(#foo) > input[type=checkbox]:checked + label:hover,
+p:not(#foo) > input[type=checkbox]:focus:checked + label 					{ background: url('../imgs/hoverChoice.png') 0 0 no-repeat; }
+p:not(#foo) > input[type=radio]:checked + label 							{ background: url('../imgs/choice.png') 0 0 no-repeat; }
+p:not(#foo) > input[type=radio]:hover:checked + label,
+p:not(#foo) > input[type=radio]:focus:checked + label,
+p:not(#foo) > input[type=radio]:checked + label:hover,
+p:not(#foo) > input[type=radio]:focus:checked + label 					{ background: url('../imgs/hoverChoice.png') 0 0 no-repeat; }
+
+
+/* Hover & Focus styles */
+p:not(#foo) > input[type=checkbox]:hover + label,
+p:not(#foo) > input[type=checkbox]:focus + label,
+p:not(#foo) > input[type=checkbox] + label:hover 							{ background: url('../imgs/hoverOff.png') 0 0 no-repeat; }
+p:not(#foo) > input[type=radio]:hover + label,
+p:not(#foo) > input[type=radio]:focus + label,
+p:not(#foo) > input[type=radio] + label:hover 							{ background: url('../imgs/hoverOff.png') 0 0 no-repeat; }
+
+
+    
