@@ -32,7 +32,6 @@ formTemplate = """
 <form class="submit" name="languageSurvey" method="POST" action="%(source_cgi_fn)s" onsubmit="return validateForm();">
 %(html)s
 
-
 <input TYPE="hidden" name="page" value="%(page)s"> 
 <input TYPE="hidden" name="pageNumber" value="%(pageNumber)d"> 
 <input TYPE="hidden" name="cookieTracker" value="%(cookieTracker)s"> 
@@ -43,12 +42,15 @@ formTemplate = """
 </form>
 """
 
-# This is more or less a HACK
+# This is more or less a HACK 
+# -- we needed to hide the submit button, but only in a single situation
+# -- (it reappears after someone clicks another button--handled via javascript)
 formTemplate2 = """
 <form class="submit" name="languageSurvey" method="POST" action="%(source_cgi_fn)s" onsubmit="return validateForm();">
+<div id="noTextWrapArea">
 %(html)s
 
-
+<div id="HiddenForm" style="DISPLAY: none">
 <input TYPE="hidden" name="page" value="%(page)s"> 
 <input TYPE="hidden" name="pageNumber" value="%(pageNumber)d"> 
 <input TYPE="hidden" name="cookieTracker" value="%(cookieTracker)s"> 
@@ -317,6 +319,7 @@ function ShowHide()
 {
 document.getElementById("ShownDiv").style.display='none';
 document.getElementById("HiddenDiv").style.display='block';
+document.getElementById("HiddenForm").style.display='block';
 for (e=0;e<%(numWords)d;e++) {
     var x = e+%(numWords)d;
 

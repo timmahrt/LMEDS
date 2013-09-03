@@ -23,6 +23,10 @@ dl.progress {
 
 /* End Progress Bar */
 
+#noTextWrapArea{
+ white-space: nowrap;
+ display: inline;
+}
 
 #title {
 text-align:center;

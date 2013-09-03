@@ -103,6 +103,8 @@ def textAnnotationPage(name, doBreaks, doProminence, txtDir, wavDir):
     embedTxt = audio.getPlayAudioJavaScript(True, 1, [2,])
     embedTxt += "\n\n" + audio.generateEmbed(wavDir, [name,])
 
+    htmlText = _makeNoWrap(htmlText)
+
     return htmlText, pageTemplate, {'embed':embedTxt}
 
 
@@ -155,6 +157,8 @@ def breaksOrProminencePage(name, doProminence, txtDir, wavDir):
     embedTxt += "\n\n" + audio.generateEmbed(wavDir, [name,])
     embedTxt += "\n\n" + html.getProminenceOrBoundaryWordEmbed(doProminence)
     
+    htmlTxt = _makeNoWrap(htmlTxt)
+    
     return htmlTxt, pageTemplate, {'embed':embedTxt}
     
     
@@ -190,6 +194,7 @@ def breaksAndProminencePage(name, txtDir, wavDir):
     
     # HTML prominence
     htmlTxt += _doBreaksOrProminence("b_and_p", numWords, 1, name, "prominence post boundary instructions short", sentenceList)[0]
+    htmlTxt += "</div>"
                 
     # Closing off the div for the prominence section
     #htmlTxt += '</div>' # The last div will be closed off by 'formTemplate2'
@@ -198,6 +203,8 @@ def breaksAndProminencePage(name, txtDir, wavDir):
     embedTxt = audio.getPlayAudioJavaScript(True, 2, [2,2,])
     embedTxt += "\n\n" + audio.generateEmbed(wavDir, [name,])
     embedTxt += "\n\n" + html.getTogglableWordEmbed(numWords)
+    
+    htmlTxt = _makeNoWrap(htmlTxt)
     
     return htmlTxt, pageTemplate, {'embed':embedTxt}
     
@@ -215,7 +222,13 @@ def axbPage(sourceNameX, compareNameA, compareNameB, wavDir):
     embedTxt = audio.getPlayAudioJavaScript(True, 3, [2,2,2,])
     embedTxt += "\n\n" + audio.generateEmbed(wavDir, [sourceNameX, compareNameA, compareNameB])
     
+    htmlText = _makeNoWrap(htmlText)
+    
     return htmlText, pageTemplate, {'embed':embedTxt}
+
+
+def _makeNoWrap(htmlTxt):
+    return '<div id="noTextWrapArea">\n\n%s\n\n</div>' % htmlTxt
 
 
 def getPageTemplates(webSurvey):
