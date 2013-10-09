@@ -227,6 +227,13 @@ class WebSurvey(object):
         except IndexError:
             numItems = 0
         
+        # Also HACK
+        processSubmitHTML = html.getProcessSubmitHTML(testType)
+        if 'embed' in updateDict.keys():
+            updateDict['embed'] += processSubmitHTML
+        else:
+            embedTxt += processSubmitHTML
+        
     #    print cookieTracker, pageNum, testType, argList
         
         # HACK

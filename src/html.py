@@ -29,7 +29,7 @@ pg2HTML = """
 
 
 formTemplate = """
-<form class="submit" name="languageSurvey" method="POST" action="%(source_cgi_fn)s" onsubmit="return validateForm();">
+<form class="submit" name="languageSurvey" method="POST" action="%(source_cgi_fn)s" onsubmit="return processSubmit();">
 %(html)s
 
 <input TYPE="hidden" name="page" value="%(page)s"> 
@@ -38,7 +38,7 @@ formTemplate = """
 <input TYPE="hidden" name="user_name" value="%(user_name)s"> 
 <input TYPE="hidden" name="num_items" value="%(num_items)d">
 <br /><br />
-<input TYPE="submit" value="Submit">
+<input id="submit" TYPE="submit" value="Submit">
 </form>
 """
 
@@ -46,8 +46,7 @@ formTemplate = """
 # -- we needed to hide the submit button, but only in a single situation
 # -- (it reappears after someone clicks another button--handled via javascript)
 formTemplate2 = """
-<form class="submit" name="languageSurvey" method="POST" action="%(source_cgi_fn)s" onsubmit="return validateForm();">
-<div id="noTextWrapArea">
+<form class="submit" name="languageSurvey" method="POST" action="%(source_cgi_fn)s" onsubmit="return processSubmit();">
 %(html)s
 
 <div id="HiddenForm" style="DISPLAY: none">
@@ -57,7 +56,7 @@ formTemplate2 = """
 <input TYPE="hidden" name="user_name" value="%(user_name)s"> 
 <input TYPE="hidden" name="num_items" value="%(num_items)d">
 <br /><br />
-<input TYPE="submit" value="Submit">
+<input id="submit" TYPE="submit" value="Submit">
 </div>
 </form>
 """
@@ -418,6 +417,45 @@ $(document).ready(function(){
         javascript %= boundaryEmbed
 
     return javascript
+
+
+def getProcessSubmitHTML(pageType):
+    '''
+    processSubmit() is a javascript function whose job is only to launch
+    other javascript functions.  These functions need to be registered with
+    a page in order to receive that functionality.
+    '''
+    
+    baseHTML = """
+<script  type="text/javascript">
+function processSubmit()
+{
+var returnValue = true;
+
+%s
+
+return returnValue;    
+}
+</script>
+"""
+    
+    funcList = []
+    # Ensure the subject has listened to all audio files
+    if pageType in ['axb', 'prominence', 'boundary', 'boundaryAndProminence',
+                    'oldProminence', 'oldBoundary', 'abn']:
+        funcList.append("verifyAudioPlayed")
+        
+    # Ensure all required forms have been filled out
+    if pageType in ['login', 'login_bad_user_name', 'consent', 'axb', 'ab', 'abn']:
+        funcList.append("validateForm")
+    
+    htmlList = []
+    for func in funcList:
+        htmlList.append("returnValue = returnValue && %s();" % func)
+    
+    htmlTxt = "\n".join(htmlList)
+    
+    return baseHTML % htmlTxt
 
 
 if __name__ == "__main__":
