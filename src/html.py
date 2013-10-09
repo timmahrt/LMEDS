@@ -139,8 +139,13 @@ def firstPageHTML():
     backButtonWarning = loader.getText('back button warning')
     pg0HTML = loader.getText('user name text') + "<br /><br />"
     pg0HTML += (txtBox % 'user_name_init') + "<br /><br />" + backButtonWarning
+    
+    unsupportedWarning = '''<div id="unsupported_warning"><br /><br /><font color="blue"><b>
+    The web browser you are using does not support features required by LMEDS.  
+    Please update your software
+    or download a modern modern such as Chrome or Firefox.</b></font></div>'''
      
-    return productNote + title + pg0HTML
+    return productNote + title + pg0HTML + unsupportedWarning
 
 
 def firstPageErrorHTML():
