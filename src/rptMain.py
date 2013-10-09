@@ -199,6 +199,9 @@ class WebSurvey(object):
         elif testType in ['axb',]:
             numOutputs = 2 # A, B
             
+        elif testType in ['abn',]:
+            numOutputs = 3 # A, B, N
+            
         return numOutputs
     
     
@@ -330,6 +333,8 @@ class WebSurvey(object):
             keyList.append('b')
         if 'axb' == taskName:
             keyList.append('axb')
+        if 'abn' == taskName:
+            keyList.append('abn')
             
         # We should not distinguish between different kinds of keys
         # -- all checkboxes on a page should be the same 

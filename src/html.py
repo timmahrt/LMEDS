@@ -227,6 +227,21 @@ def axbPageHTML():
     return html
 
 
+def audioDecisionPageHTML():
+    
+    radioButton = '<p><input type="radio" name="abn" value="%(id)s" id="%(id)s" /> <label for="%(id)s">.</label></p>'
+    
+    html = """
+    %%s
+<table class="center">
+<tr><td>%%s</td><td>%%s</td><td>%%s</td></tr>
+<tr><td>%s</td><td>%s</td><td>%s</td></tr>
+</table>""" 
+    
+    return html % (radioButton % {'id':'0'},
+                   radioButton % {'id':'1'},
+                   radioButton % {'id':'2'})
+
 def abPageHTML():
     
     radioButton = '<p><input type="radio" name="ab" value="%(id)s" id="%(id)s" /> <label for="%(id)s">.</label></p>'
@@ -237,8 +252,8 @@ def abPageHTML():
 <tr><td>%%s</td><td>%%s</td></tr>
 <tr><td>%s</td><td>%s</td></tr>
 </table>"""
-    html %= (radioButton % {'id':'1'}, 
-             radioButton % {'id':'2'})
+    html %= (radioButton % {'id':'0'}, 
+             radioButton % {'id':'1'})
     
     return html    
 

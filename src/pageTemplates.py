@@ -258,6 +258,25 @@ def axbPage(sourceNameX, compareNameA, compareNameB, wavDir):
     return htmlText, pageTemplate, {'embed':embedTxt}
 
 
+def audioDecisionPage(audioName, wavDir):
+    '''
+    Listeners hear one file and decide if its an example of "textA", "textB" or "None"
+    '''
+    pageTemplate = join(constants.htmlDir, "axbTemplate.html")
+    
+    aHTML = audio.generateAudioButton(audioName, 0, False)
+    
+    description = loader.getText("abn text")
+    
+    htmlText = description + html.audioDecisionPageHTML()
+    htmlText %= (aHTML, "Broad Focus", "Contrastive Focus", "Neither")
+    
+    embedTxt = audio.getPlayAudioJavaScript(True, 1, [1,])
+    embedTxt += "\n\n" + audio.generateEmbed(wavDir, [audioName])
+
+    return htmlText, pageTemplate, {'embed':embedTxt}
+
+
 def _makeNoWrap(htmlTxt):
     return '<div id="noTextWrapArea">\n\n%s\n\n</div>' % htmlTxt
 
@@ -283,7 +302,8 @@ def getPageTemplates(webSurvey):
                                          wavDir=webSurvey.wavDir, doBreaks=False, doProminence=True), 
                     'boundaryOld':partial(textAnnotationPage, txtDir=webSurvey.txtDir, 
                                          wavDir=webSurvey.wavDir, doBreaks=True, doProminence=False),
-                    'axb':partial(axbPage, wavDir=webSurvey.wavDir)}
+                    'axb':partial(axbPage, wavDir=webSurvey.wavDir),
+                    'abn':partial(audioDecisionPage, wavDir=webSurvey.wavDir)}
     
 #    knownKeyList = testKeyDict.keys()
     

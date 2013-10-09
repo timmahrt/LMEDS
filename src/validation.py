@@ -66,6 +66,15 @@ if (checkBoxValidate(y["axb"])==true)
   return true;
 """
 
+abnValidation = """
+var y=document.forms["languageSurvey"];
+if (checkBoxValidate(y["abn"])==true)
+  {
+  alert("%s");
+  return false;
+  }
+  return true;
+"""
 
 skipValidateList = []
 checkList = [43,44,45,46,47]
@@ -78,6 +87,8 @@ def getValidationForPage(testType):
         retPage = consentValidation % loader.getText('error consent or dissent')
     elif testType == 'axb' or testType == 'ab':
         retPage = abValidation % loader.getText('error select a or b')
+    elif testType == 'abn':
+        retPage = abnValidation % 'Error.  Select one of the three options'
     else: 
         retPage = template % "||".join([])
         
