@@ -74,14 +74,14 @@ class WebSurvey(object):
     def __init__(self, surveyName, sequenceFN, languageFileFN, 
                  disableRefreshFlag, sourceCGIFN=None):
         
-        self.surveyRoot = join(constants.rootDir, surveyName)
+        self.surveyRoot = join(constants.rootDir, "tests", surveyName)
         self.wavDir = join(self.surveyRoot, "audio")
         self.txtDir = join(self.surveyRoot, "txt")
         self.outputDir = join(self.surveyRoot, "output")
         
         self.surveyName = surveyName
         self.sequenceFN = join(self.surveyRoot, sequenceFN)
-        self.languageFileFN = join(constants.rootDir, languageFileFN)
+        self.languageFileFN = join(self.surveyRoot, languageFileFN)
         
         self.disableRefreshFlag = disableRefreshFlag
         
