@@ -16,7 +16,7 @@ def loadTxt(fn):
     txt = codecs.open(fn, "r", encoding="utf-8").read()
     #txt = open(fn, "r").read()
     txtList = txt.split("\n")
-    txtList = [txt for txt in txtList if txt != ""]
+    txtList = [txt.strip() for txt in txtList if txt != ""]
 
     return txtList
 
