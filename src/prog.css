@@ -28,6 +28,15 @@ dl.progress {
  display: inline;
 }
 
+#textWrapArea{
+ white-space: normal;
+ display: inline;
+}
+
+#unsupported_warning{
+ display: none;
+}
+
 #title {
 text-align:center;
 width:300px;
