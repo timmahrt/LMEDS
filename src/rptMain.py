@@ -310,23 +310,24 @@ class WebSurvey(object):
         # The arguments to the task hold the information that distinguish
         #    this trial from other trials
         currentPage = page[-1]
-        currentTask = currentPage[2]
-        taskArguments = currentTask[1] 
+        currentTaskTuple = currentPage[2]
+        taskName = currentTaskTuple[0]
+        taskArguments = currentTaskTuple[1] 
         taskArgumentStr = ";".join(taskArguments)
         
         # Identify the keys associated with data that we want to serialize
         keyList = []
-        if 'p' in form.keys():
+        if 'prominence' == taskName:
             keyList.append('p')
-        if 'b' in form.keys():
+        if 'boundary' == taskName:
             keyList.append('b')
-        if 'axb' in form.keys():
+        if 'axb' == taskName:
             keyList.append('axb')
             
         # We should not distinguish between different kinds of keys
         # -- all checkboxes on a page should be the same 
         # -- (I can't see the reason to do otherwise)
-        if 'b_and_p' in form.keys():
+        if 'boundaryAndProminence' == taskName:
             keyList.append('b_and_p')
         
         # At the moment, only allow a single key (or none)
