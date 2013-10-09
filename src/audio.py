@@ -42,6 +42,7 @@ var maxDict = {
 };
 function EvalSound(soundobj, button, silence, id) {
   audioFile = document.getElementById(soundobj);
+  audioFile.currentTime = 0;
   audioFile.addEventListener('ended', enable);
   audioFile.play();
 
