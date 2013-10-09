@@ -208,7 +208,8 @@ def axbPageHTML():
     
     radioButton = '<p><input type="radio" name="axb" value="%(id)s" id="%(id)s" /> <label for="%(id)s">.</label></p>'
     
-    html = """%s<br /><br />
+    html = """%s<br /><br /><br />
+%s<br /> <br />
 %%s<br /> <br />
 <table class="center">
 <tr><td>%s</td><td>%s</td></tr>
@@ -216,6 +217,7 @@ def axbPageHTML():
 <tr><td>%s</td><td>%s</td></tr>
 </table>"""
     html %= (loader.getText("axb query"),
+             loader.getText("x"),
              loader.getText("a"),
              loader.getText("b"),
              radioButton % {'id':'0'}, 
