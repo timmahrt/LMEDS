@@ -21,11 +21,32 @@ def finalPage():
     return htmlText, pageTemplate, {}
 
 
+def checkForAudioTag():
+    txt = '''
+    <script>
+    
+function isSupportedBrowser() {
+
+if(!!document.createElement('audio').canPlayType == false) {
+    document.getElementById("submit").disabled = true;
+    document.getElementById("unsupported_warning").style.display='block';
+}
+
+    }
+    window.onload = isSupportedBrowser;
+    </script>
+    '''
+
+    return txt
+
+
 def loginPage():
     htmlText = html.firstPageHTML()
     pageTemplate = join(constants.htmlDir, "blankPageWValidation.html")
 
-    return htmlText, pageTemplate, {}
+    embedTxt = checkForAudioTag()
+
+    return htmlText, pageTemplate, {'embed':embedTxt}
 
 
 def loginBadUserPage(userName):
