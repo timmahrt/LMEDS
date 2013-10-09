@@ -138,7 +138,10 @@ def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textName, sentenc
     '''
     
     htmlTxt = ""
-    htmlTxt += ("%s<br /><br />\n\n" % loader.getText(textName))
+    
+    instrMsg = ("%s<br /><br />\n\n" % loader.getText(textName))
+    htmlTxt += _makeWrap(instrMsg)
+    
     htmlTxt += audio.generateAudioButton(name, audioNum, False) + "<br /><br />\n\n"
     for sentence in sentenceList:
         wordList = sentence.split(" ")
@@ -183,13 +186,16 @@ def breaksOrProminencePage(name, doProminence, txtDir, wavDir):
     return htmlTxt, pageTemplate, {'embed':embedTxt}
     
     
-def breaksAndProminencePage(name, txtDir, wavDir):
+def breaksAndProminencePage(name, focus, txtDir, wavDir):
     '''
     Returns html for a page where users mark both breaks and prominence
     
     Subjects first mark up the boundaries.  They are then shown the same utterance
     with their original markings still present.  They are then asked to mark
     boundaries.
+    
+    'focus' - either 'meaning' or 'acoustics' -- used to print the correct
+        instructions
     '''
     
     pageTemplate = join(constants.htmlDir, "wavTemplate.html")
@@ -206,7 +212,9 @@ def breaksAndProminencePage(name, txtDir, wavDir):
     htmlTxt = '<div id="ShownDiv" style="DISPLAY: block">'
 
     # HTML boundaries
-    tmpHTMLTxt, numWords = _doBreaksOrProminence("b_and_p", wordIDNum, 0, name, "boundary instructions short", sentenceList)
+    tmpHTMLTxt, numWords = _doBreaksOrProminence("b_and_p", wordIDNum, 0, name, 
+                                                 "boundary_%s instructions short" % focus, 
+                                                 sentenceList)
     htmlTxt += tmpHTMLTxt
 
     # HTML from transitioning from the boundary portion of text to the prominence portion
@@ -214,7 +222,9 @@ def breaksAndProminencePage(name, txtDir, wavDir):
     htmlTxt += '</div>\n\n<div id="HiddenDiv" style="DISPLAY: none">\n\n'
     
     # HTML prominence
-    htmlTxt += _doBreaksOrProminence("b_and_p", numWords, 1, name, "prominence post boundary instructions short", sentenceList)[0]
+    htmlTxt += _doBreaksOrProminence("b_and_p", numWords, 1, name, 
+                                     "prominence_%s post boundary instructions short" % focus, 
+                                     sentenceList)[0]
     htmlTxt += "</div>"
                 
     # Closing off the div for the prominence section
@@ -250,6 +260,10 @@ def axbPage(sourceNameX, compareNameA, compareNameB, wavDir):
 
 def _makeNoWrap(htmlTxt):
     return '<div id="noTextWrapArea">\n\n%s\n\n</div>' % htmlTxt
+
+
+def _makeWrap(htmlTxt):
+    return '<div id="textWrapArea">\n\n%s\n\n</div>' % htmlTxt
 
 
 def getPageTemplates(webSurvey):
