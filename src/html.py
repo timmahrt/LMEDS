@@ -317,17 +317,21 @@ def getTogglableWordEmbed(numWords):
 <script>
 function ShowHide()
 {
-document.getElementById("ShownDiv").style.display='none';
-document.getElementById("HiddenDiv").style.display='block';
-document.getElementById("HiddenForm").style.display='block';
-for (e=0;e<%(numWords)d;e++) {
-    var x = e+%(numWords)d;
+var didPlay = verifyFirstAudioPlayed();
 
- if (document.getElementById(e).checked==true) {
-$("#"+x).closest("label").css({ borderRight: "3px solid #000000"});
-$("#"+x).closest("label").css({ paddingRight: "0px"});
-   }
- }
+if(didPlay == true) {
+    document.getElementById("ShownDiv").style.display='none';
+    document.getElementById("HiddenDiv").style.display='block';
+    document.getElementById("HiddenForm").style.display='block';
+    for (e=0;e<%(numWords)d;e++) {
+        var x = e+%(numWords)d;
+
+        if (document.getElementById(e).checked==true) {
+            $("#"+x).closest("label").css({ borderRight: "3px solid #000000"});
+            $("#"+x).closest("label").css({ paddingRight: "0px"});
+            }
+        }
+    }
 }
 </script>
     

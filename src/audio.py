@@ -62,6 +62,33 @@ function enable() {
             }
         }
     }
+function verifyAudioPlayed() {
+    var doAlert = false;
+    var returnValue = true;
+    for (var i=0; i<numSoundFiles;i++)
+    {
+    if (countDict[i] < 1)
+        {
+        doAlert = true;
+        }
+    }
+        
+    if (doAlert == true) {
+        alert("You must listen to all audio files at least once.");
+        returnValue = false;
+    }
+
+    return returnValue;
+}
+function verifyFirstAudioPlayed() {
+    returnValue = true;
+    if(countDict["0"] < 1)
+    {
+    alert("You must listen to the audio file at least once.");
+    returnValue = false;
+    }
+    return returnValue;
+}
     </script>
 '''
 
