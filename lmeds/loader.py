@@ -10,6 +10,8 @@ from os.path import join
 import constants
 
 import codecs
+
+import utils
 #f = codecs.open('unicode.rst', encoding='utf-8')
 
 
@@ -45,10 +47,12 @@ class TextNotInDictionaryException(Exception):
     
 
 def loadTxt(fn):
-    txt = codecs.open(fn, "r", encoding="utf-8").read()
+    txt = codecs.open(fn, "rU", encoding="utf-8").read()
     #txt = open(fn, "r").read()
-    txtList = txt.split("\n")
-    txtList = [txt.strip() for txt in txtList if txt != ""]
+    lineEnding = utils.detectLineEnding(txt)
+    txtList = txt.split(lineEnding)
+    txtList = [" ".join(txt.split()) for txt in txtList] # Removes redundant whitespace
+    txtList = [row for row in txtList if row != ""] # Remove empty rows
 
     return txtList
 
@@ -57,14 +61,18 @@ class TextDict(object):
     
     
     def __init__(self, fn):
-        self.textFN = fn
+        self.sourceFN = fn
         self.textDict = self._parse()
         
         
     def _parse(self):
             
-        data = codecs.open(self.textFN, "r", encoding="utf-8").read()
-        testItemList = data.split("\n")
+        data = codecs.open(self.sourceFN, "r", encoding="utf-8").read()
+        lineEnding = utils.detectLineEnding(data)
+        
+        testItemList = data.split(lineEnding)
+        
+#         testItemList = data.split("\n")
         
         # Remove lines that users can use to separate sections
 #         testItemList = [line for line in testItemList if not self._isSeparatingString(line)]
@@ -106,11 +114,14 @@ class TextDict(object):
                 someDict[key] = valueList
                 valueList = []
                 
-        def safeCheck(string, char):
+        def safeCheck(stringList, i, char):
+                
             retValue = False
-            if len(string) > 0:
-                if string[0] == char:
-                    retValue = True
+            if i < len(stringList):
+                string = stringList[i]
+                if len(string) > 0:
+                    if string[0] == char:
+                        retValue = True
             
             return retValue
         
@@ -119,10 +130,11 @@ class TextDict(object):
         
         i = 0
         sectionDictionary = {}
-        while i + 2 < len(textList):
+        while i < len(textList):
+            txt = textList[i]
             
             # New section
-            if safeCheck(textList[i], demarcator) and safeCheck(textList[i+2],demarcator):
+            if safeCheck(textList, i, demarcator) and safeCheck(textList,i+2,demarcator):
                 newSection(lastKey, lastList, sectionDictionary)
                 lastKey = textList[i+1]
                 lastList = []
@@ -131,8 +143,8 @@ class TextDict(object):
             else:
                 lastList.append(textList[i])
                 i += 1
-            
-            newSection(lastKey, lastList, sectionDictionary)
+        
+        newSection(lastKey, lastList, sectionDictionary)
             
         return sectionDictionary
         
@@ -157,11 +169,11 @@ def getText(key):
 
 if __name__ == "__main__":
     
-    text = TextDict("/Users/timmahrt/Sites/english.txt")
-    print "hello"
+    txtList = loadTxt("/Users/tmahrt/Sites/tests/perceptF/txt/A11_03.txt")
+    print 'hello'
+#     dict = TextDict("/Users/tmahrt/Sites/tests/perceptF/french.txt")
+#     print "'%s'" % dict.getText("continue button")
+#     exit()
     
-    print text.getText("prominence post boundary instructions short")
 
-    
-    for key in text.textDict.keys():
-        print key, len(text.textDict[key])
+
