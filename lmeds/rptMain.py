@@ -5,6 +5,8 @@ import os
 from os.path import join
 import ast
 
+import datetime
+
 import cgi
 
 import __main__
@@ -17,8 +19,7 @@ import loader
 import pageTemplates
 import constants
 import survey
-
-
+import utils
 
 # First page (name page) + consentPage + instructionsPage + ?
 #numExtraneousPages = 3
@@ -26,47 +27,6 @@ import survey
 #CONSENT_PAGE = 1
 #totalNumPages = loader.readGetNumItems()
 #FINAL_PAGE = totalNumPages + numExtraneousPages
-
-
-
-
-
-
-
-
-#def runCGI():
-#
-#    import cgitb
-#    cgitb.enable()    
-#
-#    loader.initTextDict(textDictFN)
-#
-#    testSequence = sequence.TestSequence(sequenceFN)
-#    
-#    cgiForm = cgi.FieldStorage()
-#    
-#    # The user has not started the test
-#    if not cgiForm.has_key("pageNumber"):
-#        cookieTracker = 0 # This value is irrelevant but it must always increase
-#                            # --if it does not, the program will suspect a refresh-
-#                            #    or back-button press and end the test immediately
-#        pageNum = 0 # Used for the progress bar
-#        page = [('main', 0, ('login', [])),] # The initial state
-#        userName = ""
-#    
-#    # Extract the information from the form
-#    else:
-#        pageNum, cookieTracker, page, userName = processForm(cgiForm, testSequence)
-#        
-#    
-#    buildPage(pageNum, cookieTracker, page, userName, testSequence, sourceCGIFN)
-#
-#
-#def debugCGI(page, pageNum=1, cookieTracker=True, userName="testing"):
-#    
-#    testSequence = sequence.TestSequence(sequenceFN)
-#    loader.initTextDict(textDictFN)
-#    buildPage(pageNum, cookieTracker, page, userName, testSequence, sourceCGIFN)
 
 
 class WebSurvey(object):
@@ -159,19 +119,20 @@ class WebSurvey(object):
             # Return to the login page without setting the userName if there is 
             # already data associated with that user name
             outputFN = join(self.outputDir, sequenceTitle, userName+".txt")
-            nameAlreadyExists = os.path.exists(outputFN)
+            outputFN2 = join(self.outputDir, sequenceTitle, userName+".csv")
+            nameAlreadyExists = os.path.exists(outputFN) or os.path.exists(outputFN2)
             
             if nameAlreadyExists or userName == "":
                 nextPage = lastPage[:-1] + [(subroutine, 0, ('login_bad_user_name', [userName,], {}))]
                 pageNum -= 1 # We wrongly guessed that we would be progressing in the test
-                
+         
         # Otherwise, the user name, should be stored in the form    
         elif form.has_key("user_name"):
             userName = form["user_name"].value    
         
         # Serialize all variables
         self.serializeResults(form, lastPage, userName, sequenceTitle)
-    
+        
         # Go to a special end state if the user does not consent to the study
         if taskType == 'consent':
             if form['radio'].value == 'dissent':
@@ -190,7 +151,7 @@ class WebSurvey(object):
     def getNumOutputs(self, testType, fnFullPath):
         numOutputs = 0 # All non-trial pages do not have any outputs
         if testType in ['prominence', 'boundary', 'oldProminence',
-                        'oldBoundary', 'boundaryAndProminence']:
+                        'oldBoundary', 'boundary_and_prominence']:
             wordList = loader.loadTxt(fnFullPath)
             numOutputs = 0
             for line in wordList:
@@ -199,10 +160,10 @@ class WebSurvey(object):
             if testType == 'oldBoundary':
                 numOutputs -= 1
                 
-            if testType == 'boundaryAndProminence':
+            if testType == 'boundary_and_prominence':
                 numOutputs *= 2
         
-        elif testType in ['axb',]:
+        elif testType in ['axb',"same_different"]:
             numOutputs = 2 # A, B
             
         elif testType in ['abn',]:
@@ -238,6 +199,8 @@ class WebSurvey(object):
         
         # Also HACK
         processSubmitHTML = html.getProcessSubmitHTML(testType)
+        
+        processSubmitHTML += html.taskDurationCode
         if 'embed' in updateDict.keys():
             updateDict['embed'] += processSubmitHTML
         else:
@@ -246,13 +209,19 @@ class WebSurvey(object):
     #    print cookieTracker, pageNum, testType, argList
         
         # HACK
-        if testType == 'boundaryAndProminence':
+        if testType == 'boundary_and_prominence':
             formHTML = html.formTemplate2
         else:
             formHTML = html.formTemplate
             
         progressBarHTML = html.getProgressBar()  % {'percentComplete': percentComplete,
                                                       'percentUnfinished': 100 - percentComplete,}
+                
+        # FIXME: Optional for now.  Will be required in the future
+        try:
+            metaDescription = loader.getText("metadata_description")
+        except loader.TextNotInDictionaryException:
+            metaDescription = ""
                 
         htmlDict = { 
                      'html':htmlTxt,
@@ -262,6 +231,8 @@ class WebSurvey(object):
                      'user_name':userName,
                      'validate':validateText,
                      'embed':embedTxt,
+                     'metadata_description':metaDescription,
+                     'websiteRootURL': constants.rootURL,
                      'program_title':constants.softwareName,
                      'source_cgi_fn':sourceCGIFN,
                      'num_items':numItems,
