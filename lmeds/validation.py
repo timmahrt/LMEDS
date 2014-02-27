@@ -82,13 +82,23 @@ checkList = [43,44,45,46,47]
 def getValidationForPage(testType):
     
     if testType == 'login' or testType == 'login_bad_user_name':
-        retPage = loginValidation % loader.getText('error blank name')
+        txt = loader.getText('error blank name')
+        txt = txt.replace('"', "'")
+        retPage = loginValidation % txt
     elif testType == 'consent':
-        retPage = consentValidation % loader.getText('error consent or dissent')
+        txt = loader.getText('error consent or dissent')
+        txt = txt.replace('"', "'")
+        retPage = consentValidation % txt 
     elif testType == 'axb' or testType == 'ab':
-        retPage = abValidation % loader.getText('error select a or b')
+        txt = loader.getText('error select a or b')
+        txt = txt.replace('"', "'")
+        retPage = abValidation % txt
     elif testType == 'abn':
         retPage = abnValidation % 'Error.  Select one of the three options'
+    elif testType == 'audio_test':
+        txt = loader.getText('error verify audio')
+        txt = txt.replace('"', "'")
+        retPage = consentValidation % txt
     else: 
         retPage = template % "||".join([])
         
