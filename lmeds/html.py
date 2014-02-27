@@ -309,6 +309,25 @@ def breakPageHTML():
 
     return loader.getText('section finished')
 
+  
+def audioTestPageHTML():
+    
+    audioTestPageHTML
+    
+    consentText = "\n\n<hr /><br /><br />%s" % loader.getText("audioTest text")
+
+    consentButton = radioButton % "consent"
+    dissentButton = radioButton % "dissent"
+
+    consentChoice = '%s %s\n<br /><br />%s %s' % (consentButton, 
+                                                  loader.getText("audioTest affirm"),
+                                                  dissentButton,
+                                                  loader.getText("audioTest reject"))
+
+    consentHTML = consentText + "<br /><br />%s<br /><br />" + consentChoice
+
+    return consentHTML
+  
     
 def consentPageHTML():
     
@@ -380,6 +399,21 @@ def audioDecisionPageHTML():
     return html % (radioButton % {'id':'0'},
                    radioButton % {'id':'1'},
                    radioButton % {'id':'2'})
+
+
+def sameDifferentPageHTML():
+    
+    radioButton = '<p><input type="radio" name="same_different" value="%(id)s" id="%(id)s" /> <label for="%(id)s">.</label></p>'
+    
+    html = """
+    <br /><br />%%s %%s<br /><br />
+<table class="center">
+<tr><td>%%s</td><td>%%s</td></tr>
+<tr><td>%s</td><td>%s</td></tr>
+</table>""" 
+    
+    return html % (radioButton % {'id':'0'},
+                   radioButton % {'id':'1'})
 
 def abPageHTML():
     
