@@ -455,19 +455,41 @@ def constructTable(wordList, doBreaks, doProminence, offsetNum):
     return html
 
 
-def makeTogglableWord(testType, word, idNum):
+def makeTogglableWord(testType, word, idNum, boundaryToken):
+    
+    tokenTxt = ""
+    if boundaryToken != None:
+        tokenTxt = """<span class="hidden">%s</span>""" % boundaryToken
     
     html = """
 <label for="%(idNum)d">
                 <input type="checkbox" name="%(testType)s" id="%(idNum)d" value="%(idNum)d"/>
-                %(word)s
-</label>\n\n
-"""
+                %(word)s""" + tokenTxt + """\n</label>\n\n"""
 
     return html % {"testType":testType,"word":word, "idNum":idNum}
 
 
-def getTogglableWordEmbed(numWords):
+def getTogglableWordEmbed(numWords, boundaryMarking):
+    
+
+    boundaryMarkingCode_showHide = """
+            $("#"+x).closest("label").css({ borderRight: "3px solid #000000"});
+            $("#"+x).closest("label").css({ paddingRight: "0px"});
+    """
+    
+    boundaryMarkingCode_toggle = """    
+    $(this).closest("label").css({ borderRight: this.checked ? "3px solid #000000":"0px solid #FFFFFF"});
+    $(this).closest("label").css({ paddingRight: this.checked ? "0px":"3px"});"""
+    if boundaryMarking != None:
+        boundaryMarkingCode_toggle = """
+        $(this).next("span").css({ visibility: this.checked ? "visible":"hidden"});
+        """
+        boundaryMarkingCode_showHide = """
+        $("#"+x).next("span").css({ visibility: "visible"});
+        """
+    
+    
+
     
     javascript = """
 <script type="text/javascript" src="jquery.min.js"></script>
@@ -485,8 +507,7 @@ if(didPlay == true) {
         var x = e+%(numWords)d;
 
         if (document.getElementById(e).checked==true) {
-            $("#"+x).closest("label").css({ borderRight: "3px solid #000000"});
-            $("#"+x).closest("label").css({ paddingRight: "0px"});
+%(boundaryMarkingCode_showHide)s
             }
         }
     }
@@ -513,20 +534,23 @@ if(didPlay == true) {
 <script>
 $(document).ready(function(){
   $('input[type=checkbox]').click(function(){
+    
     if (this.value < %(numWords)d)
     {
-    $(this).closest("label").css({ borderRight: this.checked ? "3px solid #000000":"0px solid #FFFFFF"});
-    $(this).closest("label").css({ paddingRight: this.checked ? "0px":"3px"});
+    /* Boundary marking */
+%(boundaryMarkingCode_toggle)s
     }
     else
     {
+    /* Prominence marking */
     $(this).closest("label").css({ color: this.checked ? "red":"black"});
     }
   });
 });
 </script>"""
 
-    return javascript % {"numWords":numWords}
+    return javascript % {"numWords":numWords, "boundaryMarkingCode_toggle":boundaryMarkingCode_toggle,
+                         "boundaryMarkingCode_showHide":boundaryMarkingCode_showHide}
 
 
 def getProminenceOrBoundaryWordEmbed(isProminence):
