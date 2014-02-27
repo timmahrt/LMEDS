@@ -23,7 +23,7 @@ def finalPage():
 
 def checkForAudioTag():
     txt = '''
-    <script>
+    <script type="text/javascript">
     
 function isSupportedBrowser() {
 
@@ -74,8 +74,10 @@ def audioTestEndPage():
     pageTemplate = join(constants.htmlDir, "finalPageTemplate.html")
     
     return htmlText, pageTemplate, {}
-def consentPage():
-    htmlText = html.consentPageHTML()
+
+
+def consentPage(consentName=None):
+    htmlText = html.consentPageHTML(consentName)
     pageTemplate = join(constants.htmlDir, "blankPageWValidation.html")
 
     return htmlText, pageTemplate, {}
@@ -96,9 +98,6 @@ def instructionPage(instructionsName):
 %s
 </p><br /><br />
 
-<u><b> Section </b></u> 
-<br /><br />
-
 <div id="longText">
 
 %s
@@ -107,7 +106,10 @@ def instructionPage(instructionsName):
     
     
 #     htmlText = open(join(constants.instructDir, instructionsName+".html"), "r").read()
+#    htmlText = html.instructionPageHTML()
+    pageTemplate = join(constants.htmlDir, "basicTemplate.html")
     
+    return htmlText, pageTemplate, {}
     
     
 def audioInstructionPage(instrName, *audioNameList, **kargs):
@@ -130,7 +132,6 @@ def audioInstructionPage(instrName, *audioNameList, **kargs):
     embedTxt = audio.getPlayAudioJavaScript(True, len(audioNameList), [-1,]*len(audioNameList), 1)
     embedTxt += "\n\n" + audio.generateEmbed(kargs['wavDir'], audioNameList)
     
-#    htmlText = html.instructionPageHTML()
     pageTemplate = join(constants.htmlDir, "basicTemplate.html")
     
     return htmlText, pageTemplate, {'embed':embedTxt}
