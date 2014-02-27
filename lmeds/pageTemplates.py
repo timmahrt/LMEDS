@@ -118,10 +118,10 @@ def textAnnotationPage(name, doBreaks, doProminence, txtDir, wavDir):
     offsetNum = 0
     for sentence in sentenceList:
         wordList = sentence.split(" ")
-        htmlText += html.constructTable(wordList, doBreaks, doProminence, offsetNum)
+        htmlText += html.constructCheckboxTable(wordList, doBreaks, doProminence, offsetNum)
         offsetNum += len(wordList)
         
-    embedTxt = audio.getPlayAudioJavaScript(True, 1, [2,])
+    embedTxt = audio.getPlayAudioJavaScript(True, 1, [2,], 1)
     embedTxt += "\n\n" + audio.generateEmbed(wavDir, [name,])
 
     htmlText = _makeNoWrap(htmlText)
@@ -129,7 +129,7 @@ def textAnnotationPage(name, doBreaks, doProminence, txtDir, wavDir):
     return htmlText, pageTemplate, {'embed':embedTxt}
 
 
-def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textName, sentenceList):
+def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textName, sentenceList, presentAudioFlag, token):
     '''
     This is a helper function.  It does not construct a full page.
     
@@ -142,20 +142,31 @@ def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textName, sentenc
     instrMsg = ("%s<br /><br />\n\n" % loader.getText(textName))
     htmlTxt += _makeWrap(instrMsg)
     
-    htmlTxt += audio.generateAudioButton(name, audioNum, False) + "<br /><br />\n\n"
+    if presentAudioFlag.lower() == 'true':
+        htmlTxt += audio.generateAudioButton(name, audioNum, False) + "<br /><br />\n\n"
+    else:
+        htmlTxt += "<br /><br />\n\n"
+    
+    sentenceListTxtList = []
     for sentence in sentenceList:
         wordList = sentence.split(" ")
+        tmpHTMLTxt = ""
         for word in wordList:
-            htmlTxt += html.makeTogglableWord(testType, word, wordIDNum)
+            tmpHTMLTxt += html.makeTogglableWord(testType, word, wordIDNum, token)
             wordIDNum += 1 
         
         # New sentence, new line
-        htmlTxt += "<br /><br />\n\n"
+        sentenceListTxtList.append(tmpHTMLTxt)
+    
+    newTxt = "<br /><br />\n\n".join(sentenceListTxtList)
+#     htmlTxt += "<br /><br />\n\n"
+            
+    htmlTxt += newTxt
             
     return htmlTxt, wordIDNum
 
 
-def breaksOrProminencePage(name, doProminence, txtDir, wavDir):
+def breaksOrProminencePage(name, minPlays, maxPlays, instructions=None, presentAudio="true", boundaryToken=None, doProminence=True, txtDir=None, wavDir=None):
     '''
     Returns html for a page where users mark either breaks or prominence
     
@@ -168,16 +179,19 @@ def breaksOrProminencePage(name, doProminence, txtDir, wavDir):
     sentenceList = loader.loadTxt(txtFN)
     
     if doProminence:
-        textName = "prominence instructions short"
+        textName = ["prominence", "instructions short"]
         testType = "p"
     else:
-        textName = "boundary instructions short"
+        textName = ["boundary", "instructions short"]
         testType = "b"
     
+    if instructions != None:
+        textName.insert(1, instructions)
+    
     # Construct the HTML here
-    htmlTxt = _doBreaksOrProminence(testType, 0, 0, name, textName, sentenceList)[0]
+    htmlTxt = _doBreaksOrProminence(testType, 0, 0, name, " ".join(textName), sentenceList, presentAudio, boundaryToken)[0]
 
-    embedTxt = audio.getPlayAudioJavaScript(True, 1, [2,])
+    embedTxt = audio.getPlayAudioJavaScript(True, 1, [maxPlays,], minPlays)
     embedTxt += "\n\n" + audio.generateEmbed(wavDir, [name,])
     embedTxt += "\n\n" + html.getProminenceOrBoundaryWordEmbed(doProminence)
     
@@ -186,7 +200,7 @@ def breaksOrProminencePage(name, doProminence, txtDir, wavDir):
     return htmlTxt, pageTemplate, {'embed':embedTxt}
     
     
-def breaksAndProminencePage(name, focus, txtDir, wavDir):
+def breaksAndProminencePage(name, minPlays, maxPlays, instructions=None, presentAudio="true", boundaryToken=None, txtDir=None, wavDir=None):
     '''
     Returns html for a page where users mark both breaks and prominence
     
@@ -197,6 +211,10 @@ def breaksAndProminencePage(name, focus, txtDir, wavDir):
     'focus' - either 'meaning' or 'acoustics' -- used to print the correct
         instructions
     '''
+    
+    # Sanity force
+    if presentAudio.lower() == "false":
+        minPlays = "0"
     
     pageTemplate = join(constants.htmlDir, "wavTemplate.html")
     
@@ -212,28 +230,38 @@ def breaksAndProminencePage(name, focus, txtDir, wavDir):
     htmlTxt = '<div id="ShownDiv" style="DISPLAY: block">'
 
     # HTML boundaries
+    instructionsText = ["boundary", "instructions short"]
+    if instructions != None:
+        instructionsText.insert(1, instructions)
     tmpHTMLTxt, numWords = _doBreaksOrProminence("b_and_p", wordIDNum, 0, name, 
-                                                 "boundary_%s instructions short" % focus, 
-                                                 sentenceList)
-    htmlTxt += tmpHTMLTxt
+                                                 " ".join(instructionsText), 
+                                                 sentenceList,
+                                                 presentAudio, 
+                                                 boundaryToken)
+    htmlTxt += "<div>%s</div>" % tmpHTMLTxt
 
     # HTML from transitioning from the boundary portion of text to the prominence portion
-    htmlTxt += '<br /><br /><input type="button" value="Submit" onclick="ShowHide()"></button>'
+    htmlTxt += '<br /><br /><input type="button" value="%s" onclick="ShowHide()"></button>' % loader.getText('continue button')
     htmlTxt += '</div>\n\n<div id="HiddenDiv" style="DISPLAY: none">\n\n'
     
     # HTML prominence
+    instructionsText = ["prominence", "post boundary instructions short"]
+    if instructions != None:
+        instructionsText.insert(1, instructions)
     htmlTxt += _doBreaksOrProminence("b_and_p", numWords, 1, name, 
-                                     "prominence_%s post boundary instructions short" % focus, 
-                                     sentenceList)[0]
+                                     " ".join(instructionsText), 
+                                     sentenceList,
+                                     presentAudio,
+                                     boundaryToken)[0]
     htmlTxt += "</div>"
                 
     # Closing off the div for the prominence section
     #htmlTxt += '</div>' # The last div will be closed off by 'formTemplate2'
                 
     # Add the javascript and style sheets here
-    embedTxt = audio.getPlayAudioJavaScript(True, 2, [2,2,])
+    embedTxt = audio.getPlayAudioJavaScript(True, 2, [maxPlays,maxPlays,], minPlays)
     embedTxt += "\n\n" + audio.generateEmbed(wavDir, [name,])
-    embedTxt += "\n\n" + html.getTogglableWordEmbed(numWords)
+    embedTxt += "\n\n" + html.getTogglableWordEmbed(numWords, boundaryToken)
     
     htmlTxt = _makeNoWrap(htmlTxt)
     
@@ -296,7 +324,7 @@ def getPageTemplates(webSurvey):
                                          wavDir=webSurvey.wavDir, doProminence=True),
                     'boundary':partial(breaksOrProminencePage, txtDir=webSurvey.txtDir,
                                          wavDir=webSurvey.wavDir, doProminence=False),
-                    'boundaryAndProminence':partial(breaksAndProminencePage, txtDir=webSurvey.txtDir,
+                    'boundary_and_prominence':partial(breaksAndProminencePage, txtDir=webSurvey.txtDir,
                                          wavDir=webSurvey.wavDir),
                     'prominenceOld':partial(textAnnotationPage, txtDir=webSurvey.txtDir, 
                                          wavDir=webSurvey.wavDir, doBreaks=False, doProminence=True), 
@@ -308,4 +336,8 @@ def getPageTemplates(webSurvey):
 #    knownKeyList = testKeyDict.keys()
     
     return testKeyDict
+
+
+if __name__ == "__main__":
+    pass
 
