@@ -13,6 +13,24 @@ import codecs
 #f = codecs.open('unicode.rst', encoding='utf-8')
 
 
+class BadlyFormattedTextError(Exception):
+    '''
+    A generic error that is used whenever a string in the text dictionary is
+    improperly formatted.
+    '''
+    
+    def __init__(self, errorTxt, txtKey):
+        self.errorTxt = errorTxt
+        self.txtKey = txtKey
+        self.dictionaryFN = textDict.sourceFN
+        
+    def __str__(self):
+        prefixStr = "For text key <<%s>> in dictionary file <<%s>>: "
+        prefixStr %= (self.txtKey, self.dictionaryFN)
+        
+        return prefixStr + self.errorTxt
+
+
     
 class TextNotInDictionaryException(Exception):
     

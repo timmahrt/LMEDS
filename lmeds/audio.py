@@ -119,12 +119,15 @@ function enable() {
     </script>
 '''
 
-def getPlayAudioJavaScript(doSilence, numItems, maxList):
+def getPlayAudioJavaScript(doSilence, numItems, maxList, minNumPlays):
+
+    maxList = [int(val) for val in maxList]
+    minNumPlays = int(minNumPlays)
 
     if doSilence:
-        silenceTxt = 'true'
+        silenceFlag = 'true'
     else:
-        silenceTxt = 'false'
+        silenceFlag = 'false'
     
     maxDictionaryTextList = []
     for i, maxV in enumerate(maxList):
@@ -136,9 +139,26 @@ def getPlayAudioJavaScript(doSilence, numItems, maxList):
         dictionaryTextList.append('"%s":0,' % (i))
     countDictionaryText = "\n".join(dictionaryTextList)
     
-
+    # Get error message and make sure it is formatted correctly
+    if minNumPlays < maxList[0]:
+        errorKey = "error must play audio at least"
+    else:
+        errorKey = "error must play audio"
+        
+    errorMsg = loader.getText(errorKey)
+    if "%d" not in errorMsg:
+        badFormattedText = "Please add a '%d', for the minimum number of required audio plays, in the text file"
+        raise loader.BadlyFormattedTextError(badFormattedText, errorKey)
     
-    jsCode = playAudioFileJS % (silenceTxt, numItems, countDictionaryText, maxDictionaryText)
+    
+    minNumPlaysErrorMsg =  errorMsg % int(minNumPlays)
+    
+    jsCode = playAudioFileJS % {"silenceFlag":silenceFlag, 
+                                "numSoundFiles":numItems, 
+                                "countDictTxt":countDictionaryText, 
+                                "maxDictTxt":maxDictionaryText, 
+                                "minNumPlays":minNumPlays,
+                                "minNumPlaysErrorMsg":minNumPlaysErrorMsg}
     
     return jsCode
 
