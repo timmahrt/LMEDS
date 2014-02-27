@@ -10,6 +10,7 @@ from os.path import join
 import Cookie
 
 from functools import partial
+
 import loader
 
 import constants
@@ -283,15 +284,21 @@ def firstPageHTML():
     or download a modern modern such as Chrome or Firefox.</b></font></div>'''
      
     return productNote + title + pg0HTML + unsupportedWarning
-
+    
 
 def firstPageErrorHTML():
     
     pg0HTML = firstPageHTML()
     pg0HTML = pg0HTML
 
+    textKey = 'error user name exists'
+    userNameErrorTxt = loader.getText(textKey)
 
-    pg0HTML += "<br />" + loader.getText('error user name exists')
+    if '%s' not in userNameErrorTxt:
+        errorMsg = "Please add a '%s' for the user name in the text associated with this key"
+        raise loader.BadlyFormattedTextError(errorMsg, textKey)
+    
+    pg0HTML += "<br />" + userNameErrorTxt
 
     return pg0HTML
 
@@ -329,12 +336,15 @@ def audioTestPageHTML():
     return consentHTML
   
     
-def consentPageHTML():
+def consentPageHTML(consentName=None):
+    
+    if consentName == None:
+        consentName = "text"
     
     consentText = open(join(constants.htmlSnippetsDir, "consent.html"), "r").read()
     consentText %= (loader.getText("title"),
                     loader.getText("consent title"),
-                    loader.getText("consent text"))
+                    loader.getText("consent %s" % consentName))
     
     consentText += "\n\n<hr /><br /><br />%s" % loader.getText("consent query")
 
@@ -373,9 +383,9 @@ def axbPageHTML():
 <tr><td>%s</td><td>%s</td></tr>
 </table>"""
     html %= (loader.getText("axb query"),
-             loader.getText("x"),
-             loader.getText("a"),
-             loader.getText("b"),
+             loader.getText("axb x"),
+             loader.getText("axb a"),
+             loader.getText("axb b"),
              radioButton % {'id':'0'}, 
              radioButton % {'id':'1'})
     
@@ -431,7 +441,7 @@ def abPageHTML():
     return html    
 
 
-def constructTable(wordList, doBreaks, doProminence, offsetNum):
+def constructCheckboxTable(wordList, doBreaks, doProminence, offsetNum):
     
 
     breakSign = "|" 
@@ -651,7 +661,6 @@ calcDuration();
 var returnValue = true;
 
 %s
-
 return returnValue;    
 }
 </script>
@@ -659,12 +668,12 @@ return returnValue;
     
     funcList = []
     # Ensure the subject has listened to all audio files
-    if pageType in ['axb', 'prominence', 'boundary', 'boundaryAndProminence',
-                    'oldProminence', 'oldBoundary', 'abn']:
+    if pageType in ['axb', 'prominence', 'boundary', 'boundary_and_prominence',
+                    'oldProminence', 'oldBoundary', 'abn', 'audio_test']:
         funcList.append("verifyAudioPlayed")
         
     # Ensure all required forms have been filled out
-    if pageType in ['login', 'login_bad_user_name', 'consent', 'axb', 'ab', 'abn']:
+    if pageType in ['login', 'login_bad_user_name', 'consent', 'audio_test', 'axb', 'ab', 'abn']:
         funcList.append("validateForm")
     
     htmlList = []
