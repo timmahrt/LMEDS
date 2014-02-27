@@ -12,6 +12,20 @@ import constants
 import codecs
 #f = codecs.open('unicode.rst', encoding='utf-8')
 
+
+    
+class TextNotInDictionaryException(Exception):
+    
+    def __init__(self, txtKey):
+        self.txtKey = txtKey
+        self.dictionaryFN = textDict.sourceFN
+        
+    def __str__(self):
+        errorTxt = "Text key <<%s>> not in dictionary file <<%s>\n\nPlease add text key to dictionary and try again."
+        
+        return errorTxt % (self.txtKey, self.dictionaryFN)
+    
+
 def loadTxt(fn):
     txt = codecs.open(fn, "r", encoding="utf-8").read()
     #txt = open(fn, "r").read()
@@ -113,9 +127,14 @@ def initTextDict(fn):
     global textDict
     textDict = TextDict(fn)
 
+
 def getText(key):
-    return textDict.getText(key)
-        
+    try:
+        returnText = textDict.getText(key)
+    except KeyError:
+        raise TextNotInDictionaryException(key)
+    
+    return returnText
 
 
 if __name__ == "__main__":
