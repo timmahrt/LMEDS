@@ -326,30 +326,17 @@ class WebSurvey(object):
         taskName = currentTaskTuple[0]
         taskArguments = currentTaskTuple[1] 
         taskArgumentStr = ";".join(taskArguments)
+
+        numPlays1 = form.getvalue('audioFilePlays0')
+        numPlays2 = form.getvalue('audioFilePlays1')
+        taskDuration = form.getvalue('task_duration')
         
-        # Identify the keys associated with data that we want to serialize
-        keyList = []
-        if 'prominence' == taskName:
-            keyList.append('p')
-        if 'boundary' == taskName:
-            keyList.append('b')
-        if 'axb' == taskName:
-            keyList.append('axb')
-        if 'abn' == taskName:
-            keyList.append('abn')
-            
-        # We should not distinguish between different kinds of keys
-        # -- all checkboxes on a page should be the same 
-        # -- (I can't see the reason to do otherwise)
-        if 'boundaryAndProminence' == taskName:
-            keyList.append('b_and_p')
-        
-        # At the moment, only allow a single key (or none)
-        assert(len(keyList) <= 1)
-        outputList = []
-        for key in keyList:
-            outputList.append(self.getoutput(key, form))
-#         open('../outputTest.txt', "a").write(str(outputList))
+        if taskName == "survey":
+            outputList = self.getOutputForSurvey(form, taskArguments[0])
+        elif taskName == "consent":
+            outputList = self.getOutputForConsent(form)
+        else:
+            outputList = self.getOutputForTask(form, taskName)
         
         # Serialize data
         for key, value in outputList:
@@ -361,11 +348,107 @@ class WebSurvey(object):
     #         if not os.path.exists(outputDir):
     #             os.mkdir(outputDir)
                 
-            outputFN = join(experimentOutputDir, "%s.txt" % (userName))
+            outputFN = join(experimentOutputDir, "%s.csv" % (userName))
             fd = open(outputFN, "a")
-            fd.write( "%s,%s,%s\n" % (key,taskArgumentStr,value))    
+            fd.write( "%s,%s,%s,%s,%s;,%s\n" % (key,taskArgumentStr,numPlays1, numPlays2, taskDuration, value))    
             fd.close()
 
+
+    def getOutputForTask(self, form, taskName):
+        # Identify the keys associated with data that we want to serialize
+        keyList = []
+        if 'prominence' == taskName:
+            keyList.append('p')
+        if 'boundary' == taskName:
+            keyList.append('b')
+        if 'axb' == taskName:
+            keyList.append('axb')
+        if 'abn' == taskName:
+            keyList.append('abn')
+        if 'same_different' == taskName:
+            keyList.append('same_different')
+            
+        # We should not distinguish between different kinds of keys
+        # -- all checkboxes on a page should be the same 
+        # -- (I can't see the reason to do otherwise)
+        if 'boundary_and_prominence' == taskName:
+            keyList.append('b_and_p')
+        
+        
+        
+    
+        
+        # At the moment, only allow a single key (or none)
+        assert(len(keyList) <= 1)
+        outputList = []
+        for key in keyList:
+            outputList.append(self.getoutput(key, form))
+    #         open('../outputTest.txt', "a").write(str(outputList))
+
+        return outputList
+    
+    
+    def getOutputForSurvey(self, form, surveyName):
+        surveyItemList = survey.parseSurveyFile(join(self.surveyRoot, surveyName + ".txt"))
+        
+        tmpList = []
+        k = 0
+        for j, item in enumerate(surveyItemList):
+            
+            
+            for i, currentItem in enumerate(item.widgetList):
+                itemType, argList = currentItem
+                
+                
+                value = form.getvalue(str(k))
+                
+                if not value:
+                    value = ""
+                    if itemType in ["Choice", "Item_List", "Choicebox"]:
+                        value = ","*(len(argList)-1) # 1 comma between every element
+                else:
+                    
+                    # Remove newlines (because each newline is a new data entry)
+                    if itemType == "Multiline_Textbox":
+                        value = value.replace(",", "") # Remove commas (because saved as a CSV file)
+                        newlineChar = utils.detectLineEnding(value)
+                        if newlineChar != None:
+                            value = value.replace(newlineChar, " - ") 
+                    
+                    if itemType in ["Choice", "Choicebox"]:
+                        if itemType == "Choice":
+                            index = argList.index(value)
+                        elif itemType == "Choicebox":
+                            index = int(value)
+                            
+                        valueList = ["0" for x in xrange(len(argList))]
+                        valueList[index] = "1"
+                        value = ",".join(valueList)
+                        
+                    elif itemType in ["Item_List"]:
+                        indexList = [argList.index(subVal) for subVal in value]
+                        valueList = ["1" if i in indexList else "0" for i in xrange(len(argList))]
+                        value = ",".join(valueList)
+                    
+                tmpList.append(value)
+                k += 1
+        
+#         tmpList = outputList
+        
+        return [("survey", ",".join(tmpList)),]
+            
+    
+    def getOutputForConsent(self, form):
+        didConsent = form.getvalue("radio")
+        
+        timestamp = datetime.datetime.now().isoformat()
+        if didConsent == "consent":
+            returnTxt = "User consented to participate in experiment on %s"
+        else:
+            returnTxt = "User declined consent to participate in experiment on %s"
+
+        return [("consent", returnTxt % timestamp),]
+    
 
 if __name__ == "__main__":
     survey = WebSurvey("files_perceptionOfDiscourseMeaning", "sequence.txt", "english", True)
