@@ -178,6 +178,11 @@ class WebSurvey(object):
                 nextPage = [(subroutine, 0, ('consent_end', [], {}))]
     #            print open("../html/optOut.html", "r").read()
     
+        # Go to a special end state if the user cannot play audio files
+        if taskType == 'audio_test':
+            if form['radio'].value == 'dissent':
+                nextPage = [(subroutine, 0, ('audio_test_end', [], {}))]
+    
     
         return pageNum, cookieTracker, nextPage, userName
     
