@@ -9,9 +9,11 @@ import os
 from os.path import join
 import Cookie
 
+from functools import partial
 import loader
 
 import constants
+import survey
 
 choice = """<input type="radio" name="radio">"""
 img = """<img src="data/%s">"""
@@ -87,6 +89,115 @@ function calcDuration() {
 }
 </script>
 """
+
+
+def createChoice(textList, i, checkboxFlag=False):
+    
+    widgetTemplate = """<input type="radio" name="%s" id="%s" value="%s">"""
+    if checkboxFlag:
+        widgetTemplate = """<input type="checkbox" name="%s" id="%s" value="%s">"""
+        
+    choiceList = []
+    for text in textList:
+        newRadioButton = widgetTemplate % (str(i), str(i), text)
+        choiceList.append("%s %s" % (text, newRadioButton))
+    
+    txtSeparator = "&nbsp;" * 4
+    
+    return "%s" %  txtSeparator.join(choiceList), i + 1
+
+
+def createChoicebox(textList, i):
+    
+    widgetTemplate = """<option value="%s">%s</option>"""
+    
+#     textList = ["",] + textList # Default value is blank
+    
+    choiceList = []
+    for j, text in enumerate(textList):
+        newChoice = widgetTemplate % (str(j), text)
+        choiceList.append(newChoice)
+        
+    returnTxt = """<select name="%s" id="%s">%%s</select>""" % (str(i), str(i))
+    returnTxt %= "\n".join(choiceList)
+    
+    return returnTxt, i + 1
+
+
+def createTextbox(i):
+    txtBox = """<input type="text" name="%s" id="%s" value=""/>"""
+    return txtBox % (str(i), str(i)), i + 1
+
+
+def createTextfield(i, argList):
+    width = argList[0] # Units in number of characters
+    numRows = argList[1]
+    return """<textarea name="%s" id="%s" rows="%s" cols="%s"></textarea>""" % (str(i), str(i), numRows, width), i + 1
+
+    
+def createWidget(widgetType, argList, i):
+
+    elementDictionary = {"Choice":createChoice,
+                         "Item_List":partial(createChoice, checkboxFlag=True),
+                         "Choicebox":createChoicebox,
+                         }
+    
+    if widgetType == "Textbox":
+        widgetHTML, i = createTextbox(i)
+    elif widgetType == "Multiline_Textbox":
+        widgetHTML, i = createTextfield(i, argList)
+    else:
+        widgetHTML, i = elementDictionary[widgetType](argList, i)
+        
+    return widgetHTML, i
+
+
+def surveyPage(surveyFN):
+    surveyItemList = survey.parseSurveyFile(surveyFN)
+    i = 0
+    itemHTMLList = []
+    
+    choiceBoxIndexList = []
+    for item in surveyItemList:
+        
+        itemElementList = []
+        for dataTuple in item.widgetList:
+            elementType, argList = dataTuple
+            widget = createWidget(elementType, argList, i)[0]
+            itemElementList.append(widget)
+        
+            if elementType == "Choicebox":
+                choiceBoxIndexList.append(i)
+            i += 1
+        
+        
+        
+        elementHTML = " ".join(itemElementList)
+        
+        itemHTML = "%s) %s<br />%s" % (item.enumStrId, item.text, elementHTML)
+        
+        if item.depth == 1:
+            itemHTML = "<div id='indentedText'>%s</div>" % itemHTML
+        elif item.depth > 1:
+            itemHTML = "<div id='doubleIndentedText'>%s</div>" % itemHTML
+        
+        itemHTMLList.append(itemHTML)
+    
+    surveyHTML = "<br /><br />\n".join(itemHTMLList)
+    
+    javascript = """document.getElementById("%d").selectedIndex = -1;"""
+    javascriptList = [javascript % i for i in choiceBoxIndexList]
+
+        
+    embedTxt = """\n<script type="text/javascript">\nfunction setchoiceboxes() {
+    %s
+    }
+    window.addEventListener("load", setchoiceboxes);\n</script>\n""" % "\n".join(javascriptList)
+    
+    return "<div id='longText'>%s</div>" % surveyHTML, embedTxt
+        
+        
+
 def getProgressBar():
     progressBarText = "- %s - <br />" % loader.getText("progress")
     
