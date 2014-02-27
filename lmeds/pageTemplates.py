@@ -90,9 +90,9 @@ def consentEndPage():
     return htmlText, pageTemplate, {}
 
 
-def instructionPage(instructionsName):
+def instructionPage(*name):
     
-    name = "%s instructions" % instructionsName
+    name = " ".join(name)
     
     htmlText = '''<p id="title">
 %s
