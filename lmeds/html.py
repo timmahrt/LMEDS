@@ -37,6 +37,7 @@ formTemplate = """
 <input TYPE="hidden" name="cookieTracker" value="%(cookieTracker)s"> 
 <input TYPE="hidden" name="user_name" value="%(user_name)s"> 
 <input TYPE="hidden" name="num_items" value="%(num_items)d">
+<input TYPE="hidden" name="task_duration" id="task_duration" value="0">
 <input TYPE="hidden" name="audioFilePlays0" id="audioFilePlays0" value="0" />
 <input TYPE="hidden" name="audioFilePlays1" id="audioFilePlays1" value="0" />
 <br /><br />
@@ -57,6 +58,7 @@ formTemplate2 = """
 <input TYPE="hidden" name="cookieTracker" value="%(cookieTracker)s"> 
 <input TYPE="hidden" name="user_name" value="%(user_name)s"> 
 <input TYPE="hidden" name="num_items" value="%(num_items)d">
+<input TYPE="hidden" name="task_duration" id="task_duration" value="0">
 <input TYPE="hidden" name="audioFilePlays0" id="audioFilePlays0" value="0" />
 <input TYPE="hidden" name="audioFilePlays1" id="audioFilePlays1" value="0" />
 <br /><br />
@@ -65,6 +67,26 @@ formTemplate2 = """
 </form>
 """
 
+taskDurationCode = """
+<script type="text/javascript">
+
+var start = new Date().getTime();
+
+function calcDuration() {
+    var time = new Date().getTime() - start;
+
+    var seconds = Math.floor(time / 100) / 10;
+    var minutes = Math.floor(seconds / 60);
+    seconds = seconds - (minutes * 60);
+    if(Math.round(seconds) == seconds) { 
+        seconds += '.0'; 
+    }
+    var param1 = minutes.toString();
+    var param2 = Number(seconds).toFixed(1);
+    document.getElementById("task_duration").value = param1 + ":" + param2;
+}
+</script>
+"""
 def getProgressBar():
     progressBarText = "- %s - <br />" % loader.getText("progress")
     
@@ -456,6 +478,7 @@ def getProcessSubmitHTML(pageType):
 <script  type="text/javascript">
 function processSubmit()
 {
+calcDuration();
 var returnValue = true;
 
 %s
