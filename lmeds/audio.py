@@ -6,6 +6,7 @@ import constants
 
 import wave
 import contextlib
+import loader
 
 embedTemplate = """
 <audio id="%s" preload="auto"> 
@@ -32,15 +33,15 @@ buttonTemplateExample = """
 
 playAudioFileJS = '''
     <script>
-var silence = %s;
-var numSoundFiles = %d;
+var silenceFlag = %(silenceFlag)s;
+var numSoundFiles = %(numSoundFiles)d;
 var countDict = {
-%s
+%(countDictTxt)s
 };
 var maxDict = {
-%s
+%(maxDictTxt)s
 };
-function EvalSound(soundobj, button, silence, id) {
+function EvalSound(soundobj, button, silenceFlag, id) {
   audioFile = document.getElementById(soundobj);
   audioFile.currentTime = 0;
   audioFile.addEventListener('ended', enable);
@@ -51,12 +52,16 @@ function EvalSound(soundobj, button, silence, id) {
     document.getElementById("button"+i.toString()).disabled=true;
     }
 
+    document.getElementById('audioFilePlays'+id.toString()).value = parseInt(document.getElementById('audioFilePlays'+id.toString()).value) + 1;
+
   countDict[id] = countDict[id] + 1;
+  
+  return true;
 }
 function enable() {
         for (var i=0; i<numSoundFiles;i++)
         {
-        if (silence == false || countDict[i] < maxDict[i])
+        if (silenceFlag == false || maxDict[i] < 0 || countDict[i] < maxDict[i])
             {
             document.getElementById("button"+i.toString()).disabled=false;
             }
@@ -67,14 +72,14 @@ function verifyAudioPlayed() {
     var returnValue = true;
     for (var i=0; i<numSoundFiles;i++)
     {
-    if (countDict[i] < 1)
+    if (countDict[i] < %(minNumPlays)d)
         {
         doAlert = true;
         }
     }
         
     if (doAlert == true) {
-        alert("You must listen to all audio files at least once.");
+        alert("%(minNumPlaysErrorMsg)s");
         returnValue = false;
     }
 
@@ -82,9 +87,9 @@ function verifyAudioPlayed() {
 }
 function verifyFirstAudioPlayed() {
     returnValue = true;
-    if(countDict["0"] < 1)
+    if(countDict["0"] < %(minNumPlays)d)
     {
-    alert("You must listen to the audio file at least once.");
+    alert("%(minNumPlaysErrorMsg)s");
     returnValue = false;
     }
     return returnValue;
