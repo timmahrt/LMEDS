@@ -313,7 +313,7 @@ def breaksAndProminencePage(name, minPlays, maxPlays, instructions=None, present
     return htmlTxt, pageTemplate, {'embed':embedTxt}
     
     
-def axbPage(sourceNameX, compareNameA, compareNameB, wavDir):
+def axbPage(sourceNameX, compareNameA, compareNameB, minPlays, maxPlays, wavDir):
     pageTemplate = join(constants.htmlDir, "axbTemplate.html")
     
     xHTML = audio.generateAudioButton(sourceNameX, 0, False)
@@ -323,7 +323,7 @@ def axbPage(sourceNameX, compareNameA, compareNameB, wavDir):
     htmlText = html.axbPageHTML()
     htmlText %= (xHTML, aHTML, bHTML)
     
-    embedTxt = audio.getPlayAudioJavaScript(True, 3, [2,2,2,])
+    embedTxt = audio.getPlayAudioJavaScript(True, 3, [maxPlays,maxPlays,maxPlays,], minPlays)
     embedTxt += "\n\n" + audio.generateEmbed(wavDir, [sourceNameX, compareNameA, compareNameB])
     
     htmlText = _makeNoWrap(htmlText)
@@ -331,7 +331,7 @@ def axbPage(sourceNameX, compareNameA, compareNameB, wavDir):
     return htmlText, pageTemplate, {'embed':embedTxt}
 
 
-def audioDecisionPage(audioName, wavDir):
+def audioDecisionPage(audioName, minPlays, maxPlays, wavDir):
     '''
     Listeners hear one file and decide if its an example of "textA", "textB" or "None"
     '''
@@ -341,10 +341,14 @@ def audioDecisionPage(audioName, wavDir):
     
     description = loader.getText("abn text")
     
-    htmlText = description + html.audioDecisionPageHTML()
-    htmlText %= (aHTML, "Broad Focus", "Contrastive Focus", "Neither")
+    a = loader.getText("abn a")
+    b = loader.getText("abn b")
+    n = loader.getText("abn n")
     
-    embedTxt = audio.getPlayAudioJavaScript(True, 1, [1,])
+    htmlText = description + "<br />" + html.audioDecisionPageHTML()
+    htmlText %= (aHTML, a, b, n)
+    
+    embedTxt = audio.getPlayAudioJavaScript(True, 1, [maxPlays,], minPlays)
     embedTxt += "\n\n" + audio.generateEmbed(wavDir, [audioName])
 
     return htmlText, pageTemplate, {'embed':embedTxt}
