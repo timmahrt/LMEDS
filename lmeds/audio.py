@@ -20,13 +20,13 @@ embedTemplate = """
 #"""
 
 buttonTemplate = """
-<input type="button" id="button%d" value="Play Sound" onClick="EvalSound('%s',this, true, '%d')">
+<input type="button" id="button%%d" value="%(button_label)s" onClick="EvalSound('%%s',this, true, '%%d')">
 """
 #<input type="button" value="Play Sound" onClick="EvalSound('%s',this, true, 2)">
 #<input type="button" value="Play Sound" onClick="document.getElementById('%s').play()">
 
 buttonTemplateExample = """
-<input type="button" id="button%d" value="Play Sound" onClick="EvalSound('%s',this, false, '%d')">
+<input type="button" id="button%%d" value="%(button_label)s" onClick="EvalSound('%%s',this, false, '%%d')">
 """
 
 
@@ -180,9 +180,13 @@ def generateEmbed(wavDir, fnList):
     
 def generateAudioButton(name, idNum, example=False):
     if example:
-        return buttonTemplateExample % (idNum, name, idNum)
+        template = buttonTemplateExample
     else:
-        return buttonTemplate % (idNum, name, idNum)
+        template = buttonTemplate
+
+    template = template % {'button_label': loader.getText('play button')}
+
+    return template % (idNum, name, idNum)
 
 
 def getSoundFileDuration(fn):

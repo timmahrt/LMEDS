@@ -259,6 +259,7 @@ class WebSurvey(object):
                      'program_title':constants.softwareName,
                      'source_cgi_fn':sourceCGIFN,
                      'num_items':numItems,
+                     'submit_button_text':loader.getText('continue button')
                                      }
         
         

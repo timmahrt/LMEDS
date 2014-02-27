@@ -38,7 +38,7 @@ formTemplate = """
 <input TYPE="hidden" name="user_name" value="%(user_name)s"> 
 <input TYPE="hidden" name="num_items" value="%(num_items)d">
 <br /><br />
-<input id="submit" TYPE="submit" value="Submit">
+<input id="submit" TYPE="submit" value="%(submit_button_text)s">
 </form>
 """
 
@@ -56,7 +56,7 @@ formTemplate2 = """
 <input TYPE="hidden" name="user_name" value="%(user_name)s"> 
 <input TYPE="hidden" name="num_items" value="%(num_items)d">
 <br /><br />
-<input id="submit" TYPE="submit" value="Submit">
+<input id="submit" TYPE="submit" value="%(submit_button_text)s">
 </div>
 </form>
 """
