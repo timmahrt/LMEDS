@@ -110,7 +110,7 @@ class WebSurvey(object):
                                 # --if it does not, the program will suspect a refresh-
                                 #    or back-button press and end the test immediately
             pageNum = 0 # Used for the progress bar
-            page = [('main', 0, ('login', [])),] # The initial state
+            page = [('main', 0, ('login', [], {})),] # The initial state
             userName = ""
         
         # Extract the information from the form
@@ -162,7 +162,7 @@ class WebSurvey(object):
             nameAlreadyExists = os.path.exists(outputFN)
             
             if nameAlreadyExists or userName == "":
-                nextPage = lastPage[:-1] + [(subroutine, 0, ('login_bad_user_name', [userName,]))]
+                nextPage = lastPage[:-1] + [(subroutine, 0, ('login_bad_user_name', [userName,], {}))]
                 pageNum -= 1 # We wrongly guessed that we would be progressing in the test
                 
         # Otherwise, the user name, should be stored in the form    
@@ -175,7 +175,7 @@ class WebSurvey(object):
         # Go to a special end state if the user does not consent to the study
         if taskType == 'consent':
             if form['radio'].value == 'dissent':
-                nextPage = [(subroutine, 0, ('consent_end', []))]
+                nextPage = [(subroutine, 0, ('consent_end', [], {}))]
     #            print open("../html/optOut.html", "r").read()
     
     
@@ -211,7 +211,7 @@ class WebSurvey(object):
     
         subroutine, subPageNum, task = page[-1]
     #    print page
-        testType, argList = task
+        testType, argList, kargDict = task
     
         # Defaults
         embedTxt = audio.generateEmbed(self.wavDir, [])
@@ -222,7 +222,7 @@ class WebSurvey(object):
         totalNumPages = len(testSequence.iterate())
         percentComplete = int(100*(pageNum)/(totalNumPages))
         
-        htmlTxt, pageTemplateFN, updateDict = pageTemplates.getPageTemplates(self)[testType](*argList)
+        htmlTxt, pageTemplateFN, updateDict = pageTemplates.getPageTemplates(self)[testType](*argList, **kargDict)
         
         try:
             name = argList[0]

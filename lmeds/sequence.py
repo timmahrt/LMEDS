@@ -79,8 +79,23 @@ class TestSequence(object):
         
         # Split items into argument lists
         keyValueList = [row.split(" ") for row in testItemList]
-        keyValueList = [(row[0], [item for item in row[1:] if item.strip() != ""]) for row in keyValueList
-                        if row[0].strip() != ""]
+#         keyValueList = [(row[0], [item for item in row[1:] if item.strip() != ""]) for row in keyValueList
+#                         if row[0].strip() != ""]
+        
+        tmpKeyValueList = []
+        for row in keyValueList:
+            if row[0].strip() != "":
+                itemKey = row[0]
+                tmpList = [arg for arg in row[1:] if arg != ''] # Filter out emptry strings (how are these appearing?)
+                argList = [arg for arg in tmpList if "=" not in arg] # Args
+                nonArgList = [arg.split("=", 1) for arg in row[1:] if '=' in arg]
+                # Kargs
+                kargDict = {}
+                for key, value in nonArgList:
+                    kargDict[key] = value
+                tmpKeyValueList.append( (itemKey, argList, kargDict) )
+        
+        keyValueList = tmpKeyValueList
         
         # The first item is the sequence title, uniquely identifying this test
         sequenceTitle = keyValueList.pop(0)[0]
@@ -95,7 +110,6 @@ class TestSequence(object):
         sequenceDict = {"main":[],}
         lastKey = "main"
         for i, keyValuePair in enumerate(keyValueList):
-            key, valueList = keyValuePair
             
             # At least the first item should be a runnable item and not a subsequence definition
             if i == 0 and key[0] == '#':
@@ -110,6 +124,7 @@ class TestSequence(object):
             
             # Continue adding instructions to the current sequence   
             else:
+                sequenceDict[lastKey].append((key, valueList, valueDict))
                 sequenceDict[lastKey].append((key, valueList))
         
         # No subsequence should have zero length
