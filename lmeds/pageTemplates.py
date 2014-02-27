@@ -56,6 +56,24 @@ def loginBadUserPage(userName):
     return htmlText, pageTemplate, {}
 
 
+def audioTestPage(name, wavDir):
+    
+    htmlText = html.audioTestPageHTML()
+    pageTemplate = join(constants.htmlDir, "blankPageWValidation.html")
+    
+    htmlText %= audio.generateAudioButton(name, 0, False) + "<br />"
+    
+    embedTxt = audio.getPlayAudioJavaScript(True, 1, [-1,], 1)
+    embedTxt += "\n\n" + audio.generateEmbed(wavDir, [name,])
+    
+    return htmlText, pageTemplate, {'embed':embedTxt}
+
+
+def audioTestEndPage():
+    htmlText = loader.getText('audioTest no audio')
+    pageTemplate = join(constants.htmlDir, "finalPageTemplate.html")
+    
+    return htmlText, pageTemplate, {}
 def consentPage():
     htmlText = html.consentPageHTML()
     pageTemplate = join(constants.htmlDir, "blankPageWValidation.html")
@@ -92,10 +110,37 @@ def instructionPage(instructionsName):
     
     
     
+def audioInstructionPage(instrName, *audioNameList, **kargs):
+
+    audioNameList = [name.strip() for name in audioNameList]
+    audioButtonList = [audio.generateAudioButton(name, i, False) for i, name in enumerate(audioNameList)]
+    
+    tmpTxt = loader.getText(instrName) % tuple(audioButtonList)
+    htmlText = '''<p id="title">
+%s
+</p><br /><br />
+
+<div id="longText">
+
+%s
+
+</div><br />''' % (loader.getText('title'), tmpTxt)
+    
+    
+    embedTxt = audio.getPlayAudioJavaScript(True, len(audioNameList), [-1,]*len(audioNameList), 1)
+    embedTxt += "\n\n" + audio.generateEmbed(kargs['wavDir'], audioNameList)
+    
 #    htmlText = html.instructionPageHTML()
     pageTemplate = join(constants.htmlDir, "basicTemplate.html")
     
-    return htmlText, pageTemplate, {}
+    return htmlText, pageTemplate, {'embed':embedTxt}
+    
+    
+def surveyPage(surveyFN, surveyPath):
+    htmlText, embedTxt = html.surveyPage(join(surveyPath, surveyFN + ".txt"))
+    pageTemplate = join(constants.htmlDir, "basicTemplate.html")
+    
+    return htmlText, pageTemplate, {'embed':embedTxt}
     
     
 def breakPage():
@@ -305,6 +350,29 @@ def audioDecisionPage(audioName, wavDir):
     return htmlText, pageTemplate, {'embed':embedTxt}
 
 
+def sameDifferentPage(audioName1, audioName2, minPlays, maxPlays, wavDir):
+    '''
+    Listeners hear two files and decide if they are the same or different
+    '''
+    pageTemplate = join(constants.htmlDir, "axbTemplate.html")
+    
+    aHTML = audio.generateAudioButton(audioName1, 0, False)
+    bHTML = audio.generateAudioButton(audioName2, 1, False)
+    
+    description = loader.getText("same_different text")
+    
+    sameTxt = loader.getText("same_different same")
+    differentTxt = loader.getText("same_different different")
+    
+    htmlText = description + html.sameDifferentPageHTML()
+    htmlText %= (aHTML, bHTML, sameTxt, differentTxt)
+
+    embedTxt = audio.getPlayAudioJavaScript(True, 2, [maxPlays, maxPlays], minPlays)
+    embedTxt += "\n\n" + audio.generateEmbed(wavDir, [audioName1, audioName2])
+
+    return htmlText, pageTemplate, {'embed': embedTxt}
+
+
 def _makeNoWrap(htmlTxt):
     return '<div id="noTextWrapArea">\n\n%s\n\n</div>' % htmlTxt
 
@@ -317,7 +385,11 @@ def getPageTemplates(webSurvey):
     
     testKeyDict = {'login':loginPage, 'login_bad_user_name':loginBadUserPage,
                    'consent':consentPage, 'consent_end':consentEndPage,
-                   'instruct':instructionPage,
+                   'survey':partial(surveyPage, surveyPath=webSurvey.surveyRoot),
+                   'audio_test':partial(audioTestPage, wavDir=webSurvey.wavDir),
+                   'audio_test_end':audioTestEndPage,
+                   'text_page':instructionPage,
+                   'text_and_audio_page':partial(audioInstructionPage, wavDir=webSurvey.wavDir),
                    'break':breakPage,
                     'end':finalPage,
                     'prominence':partial(breaksOrProminencePage, txtDir=webSurvey.txtDir,
@@ -331,7 +403,8 @@ def getPageTemplates(webSurvey):
                     'boundaryOld':partial(textAnnotationPage, txtDir=webSurvey.txtDir, 
                                          wavDir=webSurvey.wavDir, doBreaks=True, doProminence=False),
                     'axb':partial(axbPage, wavDir=webSurvey.wavDir),
-                    'abn':partial(audioDecisionPage, wavDir=webSurvey.wavDir)}
+                    'abn':partial(audioDecisionPage, wavDir=webSurvey.wavDir),
+                    'same_different':partial(sameDifferentPage, wavDir=webSurvey.wavDir)}
     
 #    knownKeyList = testKeyDict.keys()
     
