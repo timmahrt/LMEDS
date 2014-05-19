@@ -6,7 +6,7 @@ Created on Nov 17, 2013
 
 import codecs
 
-import utils
+from lmeds import utils
 
 alpha = lambda num: unichr(num+96) # ASCII section for lowercase alpha
 numTypeList = [int, alpha]

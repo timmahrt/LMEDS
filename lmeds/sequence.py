@@ -5,8 +5,7 @@ Created on May 30, 2013
 '''
 
 
-import constants
-
+from lmeds import factories
 
 # These are key words used in the forms to store the results of tests.
 formOutputDict = {'prominence':'p',

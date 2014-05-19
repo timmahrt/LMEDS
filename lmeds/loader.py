@@ -5,13 +5,11 @@ Created on Mar 28, 2013
 @author: timmahrt
 '''
 
-from os.path import join
-
-import constants
 
 import codecs
 
-import utils
+from lmeds import utils
+
 #f = codecs.open('unicode.rst', encoding='utf-8')
 
 

@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import os
-import constants
+from os.path import join
 
 import wave
 import contextlib
-import loader
+
+from lmeds import loader
 
 embedTemplate = """
 <audio id="%s" preload="auto"> 

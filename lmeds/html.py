@@ -3,18 +3,16 @@
 Created on Mar 28, 2013
 
 @author: timmahrt
+
+Common HTML snippets
 '''
 
 import os
-from os.path import join
 import Cookie
 
 from functools import partial
 
-import loader
-
-import constants
-import survey
+from lmeds import loader
 
 choice = """<input type="radio" name="radio">"""
 img = """<img src="data/%s">"""
