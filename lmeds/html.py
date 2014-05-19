@@ -30,7 +30,8 @@ pg2HTML = """
 
 
 formTemplate = """
-<form class="submit" name="languageSurvey" method="POST" action="%(source_cgi_fn)s" onsubmit="return processSubmit();">
+<div id='audio_hook'></div>
+<form class="submit" name="languageSurvey" method="POST">
 %(html)s
 
 <input TYPE="hidden" name="page" value="%(page)s"> 
@@ -39,10 +40,9 @@ formTemplate = """
 <input TYPE="hidden" name="user_name" value="%(user_name)s"> 
 <input TYPE="hidden" name="num_items" value="%(num_items)d">
 <input TYPE="hidden" name="task_duration" id="task_duration" value="0">
-<input TYPE="hidden" name="audioFilePlays0" id="audioFilePlays0" value="0" />
-<input TYPE="hidden" name="audioFilePlays1" id="audioFilePlays1" value="0" />
+%(audio_play_tracking_html)s
 <br /><br />
-<input id="submit" TYPE="submit" value="%(submit_button_text)s">
+%(submit_button_slot)s
 </form>
 """
 
@@ -50,7 +50,8 @@ formTemplate = """
 # -- we needed to hide the submit button, but only in a single situation
 # -- (it reappears after someone clicks another button--handled via javascript)
 formTemplate2 = """
-<form class="submit" name="languageSurvey" method="POST" action="%(source_cgi_fn)s" onsubmit="return processSubmit();">
+<div id='audio_hook'></div>
+<form class="submit" name="languageSurvey" method="POST">
 %(html)s
 
 <div id="HiddenForm" style="DISPLAY: none">
@@ -60,18 +61,54 @@ formTemplate2 = """
 <input TYPE="hidden" name="user_name" value="%(user_name)s"> 
 <input TYPE="hidden" name="num_items" value="%(num_items)d">
 <input TYPE="hidden" name="task_duration" id="task_duration" value="0">
-<input TYPE="hidden" name="audioFilePlays0" id="audioFilePlays0" value="0" />
-<input TYPE="hidden" name="audioFilePlays1" id="audioFilePlays1" value="0" />
+%(audio_play_tracking_html)s
 <br /><br />
-<input id="submit" TYPE="submit" value="%(submit_button_text)s">
+%(submit_button_slot)s
 </div>
 </form>
 """
 
+submitButtonHTML = """<input name="submitButton" type="button" value="%s">"""
+
+
+def getWidgetSubmit(widgetName):
+    '''Associates all widgets with a provided name (%s) with the submit function'''
+    widgetSubmit = """ 
+      var radios = document.getElementsByName("%s");
+      for (var i = [0]; i < radios.length; i++) {
+        radios[i].onclick=processSubmit;
+    }""" % widgetName    
+    return widgetSubmit
+
+
+def getTimeoutSubmit(timeS):
+    '''Associates a timeout with the submit function'''
+    timeoutSubmit = "setTimeout(processSubmit, %d);" % int(float(timeS) * 1000)
+    return timeoutSubmit
+
+
+def constructSubmitAssociation(tupleList):
+    returnStr = ""
+    assocDict = {'widget': getWidgetSubmit,
+                 'timeout': getTimeoutSubmit}
+    for task, arg in tupleList:
+        returnStr += assocDict[task](arg) + "\n"
+    
+    return returnStr
+
+
+# Associates a submit button with 
 taskDurationCode = """
 <script type="text/javascript">
 
 var start = new Date().getTime();
+
+window.onload=function() {
+
+%s
+
+
+}
 
 function calcDuration() {
     var time = new Date().getTime() - start;
@@ -88,6 +125,8 @@ function calcDuration() {
 }
 </script>
 """
+
+audioPlayTrackingTemplate = '<input TYPE="hidden" name="audioFilePlays%(id)d" id="audioFilePlays%(id)d" value="0" />\n'
 
 
 def createChoice(textList, i, checkboxFlag=False):
@@ -124,8 +163,8 @@ def createChoicebox(textList, i):
 
 
 def createTextbox(i):
-    txtBox = """<input type="text" name="%s" id="%s" value=""/>"""
-    return txtBox % (str(i), str(i)), i + 1
+    tmpTxtBox = """<input type="text" name="%s" id="%s" value=""/>"""
+    return tmpTxtBox % (str(i), str(i)), i + 1
 
 
 def createTextfield(i, argList):
