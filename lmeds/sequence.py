@@ -17,7 +17,8 @@ formOutputDict = {'prominence':'p',
 
 class TestSetupError(Exception):
 
-    def __init__(self, unknownKeyList):
+    def __init__(self, unknownKeyList, *args, **kargs):
+        super(TestSetupError, self).__init__(*args, **kargs)
         self.unknownKeyList = unknownKeyList
 
     def __str__(self):
@@ -65,11 +66,115 @@ class InvalidSequenceFileError(Exception):
 class TestSequence(object):
     
     
-    def __init__(self, sequenceFN):
+    def __init__(self, webSurvey, sequenceFN):
         self.sequenceFN = sequenceFN
+    
+        self.webSurvey = webSurvey
+        self.sequenceTitle, self.testItemList = self.quickParse()
+
+    
+    def getNumPages(self):
+        return len(self.testItemList)
+    
+    
+    def getPage(self, pageNum):
+        
+        pageName, pageArgStr = self.getPageStr(pageNum)
+        
+        argList = [arg for arg in pageArgStr if "=" not in arg] # Args
+        
+        # Kargs
+        kargDict = {}
+        nonArgList = [arg.split("=", 1) for arg in pageArgStr if '=' in arg]
+        for key, value in nonArgList:
+            kargDict[key] = value
+        
+        page = factories.loadPage(self.webSurvey, pageName, argList, kargDict)
+        
+        return page
+    
+    
+    def getPageStr(self, pageNum):
+        pageRow = self.testItemList[pageNum]
+#         tmpList = pageRow.split(" ")
+#         pageName = tmpList[0]
+#         pageArgStr = tmpList[1:]
         
 
-    def parse(self):
+        # Find lists
+        indicies = [0]
+        indexList = []
+        indexList2 = []
+        startIndex = 0
+        endIndex = 0
+        char1 = "["
+        char2 = "]"
+        text = pageRow
+        while True:
+            try:
+                bracketStartIndex = text.index(char1, startIndex)
+            except ValueError:
+                break
+            endIndex = text.index(char2, bracketStartIndex)
+            
+            indexList.append( (startIndex, bracketStartIndex-1))
+            indexList.append( (bracketStartIndex+1, endIndex))
+            
+            indicies.append(endIndex)
+            startIndex = endIndex + 1
+        
+        if endIndex == 0:
+            indexList.append( (0, -1))
+        else:
+            indexList.append( (endIndex + 1, -1) )
+        
+        # Make chunks
+        chunkList = []
+#         for i in xrange(len(indicies) - 1):
+#             chunkList.append(text[i:i+1])
+        i = 0
+        while i < len(indexList) - 1:
+            tmpData = text[indexList[i][0]:indexList[i][1]].strip()
+            if tmpData != "":
+                chunkList.extend((tmpData.split(" ")))
+#             print indexList[i], text[indexList[i][0]:indexList[i][1]]
+            tmpData = text[indexList[i+1][0]:indexList[i+1][1]].strip()
+            if tmpData != "":
+#                 chunkList.append(tmpData.replace(" ", ","))
+                chunkList.append(tmpData.split(" "))
+#             print indexList[i+1], text[indexList[i+1][0]:indexList[i+1][1]], "\n"
+            i += 2
+        tmpData = text[indexList[-1][0]:].strip()
+        if tmpData != "":
+            chunkList.extend(tmpData.split(" "))
+        
+        pageName = chunkList.pop(0)
+        
+        return pageName, chunkList
+        
+#         pageArgStr.
+#         
+#         return pageName, pageArgStr
+        
+    
+    def quickParse(self):
+        data = open(self.sequenceFN, "r").read()
+        testItemList = data.split("\n")
+        testItemList = [row.strip() for row in testItemList]
+        testItemList = [row for row in testItemList if row != '']
+
+        # Validate the test title
+        sequenceTitle = testItemList.pop(0)
+        if sequenceTitle[0] != "*":
+            raise InvalidFirstLine(sequenceTitle)
+        
+        # Now that we've validated this is the sequence title, get rid of the '*'
+        sequenceTitle = sequenceTitle[1:]
+
+        return sequenceTitle, testItemList
+    
+
+    def parse_old(self):
         data = open(self.sequenceFN, "r").read()
         testItemList = data.split("\n")
         
@@ -109,6 +214,7 @@ class TestSequence(object):
         sequenceDict = {"main":[],}
         lastKey = "main"
         for i, keyValuePair in enumerate(keyValueList):
+            key, valueList, valueDict = keyValuePair
             
             # At least the first item should be a runnable item and not a subsequence definition
             if i == 0 and key[0] == '#':
@@ -124,7 +230,6 @@ class TestSequence(object):
             # Continue adding instructions to the current sequence   
             else:
                 sequenceDict[lastKey].append((key, valueList, valueDict))
-                sequenceDict[lastKey].append((key, valueList))
         
         # No subsequence should have zero length
         for valueList in sequenceDict.values():
@@ -238,11 +343,14 @@ class TestSequence(object):
 
 
 if __name__ == "__main__":
-    ts = TestSequence("../sequences/sequence2.txt")
-    title, testSequence = ts.parse() 
-    for lineEntry in testSequence:
-        print lineEntry
-        
+    from lmeds import rptMain
+    survey = rptMain.WebSurvey("demo", "sequence2.txt", "english.txt", False)
+    ts = TestSequence(survey, "/Users/tmahrt/Sites/tests/demo/sequence2.txt")
+    for pageNum in xrange(ts.getNumPages()):
+        print ts.getPageStr(pageNum)
+    
+#     page = ts.getPage(3)
+#     print page.getHTML()
     pass
         
 
