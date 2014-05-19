@@ -40,7 +40,9 @@ class WebSurvey(object):
         
         self.surveyName = surveyName
         self.sequenceFN = join(self.surveyRoot, sequenceFN)
+        self.testSequence = sequence.TestSequence(self, self.sequenceFN)
         self.languageFileFN = join(self.surveyRoot, languageFileFN)
+        loader.initTextDict(self.languageFileFN)
         
         self.disableRefreshFlag = disableRefreshFlag
         
@@ -55,10 +57,6 @@ class WebSurvey(object):
     def run(self):
         import cgitb
         cgitb.enable()    
-    
-        loader.initTextDict(self.languageFileFN)
-    
-        testSequence = sequence.TestSequence(self.sequenceFN)
         
         cgiForm = cgi.FieldStorage()
         
@@ -68,21 +66,22 @@ class WebSurvey(object):
                                 # --if it does not, the program will suspect a refresh-
                                 #    or back-button press and end the test immediately
             pageNum = 0 # Used for the progress bar
-            page = [('main', 0, ('login', [], {})),] # The initial state
+#             page = [('main', 0, ('login', [], {})),] # The initial state
+#             page = newPage.loginPage()
+            page = self.testSequence.getPage(0)
             userName = ""
         
         # Extract the information from the form
         else:
-            pageNum, cookieTracker, page, userName = self.processForm(cgiForm, testSequence)
+            pageNum, cookieTracker, page, userName = self.processForm(cgiForm, self.testSequence)
             
         
-        self.buildPage(pageNum, cookieTracker, page, userName, testSequence, self.sourceCGIFN)
+        self.buildPage(pageNum, cookieTracker, page, userName, self.testSequence, self.sourceCGIFN)
     
     
     def runDebug(self, page, pageNum=1, cookieTracker=True, userName="testing"):
         
         testSequence = sequence.TestSequence(self.sequenceFN)
-        loader.initTextDict(self.languageFileFN)
         self.buildPage(pageNum, cookieTracker, page, userName, testSequence, self.sourceCGIFN)
 
 
@@ -98,20 +97,19 @@ class WebSurvey(object):
         cookieTracker += 1
         
         pageNum = int(form["pageNumber"].value)
-        pageNum += 1
-        
-        lastPage = ast.literal_eval(form["page"].value)
-        subroutine = lastPage[-1][0]
-        taskType = lastPage[-1][2][0]
+        lastPage = self.testSequence.getPage(pageNum)
+        lastPageNum = pageNum
         
         # This is the default next page, but in the code below we will see
-        #    if we need to override that decision
-        sequenceTitle, nextPage = testSequence.getNextPage(lastPage)
+        #    if we need to override that decision        
+        pageNum += 1
+        sequenceTitle = testSequence.sequenceTitle 
+        nextPage = testSequence.getPage(pageNum)
         
         # If a user name text control is on the page, extract the user name from it
         if form.has_key("user_name_init"):
             
-            userName = form["user_name_init"].value
+            userName = form["user_name_init"].value.decode('utf-8')
             userName = userName.strip()
             
             # Return to the login page without setting the userName if there is 
@@ -121,27 +119,25 @@ class WebSurvey(object):
             nameAlreadyExists = os.path.exists(outputFN) or os.path.exists(outputFN2)
             
             if nameAlreadyExists or userName == "":
-                nextPage = lastPage[:-1] + [(subroutine, 0, ('login_bad_user_name', [userName,], {}))]
+                nextPage = factories.loadPage(self, "login_bad_user_name", [userName,], {})
                 pageNum -= 1 # We wrongly guessed that we would be progressing in the test
          
         # Otherwise, the user name, should be stored in the form    
         elif form.has_key("user_name"):
-            userName = form["user_name"].value    
+            userName = form["user_name"].value.decode('utf-8')  
         
         # Serialize all variables
-        self.serializeResults(form, lastPage, userName, sequenceTitle)
+        self.serializeResults(form, lastPage, lastPageNum, userName, sequenceTitle)
         
         # Go to a special end state if the user does not consent to the study
-        if taskType == 'consent':
+        if lastPage.sequenceName == 'consent':
             if form['radio'].value == 'dissent':
-                nextPage = [(subroutine, 0, ('consent_end', [], {}))]
-    #            print open("../html/optOut.html", "r").read()
+                nextPage = factories.loadPage(self, "consent_end")
     
         # Go to a special end state if the user cannot play audio files
-        if taskType == 'audio_test':
+        if lastPage.sequenceName == 'audio_test':
             if form['radio'].value == 'dissent':
-                nextPage = [(subroutine, 0, ('audio_test_end', [], {}))]
-    
+                nextPage = factories.loadPage(self, "audio_test_end", [], {})
     
         return pageNum, cookieTracker, nextPage, userName
     
@@ -172,37 +168,41 @@ class WebSurvey(object):
     
     def buildPage(self, pageNum, cookieTracker, page, userName, testSequence, sourceCGIFN):  
         html.printCGIHeader(cookieTracker, self.disableRefreshFlag)
-    
-        subroutine, subPageNum, task = page[-1]
+        
     #    print page
-        testType, argList, kargDict = task
+#         testType, argList, kargDict = task
+        validateText = page.getValidation()
+        
     
         # Defaults
         embedTxt = audio.generateEmbed(self.wavDir, [])
-        validateText = validation.getValidationForPage(testType)
+#         embedTxt += "goodbye"
+#         embedTxt += html.getProcessSubmitHTML(testType)
+#         embedTxt += "hello"
+        
+#         validateText = validation.getValidationForPage(testType)
         
         # Estimate our current progress (this doesn't work well if the user
         #    can jump around)
-        totalNumPages = len(testSequence.iterate())
-        percentComplete = int(100*(pageNum)/(totalNumPages))
+        totalNumPages = float(len(testSequence.testItemList))
+        percentComplete = int(100*(pageNum)/(totalNumPages - 1))
         
-        htmlTxt, pageTemplateFN, updateDict = pageTemplates.getPageTemplates(self)[testType](*argList, **kargDict)
+        htmlTxt, pageTemplateFN, updateDict = page.getHTML()
+        htmlTxt = html.getLoadingNotification() + htmlTxt
+        testType = page.sequenceName
+#         try:
+#             name = argList[0]
+#             txtFN = join(self.txtDir, name+".txt")
+#             numItems = self.getNumOutputs(testType, txtFN)
+#         except IndexError:
+#             numItems = 0
         
-        try:
-            name = argList[0]
-            txtFN = join(self.txtDir, name+".txt")
-            numItems = self.getNumOutputs(testType, txtFN)
-        except IndexError:
-            numItems = 0
+        numItems = page.getNumOutputs()
         
         # Also HACK
-        processSubmitHTML = html.getProcessSubmitHTML(testType)
+        processSubmitHTML = page.getProcessSubmitFunctions()
         
-        processSubmitHTML += html.taskDurationCode
-        if 'embed' in updateDict.keys():
-            updateDict['embed'] += processSubmitHTML
-        else:
-            embedTxt += processSubmitHTML
+
         
     #    print cookieTracker, pageNum, testType, argList
         
@@ -211,6 +211,33 @@ class WebSurvey(object):
             formHTML = html.formTemplate2
         else:
             formHTML = html.formTemplate
+        # -*- coding: utf-8 -*-
+
+
+        submitWidgetList = []
+        if page.submitProcessButtonFlag:
+            submitButtonHTML = html.submitButtonHTML % loader.getText('continue button')
+            submitWidgetList.append( ('widget', "submitButton"), ) 
+        else:
+            submitButtonHTML = "" 
+        
+        submitWidgetList.extend(page.nonstandardSubmitProcessList)
+
+        runOnLoad = ""          
+        submitAssociation = html.constructSubmitAssociation(submitWidgetList)
+    	runOnLoad += submitAssociation    
+	
+        if page.getNumAudioButtons() > 0:
+        	runOnLoad += audio.loadAudioSnippet
+        processSubmitHTML += html.taskDurationCode % runOnLoad
+            
+        jqueryCode = """<script src="jquery-1.11.0.min.js"></script>\n"""
+        processSubmitHTML = jqueryCode + processSubmitHTML
+            
+        if 'embed' in updateDict.keys():
+            updateDict['embed'] = processSubmitHTML + updateDict['embed']
+        else:
+            embedTxt += processSubmitHTML
             
         progressBarHTML = html.getProgressBar()  % {'percentComplete': percentComplete,
                                                       'percentUnfinished': 100 - percentComplete,}
@@ -220,6 +247,10 @@ class WebSurvey(object):
             metaDescription = loader.getText("metadata_description")
         except loader.TextNotInDictionaryException:
             metaDescription = ""
+                
+        audioPlayTrackingHTML = ""
+        for i in xrange(page.getNumAudioButtons()):
+            audioPlayTrackingHTML += html.audioPlayTrackingTemplate % {"id":i}
                 
         htmlDict = { 
                      'html':htmlTxt,
@@ -234,7 +265,8 @@ class WebSurvey(object):
                      'program_title':constants.softwareName,
                      'source_cgi_fn':sourceCGIFN,
                      'num_items':numItems,
-                     'submit_button_text':loader.getText('continue button')
+                     'audio_play_tracking_html':audioPlayTrackingHTML,
+                     'submit_button_slot': submitButtonHTML,
                                      }
         
         
@@ -291,143 +323,43 @@ class WebSurvey(object):
         return key, ",".join(retList)
     
     
-    def serializeResults(self, form, page, userName, sequenceTitle):
+    def serializeResults(self, form, page, pageNum, userName, sequenceTitle):
         
         # The arguments to the task hold the information that distinguish
         #    this trial from other trials
-        currentPage = page[-1]
-        currentTaskTuple = currentPage[2]
-        taskName = currentTaskTuple[0]
-        taskArguments = currentTaskTuple[1] 
-        taskArgumentStr = ";".join(taskArguments)
+#         currentPage = page[-1]
+
+        taskName, taskArgumentStr = self.testSequence.getPageStr(pageNum)
 
         numPlays1 = form.getvalue('audioFilePlays0')
         numPlays2 = form.getvalue('audioFilePlays1')
         taskDuration = form.getvalue('task_duration')
         
-        if taskName == "survey":
-            outputList = self.getOutputForSurvey(form, taskArguments[0])
-        elif taskName == "consent":
-            outputList = self.getOutputForConsent(form)
-        else:
-            outputList = self.getOutputForTask(form, taskName)
+        key = page.sequenceName
+        value = page.getOutput(form)
         
         # Serialize data
-        for key, value in outputList:
-            experimentOutputDir = join(self.outputDir, sequenceTitle)
-            if not os.path.exists(experimentOutputDir):
-                os.mkdir(experimentOutputDir)
-                
-    #         outputDir = join(experimentOutputDir, key)
-    #         if not os.path.exists(outputDir):
-    #             os.mkdir(outputDir)
-                
-            outputFN = join(experimentOutputDir, "%s.csv" % (userName))
-            fd = open(outputFN, "a")
-            fd.write( "%s,%s,%s,%s,%s;,%s\n" % (key,taskArgumentStr,numPlays1, numPlays2, taskDuration, value))    
-            fd.close()
+#         for key, value in outputList:
+        experimentOutputDir = join(self.outputDir, sequenceTitle)
+        if not os.path.exists(experimentOutputDir):
+            os.mkdir(experimentOutputDir)
+            
+#         outputDir = join(experimentOutputDir, key)
+#         if not os.path.exists(outputDir):
+#             os.mkdir(outputDir)
+            
+        outputFN = join(experimentOutputDir, "%s.csv" % (userName))
+        fd = codecs.open(outputFN, "aU", encoding="utf-8")
+        fd.write( "%s,%s,%s,%s,%s;,%s\n" % (key,taskArgumentStr,numPlays1, numPlays2, taskDuration, value))    
+        fd.close()
 
 
-    def getOutputForTask(self, form, taskName):
-        # Identify the keys associated with data that we want to serialize
-        keyList = []
-        if 'prominence' == taskName:
-            keyList.append('p')
-        if 'boundary' == taskName:
-            keyList.append('b')
-        if 'axb' == taskName:
-            keyList.append('axb')
-        if 'abn' == taskName:
-            keyList.append('abn')
-        if 'same_different' == taskName:
-            keyList.append('same_different')
-            
-        # We should not distinguish between different kinds of keys
-        # -- all checkboxes on a page should be the same 
-        # -- (I can't see the reason to do otherwise)
-        if 'boundary_and_prominence' == taskName:
-            keyList.append('b_and_p')
-        
-        
-        
-    
-        
-        # At the moment, only allow a single key (or none)
-        assert(len(keyList) <= 1)
-        outputList = []
-        for key in keyList:
-            outputList.append(self.getoutput(key, form))
-    #         open('../outputTest.txt', "a").write(str(outputList))
-
-        return outputList
-    
-    
-    def getOutputForSurvey(self, form, surveyName):
-        surveyItemList = survey.parseSurveyFile(join(self.surveyRoot, surveyName + ".txt"))
-        
-        tmpList = []
-        k = 0
-        for j, item in enumerate(surveyItemList):
-            
-            
-            for i, currentItem in enumerate(item.widgetList):
-                itemType, argList = currentItem
-                
-                
-                value = form.getvalue(str(k))
-                
-                if not value:
-                    value = ""
-                    if itemType in ["Choice", "Item_List", "Choicebox"]:
-                        value = ","*(len(argList)-1) # 1 comma between every element
-                else:
-                    
-                    # Remove newlines (because each newline is a new data entry)
-                    if itemType == "Multiline_Textbox":
-                        value = value.replace(",", "") # Remove commas (because saved as a CSV file)
-                        newlineChar = utils.detectLineEnding(value)
-                        if newlineChar != None:
-                            value = value.replace(newlineChar, " - ") 
-                    
-                    if itemType in ["Choice", "Choicebox"]:
-                        if itemType == "Choice":
-                            index = argList.index(value)
-                        elif itemType == "Choicebox":
-                            index = int(value)
-                            
-                        valueList = ["0" for x in xrange(len(argList))]
-                        valueList[index] = "1"
-                        value = ",".join(valueList)
-                        
-                    elif itemType in ["Item_List"]:
-                        indexList = [argList.index(subVal) for subVal in value]
-                        valueList = ["1" if i in indexList else "0" for i in xrange(len(argList))]
-                        value = ",".join(valueList)
-                    
-                tmpList.append(value)
-                k += 1
-        
-#         tmpList = outputList
-        
-        return [("survey", ",".join(tmpList)),]
-            
-    
-    def getOutputForConsent(self, form):
-        didConsent = form.getvalue("radio")
-        
-        timestamp = datetime.datetime.now().isoformat()
-        if didConsent == "consent":
-            returnTxt = "User consented to participate in experiment on %s"
-        else:
-            returnTxt = "User declined consent to participate in experiment on %s"
-
-        return [("consent", returnTxt % timestamp),]
     
 
 if __name__ == "__main__":
-    survey = WebSurvey("files_perceptionOfDiscourseMeaning", "sequence.txt", "english", True)
+    survey = WebSurvey("perceptDiscourse", "sequence_test.txt", "english.txt", False)
 #    survey.run()
-    survey.runDebug([('main', 1, ('axb', ['apples', 'water', 'apples']))],)
+    survey.runDebug([('main', 1, ('boundary_and_prominence', ['s01-1-test2', 'meaning',]))], cookieTracker=False)
    
 #     runCGI()
 #     
