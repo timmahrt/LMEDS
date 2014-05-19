@@ -151,51 +151,32 @@ def createWidget(widgetType, argList, i):
     return widgetHTML, i
 
 
-def surveyPage(surveyFN):
-    surveyItemList = survey.parseSurveyFile(surveyFN)
-    i = 0
-    itemHTMLList = []
-    
-    choiceBoxIndexList = []
-    for item in surveyItemList:
-        
-        itemElementList = []
-        for dataTuple in item.widgetList:
-            elementType, argList = dataTuple
-            widget = createWidget(elementType, argList, i)[0]
-            itemElementList.append(widget)
-        
-            if elementType == "Choicebox":
-                choiceBoxIndexList.append(i)
-            i += 1
-        
-        
-        
-        elementHTML = " ".join(itemElementList)
-        
-        itemHTML = "%s) %s<br />%s" % (item.enumStrId, item.text, elementHTML)
-        
-        if item.depth == 1:
-            itemHTML = "<div id='indentedText'>%s</div>" % itemHTML
-        elif item.depth > 1:
-            itemHTML = "<div id='doubleIndentedText'>%s</div>" % itemHTML
-        
-        itemHTMLList.append(itemHTML)
-    
-    surveyHTML = "<br /><br />\n".join(itemHTMLList)
-    
-    javascript = """document.getElementById("%d").selectedIndex = -1;"""
-    javascriptList = [javascript % i for i in choiceBoxIndexList]
 
         
-    embedTxt = """\n<script type="text/javascript">\nfunction setchoiceboxes() {
+        
+def getLoadingNotification():
+    loadingText = "- %s - " % loader.getText("loading_progress")
+    progressBarTemplate = """
+    <div id="loading_status_indicator" class="centered_splash">
+    <div class="centered_splash_inner">
     %s
-    }
-    window.addEventListener("load", setchoiceboxes);\n</script>\n""" % "\n".join(javascriptList)
+    <dl class="progress">
+        <dt>Completed:</dt>
+        <dd id="loading_percent_done" class="done" style="width:0%%"><a href="/"></a></dd>
     
-    return "<div id='longText'>%s</div>" % surveyHTML, embedTxt
-        
-        
+        <dt >Left:</dt>
+        <dd id="loading_percent_left" class="left" style="width:100%%"><a href="/"></a></dd>
+    </dl>
+
+    </div>
+    </div>
+    """
+    # A button users can use to reload their audio if 
+    #<input type="button" id="reload_button" value="Reload" onClick="reload_audio()">
+    # htmlMsg: If you suspect the audio has failed to load (e.g. due to a poor internet connection) please press this button to attempt to reload the audio.
+
+    return progressBarTemplate % loadingText
+    
 
 def getProgressBar():
     progressBarText = "- %s - <br />" % loader.getText("progress")
@@ -264,394 +245,33 @@ def printCGIHeader(pageNum, disableRefreshFlag):
     print "\n\n"
 
 
-def firstPageHTML():
-    txtBox = """<input type="text" name="%s" value=""/>"""
-    productNote = """%s <br /> 
-<b><i>%s</i></b><br /><br />\n\n""" % (loader.getText('experiment header'),
-                                       constants.softwareName)
+def checkForAudioTag():
+    txt = '''
+    <script type="text/javascript">
     
-    title = """<div><p id="title">%s</p></div>\n\n""" % loader.getText('title')
-    
-    backButtonWarning = loader.getText('back button warning')
-    pg0HTML = loader.getText('user name text') + "<br /><br />"
-    pg0HTML += (txtBox % 'user_name_init') + "<br /><br />" + backButtonWarning
-    
-    unsupportedWarning = '''<div id="unsupported_warning"><br /><br /><font color="blue"><b>
-    The web browser you are using does not support features required by LMEDS.  
-    Please update your software
-    or download a modern modern such as Chrome or Firefox.</b></font></div>'''
-     
-    return productNote + title + pg0HTML + unsupportedWarning
-    
+function isSupportedBrowser() {
 
-def firstPageErrorHTML():
-    
-    pg0HTML = firstPageHTML()
-    pg0HTML = pg0HTML
-
-    textKey = 'error user name exists'
-    userNameErrorTxt = loader.getText(textKey)
-
-    if '%s' not in userNameErrorTxt:
-        errorMsg = "Please add a '%s' for the user name in the text associated with this key"
-        raise loader.BadlyFormattedTextError(errorMsg, textKey)
-    
-    pg0HTML += "<br />" + userNameErrorTxt
-
-    return pg0HTML
-
-
-def instructionPageHTML():
-    
-    instructionText = """Instruction Page<br/><br/>In this study, you will...
-    <br/><br/>Each sound file is playable twice.  After listening to the audio, 
-    make your judgements and move on to the next page."""
-    
-    return instructionText
-
-
-def breakPageHTML():
-
-    return loader.getText('section finished')
-
-  
-def audioTestPageHTML():
-    
-    audioTestPageHTML
-    
-    consentText = "\n\n<hr /><br /><br />%s" % loader.getText("audioTest text")
-
-    consentButton = radioButton % "consent"
-    dissentButton = radioButton % "dissent"
-
-    consentChoice = '%s %s\n<br /><br />%s %s' % (consentButton, 
-                                                  loader.getText("audioTest affirm"),
-                                                  dissentButton,
-                                                  loader.getText("audioTest reject"))
-
-    consentHTML = consentText + "<br /><br />%s<br /><br />" + consentChoice
-
-    return consentHTML
-  
-    
-def consentPageHTML(consentName=None):
-    
-    if consentName == None:
-        consentName = "text"
-    
-    consentText = open(join(constants.htmlSnippetsDir, "consent.html"), "r").read()
-    consentText %= (loader.getText("title"),
-                    loader.getText("consent title"),
-                    loader.getText("consent %s" % consentName))
-    
-    consentText += "\n\n<hr /><br /><br />%s" % loader.getText("consent query")
-
-#    radioButton = """<input type="radio" name="radio" value="%s">"""
-
-    consentButton = radioButton % "consent"
-    dissentButton = radioButton % "dissent"
-
-    consentChoice = '%s %s\n<br /><br />%s %s' % (consentButton, 
-                                                  loader.getText("consent"),
-                                                  dissentButton,
-                                                  loader.getText("dissent"))
-
-    consentHTML = consentText + "<br /><br />" + consentChoice
-
-    return consentHTML
-
-
-def consentEndPageHTML():
-    
-    consentErrorHTML = ""
-    
-    return consentErrorHTML
-
-
-def axbPageHTML():
-    
-    radioButton = '<p><input type="radio" name="axb" value="%(id)s" id="%(id)s" /> <label for="%(id)s">.</label></p>'
-    
-    html = """%s<br /><br /><br />
-%s<br /> <br />
-%%s<br /> <br />
-<table class="center">
-<tr><td>%s</td><td>%s</td></tr>
-<tr><td>%%s</td><td>%%s</td></tr>
-<tr><td>%s</td><td>%s</td></tr>
-</table>"""
-    html %= (loader.getText("axb query"),
-             loader.getText("axb x"),
-             loader.getText("axb a"),
-             loader.getText("axb b"),
-             radioButton % {'id':'0'}, 
-             radioButton % {'id':'1'})
-    
-#     html %= ('<p><input type="radio" value="A" id="A" name="gender" /> <label for="A">Male</label></p>',
-#             '<p><input type="radio" value="B" id="B" name="gender" /> <label for="B ">Female</label></p>')
-    
-    return html
-
-
-def audioDecisionPageHTML():
-    
-    radioButton = '<p><input type="radio" name="abn" value="%(id)s" id="%(id)s" /> <label for="%(id)s">.</label></p>'
-    
-    html = """
-    %%s
-<table class="center">
-<tr><td>%%s</td><td>%%s</td><td>%%s</td></tr>
-<tr><td>%s</td><td>%s</td><td>%s</td></tr>
-</table>""" 
-    
-    return html % (radioButton % {'id':'0'},
-                   radioButton % {'id':'1'},
-                   radioButton % {'id':'2'})
-
-
-def sameDifferentPageHTML():
-    
-    radioButton = '<p><input type="radio" name="same_different" value="%(id)s" id="%(id)s" /> <label for="%(id)s">.</label></p>'
-    
-    html = """
-    <br /><br />%%s %%s<br /><br />
-<table class="center">
-<tr><td>%%s</td><td>%%s</td></tr>
-<tr><td>%s</td><td>%s</td></tr>
-</table>""" 
-    
-    return html % (radioButton % {'id':'0'},
-                   radioButton % {'id':'1'})
-
-def abPageHTML():
-    
-    radioButton = '<p><input type="radio" name="ab" value="%(id)s" id="%(id)s" /> <label for="%(id)s">.</label></p>'
-    
-    html = """Write statement about how the user should select (A) or (B).<br /><br />
-<table class="center">
-<tr><td>A</td><td>B</td></tr>
-<tr><td>%%s</td><td>%%s</td></tr>
-<tr><td>%s</td><td>%s</td></tr>
-</table>"""
-    html %= (radioButton % {'id':'0'}, 
-             radioButton % {'id':'1'})
-    
-    return html    
-
-
-def constructCheckboxTable(wordList, doBreaks, doProminence, offsetNum):
-    
-
-    breakSign = "|" 
-    breakHTML = '<p><input type="checkbox" name="b" value="%(num)d" id="%(num)d"/> <label for="%(num)d">.</label></p>\n'
-    prominenceHTML = '<p><input type="checkbox" name="p" value="%(num)d" id="%(num)d"/> <label for="%(num)d">.</label></p>\n'
-    
-    
-    # Set the prominence marks
-    row1List = wordList
-    bCheckboxList = []
-    pCheckboxList = [prominenceHTML % {'num':i+offsetNum} for i, word in enumerate(wordList)]
-    
-    # Set the breaks
-    if doBreaks:
-        
-        row1ListCopy = []
-        pCheckboxListCopy = []
-        
-#        row1List = [breakSign,]
-        bCheckboxList = []
-        for i, wordTuple in enumerate( zip(row1List,pCheckboxList) ):
-            word, pCheckbox = wordTuple
-            
-            row1ListCopy.append(word)
-            row1ListCopy.append(breakSign)
-            
-            bCheckboxList.append("")
-            bCheckboxList.append(breakHTML % {'num':i})
-            
-            pCheckboxListCopy.append(pCheckbox)
-            pCheckboxListCopy.append("")
-        
-        row1List = row1ListCopy[:-1]
-        pCheckboxList = pCheckboxListCopy[:-1]
-        bCheckboxList = bCheckboxList[:-1]
-        
-    textRow = "</td><td>".join(row1List)
-
-    
-    rowHTML = "<tr><td>%s</td></tr>"
-    
-    allRows = ""
-    allRows += rowHTML % textRow
-    
-    if doBreaks:
-        bCheckboxRow = "</td><td>".join(bCheckboxList)
-        allRows += rowHTML % bCheckboxRow 
-    
-    if doProminence:
-        pCheckboxRow = "</td><td>".join(pCheckboxList)
-        allRows += rowHTML % pCheckboxRow   
-    
-    html = '<table class="center">%s</table>' % allRows
-
-    return html
-
-
-def makeTogglableWord(testType, word, idNum, boundaryToken):
-    
-    tokenTxt = ""
-    if boundaryToken != None:
-        tokenTxt = """<span class="hidden">%s</span>""" % boundaryToken
-    
-    html = """
-<label for="%(idNum)d">
-                <input type="checkbox" name="%(testType)s" id="%(idNum)d" value="%(idNum)d"/>
-                %(word)s""" + tokenTxt + """\n</label>\n\n"""
-
-    return html % {"testType":testType,"word":word, "idNum":idNum}
-
-
-def getTogglableWordEmbed(numWords, boundaryMarking):
-    
-
-    boundaryMarkingCode_showHide = """
-            $("#"+x).closest("label").css({ borderRight: "3px solid #000000"});
-            $("#"+x).closest("label").css({ paddingRight: "0px"});
-    """
-    
-    boundaryMarkingCode_toggle = """    
-    $(this).closest("label").css({ borderRight: this.checked ? "3px solid #000000":"0px solid #FFFFFF"});
-    $(this).closest("label").css({ paddingRight: this.checked ? "0px":"3px"});"""
-    if boundaryMarking != None:
-        boundaryMarkingCode_toggle = """
-        $(this).next("span").css({ visibility: this.checked ? "visible":"hidden"});
-        """
-        boundaryMarkingCode_showHide = """
-        $("#"+x).next("span").css({ visibility: "visible"});
-        """
-    
-    
-
-    
-    javascript = """
-<script type="text/javascript" src="jquery.min.js"></script>
-    
-<script>
-function ShowHide()
-{
-var didPlay = verifyFirstAudioPlayed();
-
-if(didPlay == true) {
-    document.getElementById("ShownDiv").style.display='none';
-    document.getElementById("HiddenDiv").style.display='block';
-    document.getElementById("HiddenForm").style.display='block';
-    for (e=0;e<%(numWords)d;e++) {
-        var x = e+%(numWords)d;
-
-        if (document.getElementById(e).checked==true) {
-%(boundaryMarkingCode_showHide)s
-            }
-        }
-    }
+if(!!document.createElement('audio').canPlayType == false) {
+    document.getElementById("submit").disabled = true;
+    document.getElementById("unsupported_warning").style.display='block';
 }
-</script>
-    
-<style type="text/css">
-           /* Style the label so it looks like a button */
-           label {
-                border-right: 0px solid #FFFFFF;
-                position: relative;
-                z-index: 3;
-                padding-right: 3px;
-                padding-left: 3px;
-           }
-           /* CSS to make the checkbox disappear (but remain functional) */
-           label input {
-                position: absolute;
-                visibility: hidden;
-           }
-</style>
-    
-    
-<script>
-$(document).ready(function(){
-  $('input[type=checkbox]').click(function(){
-    
-    if (this.value < %(numWords)d)
-    {
-    /* Boundary marking */
-%(boundaryMarkingCode_toggle)s
+
     }
-    else
-    {
-    /* Prominence marking */
-    $(this).closest("label").css({ color: this.checked ? "red":"black"});
-    }
-  });
-});
-</script>"""
-
-    return javascript % {"numWords":numWords, "boundaryMarkingCode_toggle":boundaryMarkingCode_toggle,
-                         "boundaryMarkingCode_showHide":boundaryMarkingCode_showHide}
-
-
-def getProminenceOrBoundaryWordEmbed(isProminence):
-    
-    boundaryEmbed = """
-    $(this).closest("label").css({ borderRight: this.checked ? "3px solid #000000":"0px solid #FFFFFF"});
-    $(this).closest("label").css({ paddingRight: this.checked ? "0px":"3px"});
-    """
-    
-    prominenceEmbed = """
-    $(this).closest("label").css({ color: this.checked ? "red":"black"});
-    """
-    
-    javascript = """
-<script type="text/javascript" src="jquery.min.js"></script>
-
-    
-<style type="text/css">
-           /* Style the label so it looks like a button */
-           label {
-                border-right: 0px solid #FFFFFF;
-                position: relative;
-                z-index: 3;
-                padding-right: 3px;
-                padding-left: 3px;
-           }
-           /* CSS to make the checkbox disappear (but remain functional) */
-           label input {
-                position: absolute;
-                visibility: hidden;
-           }
-</style>
-    
-    
-<script>
-$(document).ready(function(){
-  $('input[type=checkbox]').click(function(){
-%s
-  });
-});
-</script>
-"""
-    
-    if isProminence:
-        javascript %= prominenceEmbed
-    else:
-        javascript %= boundaryEmbed
-
-    return javascript
-
-
-def getProcessSubmitHTML(pageType):
+    </script>
     '''
-    processSubmit() is a javascript function whose job is only to launch
-    other javascript functions.  These functions need to be registered with
-    a page in order to receive that functionality.
-    '''
-    
-    baseHTML = """
+
+    return txt
+
+
+def makeNoWrap(htmlTxt):
+    return '<div id="noTextWrapArea">\n\n%s\n\n</div>' % htmlTxt
+
+
+def makeWrap(htmlTxt):
+    return '<div id="textWrapArea">\n\n%s\n\n</div>' % htmlTxt
+
+
+processSubmitHTML = """
 <script  type="text/javascript">
 function processSubmit()
 {
@@ -659,31 +279,19 @@ calcDuration();
 var returnValue = true;
 
 %s
+
+
+if (returnValue == true) {
+document.languageSurvey.submit()
+}
+
 return returnValue;    
 }
 </script>
 """
-    
-    funcList = []
-    # Ensure the subject has listened to all audio files
-    if pageType in ['axb', 'prominence', 'boundary', 'boundary_and_prominence',
-                    'oldProminence', 'oldBoundary', 'abn', 'audio_test']:
-        funcList.append("verifyAudioPlayed")
-        
-    # Ensure all required forms have been filled out
-    if pageType in ['login', 'login_bad_user_name', 'consent', 'audio_test', 'axb', 'ab', 'abn']:
-        funcList.append("validateForm")
-    
-    htmlList = []
-    for func in funcList:
-        htmlList.append("returnValue = returnValue && %s();" % func)
-    
-    htmlTxt = "\n".join(htmlList)
-    
-    return baseHTML % htmlTxt
+
 
 
 if __name__ == "__main__":
     loader.initTextDict("../english.txt")
-    print firstPageErrorHTML()
 
