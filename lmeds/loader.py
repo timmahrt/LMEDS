@@ -20,6 +20,8 @@ class BadlyFormattedTextError(Exception):
     '''
     
     def __init__(self, errorTxt, txtKey):
+        super(BadlyFormattedTextError, self).__init__()
+        
         self.errorTxt = errorTxt
         self.txtKey = txtKey
         self.dictionaryFN = textDict.sourceFN
@@ -35,6 +37,7 @@ class BadlyFormattedTextError(Exception):
 class TextNotInDictionaryException(Exception):
     
     def __init__(self, txtKey):
+        super(TextNotInDictionaryException, self).__init__()
         self.txtKey = txtKey
         self.dictionaryFN = textDict.sourceFN
         
@@ -48,11 +51,26 @@ def loadTxt(fn):
     txt = codecs.open(fn, "rU", encoding="utf-8").read()
     #txt = open(fn, "r").read()
     lineEnding = utils.detectLineEnding(txt)
-    txtList = txt.split(lineEnding)
+    if lineEnding == None: # Should be only a single line
+        txtList = [txt,]
+    else:
+        txtList = txt.split(lineEnding)
     txtList = [" ".join(txt.split()) for txt in txtList] # Removes redundant whitespace
     txtList = [row for row in txtList if row != ""] # Remove empty rows
 
     return txtList
+
+
+def getNumWords(fnFullPath):
+    '''
+    Get number of words in a transcript
+    '''
+    wordList = loadTxt(fnFullPath)
+    numOutputs = 0
+    for line in wordList:
+        numOutputs += len(line.split(" "))
+
+    return numOutputs
 
 
 class TextDict(object):
@@ -129,7 +147,6 @@ class TextDict(object):
         i = 0
         sectionDictionary = {}
         while i < len(textList):
-            txt = textList[i]
             
             # New section
             if safeCheck(textList, i, demarcator) and safeCheck(textList,i+2,demarcator):
