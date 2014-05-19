@@ -1,4 +1,15 @@
 
+.centered_content {
+	float:left; 
+	height:50%; 
+	margin-bottom:-120px;}
+
+.loading_status_indicator {
+	clear:both; 
+	height:240px; 
+	position:relative;
+	font-weight:bold;}
+
 /* Progress Bar */
 
 dl.progress,
