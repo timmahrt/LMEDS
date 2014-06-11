@@ -1,0 +1,13 @@
+*Test_Sequence_example
+login
+audio_list 1 1 1 [water apples water]
+same_different_beep [water apples] 1 1
+same_different_stream 0.5 1 -1 [water apples]
+axb water water apples 0 2
+abn water 0 2
+prominence water water 1 2 acoustics true
+boundary water water 1 3 acoustics true
+boundary_and_prominence apples apples 0 -1 imagine false
+fill_in_the_blank water_blank 10.0 polluted cold not_drinkable
+end
+

@@ -1,0 +1,22 @@
+from app import app
+from flask import redirect
+import os.path
+
+@app.route('/')
+@app.route('/index')
+def index():
+    from app.lmeds import experiment_runner
+
+    #redirect stdout magic
+    import sys
+    import StringIO
+    stdout = sys.stdout  #keep a handle on the real standard output
+    mystring = StringIO.StringIO()
+    sys.stdout = mystring #Choose a file-like object to write to
+    experiment_runner.runExperiment("gails_test", "/home/gail/Senior_Project/flask_example/app/tests/sequence.txt",\
+     "/home/gail/Senior_Project/flask_example/app/tests/english.txt", disableRefresh=False)
+    sys.stdout = stdout
+
+    print mystring
+
+    return "Hello"

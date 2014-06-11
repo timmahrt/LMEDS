@@ -1,0 +1,12 @@
+*Test_Sequence_example
+login
+same_different water water 1 -1
+audio_list [water apples water]
+prominence water 1 2 acoustics true
+boundary water 1 [1 2 3] [brrrr] brrrr [trees]
+boundary_and_prominence [apples 0 -1] imagine false
+same_different [water water 1 -1]
+axb water [water] water 0 2
+abn water [0] 2
+end
+
