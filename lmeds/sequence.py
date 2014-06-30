@@ -79,11 +79,13 @@ class TestSequence(object):
     
     def getPage(self, pageNum):
         
+        # Fetching page text from sequence file
         pageName, pageArgStr = self.getPageStr(pageNum)
         
+        # Get non-keyword arguments
         argList = [arg for arg in pageArgStr if "=" not in arg] # Args
         
-        # Kargs
+        # Get keyword arguments
         kargDict = {}
         nonArgList = [arg.split("=", 1) for arg in pageArgStr if '=' in arg]
         for key, value in nonArgList:

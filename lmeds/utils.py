@@ -21,3 +21,5 @@ def detectLineEnding(txt):
 #     assert(sum(truthList) <= 1)
     
     return returnText
+
+
