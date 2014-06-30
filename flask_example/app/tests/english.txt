@@ -1,0 +1,685 @@
+
+---------------
+lmeds interface
+---------------
+
+==================
+same_different_question
+==================
+
+Are these utterances the same or different?
+
+
+==================
+same_different_same
+==================
+
+Same
+
+==================
+same_different_different
+==================
+
+Different
+
+==================
+memory_instruct
+==================
+
+Oik
+
+==================
+memory_a
+==================
+
+A
+
+==================
+memory_b
+==================
+
+B
+
+==================
+fill_in_the_blank_instruct
+==================
+
+Please fill in the option that correctly completes this sentence.
+
+==================
+three_option_validation
+==================
+
+Error.  Please select one of the three options.
+
+==================
+error select same or different
+==================
+
+Error.  Select SAME, DIFFERENT, or BEEP in order to continue.
+
+==================
+same_different beep
+==================
+
+BEEP
+
+===============
+loading_progress
+===============
+
+Loading.  Please wait.
+
+===============
+multilingual
+===============
+
+LMEDS can display any language!<br /><br />
+
+LMEDS peuvent afficher n'importe quelle langue!<br /><br />
+
+<p dir="RTL">يمكن LMEDS عرض أي لغة!</p>
+
+LMEDS可以显示任何语言！<br /><br />
+
+LMEDS किसी भी भाषा प्रदर्शित कर सकते हैं!<br /><br />
+
+===============
+continue button
+===============
+
+Submit
+
+===============
+play button
+===============
+
+Play sound
+
+
+---------------
+login page
+---------------
+
+===============
+progress
+===============
+
+Progress
+
+===============
+title
+===============
+
+Perception of Spoken Discourse
+
+===============
+error blank name
+===============
+
+Please enter a user name to continue.
+
+===============
+experiment header
+===============
+
+The following experiment was made using
+
+================
+user name text
+================
+
+In the textbox below, please enter a <u>unique</u>, identifying name or number. Please do not use spaces (instead use underscores "_"). Press "submit" when you are ready for the subject to begin the experiment.
+
+===============
+back button warning
+===============
+
+<font color="red">Please note that pressing 'back' or 'refresh' will invalidate this experiment session.</font>
+
+
+===============
+error user name exists
+===============
+
+<font color="red"> ERROR: Username '%s' already exists or is invalid. Please choose another name. </font>
+
+
+------------------
+Consent
+------------------
+
+
+===============
+error consent or dissent
+===============
+
+To continue you must either choose either /consent/ or /dissent/.
+
+
+===============
+consent query
+===============
+
+Do you consent to participate in this study?
+
+
+===============
+consent
+===============
+
+Consent
+
+
+===============
+dissent
+===============
+
+Dissent
+
+
+===============
+consent opt out
+===============
+
+You have opted not to participate in this study. Thank you for your time. 
+<br /><br /> 
+
+
+==============
+consent title
+==============
+
+Online Consent 
+
+
+==============
+consent text
+==============
+
+<b>Investigators:</b>  Jennifer Cole (Dept. of Linguistics), José I. Hualde (Dept. of Spanish, Italian and Portuguese/Dept. of Linguistics) <br /><br />
+
+<b>Purpose of this research:</b> This research will shed light on how speakers use prosody (intonation and rhythm) in speech to convey meaning, and how listeners perceive the prosodic features of spoken language. This work contributes to knowledge about how languages vary, and to knowledge about how adults process their native spoken language.  <br /><br />
+
+<b>What you will be expected to do:</b>  If you agree to participate, you will be asked to listen to speech samples in your native language for which you will also be presented a transcription with punctuation removed, and perform one of the following tasks: (a) mark up a transcript of the speech sample to identify words that you perceive as prominent or to identify places in the utterance where you perceive a break; (b) select the most appropriate discourse context for the utterance you hear from among several that will be provided in text format (for instance, you may be asked to judge whether a recording of a speaker saying "John brought the pizza" sounds more like a reply to the question Who brought the pizza?  or to What did John bring?, based on the intonation of the recorded utterance.) <br /><br />
+
+<b>Your compensation:</b> For your participation in this study you will be offered $9 per experimental session on completion of the session, or the equivalent amount in Euros. Each session lasts less than one hour. You may participate in up to five sessions. If you decide to withdraw before a session ends, you will receive no compensation for that session.  <br /><br />
+
+<b>Your right to confidentiality:</b>  The data obtained in this research will be treated as confidential. Your name will be replaced with a code and no information will be released that may reveal your identity. All the data will be stored in a secure location (password-protected computers) and only the researchers will have access to them. <br /><br />
+
+<b>Your right to withdraw at any time:</b> Your participation in this research is strictly voluntary. You may withdraw from it or discontinue participating at any time and you may also request to have your data destroyed without any negative consequences for you. <br /><br />
+
+<b>Benefits:</b> The results of this investigation are intended to contribute to our understanding of the use of intonation in human communication. There are no direct benefits for you. <br /><br />
+
+<b>Possible risks:</b>  To our knowledge there are no risks or discomforts involved in this research beyond those encountered in other everyday activities. <br /><br />
+
+<b>Dissemination:</b> This research may be presented in academic lectures, at workshops or conferences, and may be published in conference proceedings, academic journal articles and book chapters. <br /><br />
+
+<b>Your right to ask questions at any time:</b>  You may ask questions about this research at any time. You may contact the investigators  by email at jscole@illinois.edu and jihualde@illinois.edu or by phone at 1-217-333-3390.  <br /><br />
+
+If you have any questions about your rights as a participant in this study or any concerns or complaints, please contact the University of Illinois Institutional Review Board at 217-333-2670 (collect calls will be accepted if you identify yourself as a research participant) or via email at irb@illinois.edu <br /><br />
+
+<b>Giving consent to participate:</b> By digitally signing this consent form, you certify that you are 18 years of age or older, that you have read the above and understand it, that you have been given satisfactory answers to any questions about the research, and that you have been advised that you are free to withdraw your consent and to discontinue participation in the research at any time, without prejudice. <br /><br />
+
+Please print a copy of this consent form for your records, if you so desire. <br /><br />
+
+I have read and understand the above consent form, I certify that I am 18 years old or older and, by clicking the submit button to enter the survey, I indicate my willingness to voluntarily take part in the study.<br /><br />
+
+
+==============
+consent quick_test
+==============
+
+<b>Investigators:</b>  Jennifer Cole (Dept. of Linguistics), José I. Hualde (Dept. of Spanish, Italian and Portuguese/Dept. of Linguistics) <br /><br />
+
+<b>Purpose of this research:</b> This research will shed light on how speakers use prosody (intonation and rhythm) in speech to convey meaning, and how listeners perceive the prosodic features of spoken language. This work contributes to knowledge about how languages vary, and to knowledge about how adults process their native spoken language.  <br /><br />
+
+<b>What you will be expected to do:</b>  If you agree to participate, you will be asked to listen to speech samples in your native language for which you will also be presented a transcription with punctuation removed, and perform one of the following tasks: (a) mark up a transcript of the speech sample to identify words that you perceive as prominent or to identify places in the utterance where you perceive a break; (b) select the most appropriate discourse context for the utterance you hear from among several that will be provided in text format (for instance, you may be asked to judge whether a recording of a speaker saying "John brought the pizza" sounds more like a reply to the question Who brought the pizza?  or to What did John bring?, based on the intonation of the recorded utterance.) <br /><br />
+
+<b>Your compensation:</b> For your participation in this study you will be offered $5 per experimental session on completion of the session, or the equivalent amount in Euros. Each session lasts less than one hour. You may participate in up to five sessions. If you decide to withdraw before a session ends, you will receive no compensation for that session.  <br /><br />
+
+<b>Your right to confidentiality:</b>  The data obtained in this research will be treated as confidential. Your name will be replaced with a code and no information will be released that may reveal your identity. All the data will be stored in a secure location (password-protected computers) and only the researchers will have access to them. <br /><br />
+
+<b>Your right to withdraw at any time:</b> Your participation in this research is strictly voluntary. You may withdraw from it or discontinue participating at any time and you may also request to have your data destroyed without any negative consequences for you. <br /><br />
+
+<b>Benefits:</b> The results of this investigation are intended to contribute to our understanding of the use of intonation in human communication. There are no direct benefits for you. <br /><br />
+
+<b>Possible risks:</b>  To our knowledge there are no risks or discomforts involved in this research beyond those encountered in other everyday activities. <br /><br />
+
+<b>Dissemination:</b> This research may be presented in academic lectures, at workshops or conferences, and may be published in conference proceedings, academic journal articles and book chapters. <br /><br />
+
+<b>Your right to ask questions at any time:</b>  You may ask questions about this research at any time. You may contact the investigators  by email at jscole@illinois.edu and jihualde@illinois.edu or by phone at 1-217-333-3390.  <br /><br />
+
+If you have any questions about your rights as a participant in this study or any concerns or complaints, please contact the University of Illinois Institutional Review Board at 217-333-2670 (collect calls will be accepted if you identify yourself as a research participant) or via email at irb@illinois.edu <br /><br />
+
+<b>Giving consent to participate:</b> By digitally signing this consent form, you certify that you are 18 years of age or older, that you have read the above and understand it, that you have been given satisfactory answers to any questions about the research, and that you have been advised that you are free to withdraw your consent and to discontinue participation in the research at any time, without prejudice. <br /><br />
+
+Please print a copy of this consent form for your records, if you so desire. <br /><br />
+
+I have read and understand the above consent form, I certify that I am 18 years old or older and, by clicking the submit button to enter the survey, I indicate my willingness to voluntarily take part in the study.<br /><br />
+
+
+==============
+consent long_test
+==============
+
+<b>Investigators:</b>  Jennifer Cole (Dept. of Linguistics), José I. Hualde (Dept. of Spanish, Italian and Portuguese/Dept. of Linguistics) <br /><br />
+
+<b>Purpose of this research:</b> This research will shed light on how speakers use prosody (intonation and rhythm) in speech to convey meaning, and how listeners perceive the prosodic features of spoken language. This work contributes to knowledge about how languages vary, and to knowledge about how adults process their native spoken language.  <br /><br />
+
+<b>What you will be expected to do:</b>  If you agree to participate, you will be asked to listen to speech samples in your native language for which you will also be presented a transcription with punctuation removed, and perform one of the following tasks: (a) mark up a transcript of the speech sample to identify words that you perceive as prominent or to identify places in the utterance where you perceive a break; (b) select the most appropriate discourse context for the utterance you hear from among several that will be provided in text format (for instance, you may be asked to judge whether a recording of a speaker saying "John brought the pizza" sounds more like a reply to the question Who brought the pizza?  or to What did John bring?, based on the intonation of the recorded utterance.) <br /><br />
+
+<b>Your compensation:</b> For your participation in this study you will be offered $15 per experimental session on completion of the session, or the equivalent amount in Euros. Each session lasts less than one hour. You may participate in up to five sessions. If you decide to withdraw before a session ends, you will receive no compensation for that session.  <br /><br />
+
+<b>Your right to confidentiality:</b>  The data obtained in this research will be treated as confidential. Your name will be replaced with a code and no information will be released that may reveal your identity. All the data will be stored in a secure location (password-protected computers) and only the researchers will have access to them. <br /><br />
+
+<b>Your right to withdraw at any time:</b> Your participation in this research is strictly voluntary. You may withdraw from it or discontinue participating at any time and you may also request to have your data destroyed without any negative consequences for you. <br /><br />
+
+<b>Benefits:</b> The results of this investigation are intended to contribute to our understanding of the use of intonation in human communication. There are no direct benefits for you. <br /><br />
+
+<b>Possible risks:</b>  To our knowledge there are no risks or discomforts involved in this research beyond those encountered in other everyday activities. <br /><br />
+
+<b>Dissemination:</b> This research may be presented in academic lectures, at workshops or conferences, and may be published in conference proceedings, academic journal articles and book chapters. <br /><br />
+
+<b>Your right to ask questions at any time:</b>  You may ask questions about this research at any time. You may contact the investigators  by email at jscole@illinois.edu and jihualde@illinois.edu or by phone at 1-217-333-3390.  <br /><br />
+
+If you have any questions about your rights as a participant in this study or any concerns or complaints, please contact the University of Illinois Institutional Review Board at 217-333-2670 (collect calls will be accepted if you identify yourself as a research participant) or via email at irb@illinois.edu <br /><br />
+
+<b>Giving consent to participate:</b> By digitally signing this consent form, you certify that you are 18 years of age or older, that you have read the above and understand it, that you have been given satisfactory answers to any questions about the research, and that you have been advised that you are free to withdraw your consent and to discontinue participation in the research at any time, without prejudice. <br /><br />
+
+Please print a copy of this consent form for your records, if you so desire. <br /><br />
+
+I have read and understand the above consent form, I certify that I am 18 years old or older and, by clicking the submit button to enter the survey, I indicate my willingness to voluntarily take part in the study.<br /><br />
+
+===============
+first block instructions
+===============
+
+This experiment is comprised of three blocks.  Click 'submit' to view the instructions for the first block.
+
+
+===============
+second block instructions
+===============
+
+You have completed the first block.  Click 'submit' to begin the second block.  Please carefully read the instructions on the next page, as they are different from the instructions you read for the first block.
+
+===============
+third block instructions
+===============
+
+You have completed the second block.  Click 'submit' to begin the third block.  Please carefully read the instructions on the next page, as they are different from the instructions you read for the previous two blocks.
+
+---------------
+boundary_and_prominence instructions
+---------------
+
+
+===============
+boundary_and_prominence mechanics instructions
+===============
+
+<p style="text-align:center;font-weight: bold; text-decoration: underline;">
+Experimental Procedure
+</p>
+
+You will be annotating excerpts of recorded conversations.  Each page contains the transcript for the excerpt and may also contain the audio recording.  For each excerpt, you will complete two tasks.  First you will break the text into smaller sequences of words.  Second, you will mark certain words.<br /><br />
+
+In the first task, based on some criteria (see next page) you will select a word and a vertical bar will be appear after that word:<br /><br />
+word word <b>word</b> | word word ...<br /><br /> 
+
+If you change your mind after selecting a word, just select it again and the bar will disappear. In each utterance, you will be able to select as many words that match the necessary criteria. When you have finished, click 'submit'. This will transition you to the next task. <br /><br />
+
+In the <b>second task</b> you will again select words (based on different criteria—see next page), however, this time, once you select a word its color will change to red:<br /><br />
+word word <font color="red">word</font> word ...<br /><br />
+
+If you change your mind, just select the word again and it will revert back to black.   During this phase, you will see where you marked the boundaries from the earlier task. When you are finished click <b>submit</b> to move on to the next excerpt.
+
+
+
+===============
+boundary_and_prominence acoustics instructions
+===============
+
+<div style="text-align:center;">
+<i>The following instructions present the criteria for selecting words in this block.</i> 
+</div>
+<br />
+
+
+As mentioned previously, for each audio file, you will conduct two tasks. <br /><br />
+
+In the <b>first task</b>, you will mark the places where you hear a break, discontinuity or disconnection in the speech stream, strong or subtle. These break the fluid speech stream into different segments. <br /><br />
+
+
+In the <b>second task</b> select the words that stand out in the speech stream by virtue of being louder, longer, more extreme in pitch, or more crisply articulated than other words in the same utterance.<br /><br />
+
+There are <b>sixteen audio excerpts</b> in this block.  <b>Each audio file must be listened to twice in each task.</b>  Please use the second playback to review your work.  You will <b>not</b> be able to listen to the audio more than twice.
+
+
+
+===============
+boundary_and_prominence meaning instructions
+===============
+
+<div style="text-align:center;">
+<i> The following instructions present the criteria for selecting words in this block.</i> 
+</div>
+<br />
+
+
+As instructed previously, for each audio file, you will conduct two tasks. <br /><br />
+
+
+In the <b>first task</b>, select the words after which the audio file could be segmented with minimal disruption of the meaning of the speech.  <br /><br />
+
+In the <b>second task</b> select the words that convey the main points of information as you think the speaker intended.<br /><br />
+
+
+There are <b>sixteen audio excerpts</b> in this block.  Please use the second playback to review your work.  You will <b>not</b> be able to listen to the audio more than twice.
+
+
+===============
+boundary_and_prominence imagine instructions
+===============
+
+<div style="text-align:center;">
+<i> The following instructions present the criteria for selecting words in this block.</i> 
+</div>
+<br />
+
+There are <b>sixteen text excerpts</b> in this block. <br /><br />
+
+These excerpts are from <b>casual speech</b>.  They include sentence fragments, repairs and
+restarts.  <b>You are to imagine that this is your speech.</b> <br /><br />
+
+As instructed previously, for each excerpt, you will conduct two tasks. <br /><br />
+
+In the <b>first task</b>, select the words where you imagine that
+you would insert a break in the utterance to chunk the speech.<br /><br />
+
+In the <b>second task</b> select the words that you would highlight for the listener.<br /><br />
+
+For these two tasks, after each of them, review your selections carefully before continuing.
+
+
+===============
+example item instructions
+===============
+
+On the next page is a sample excerpt.  You may use this item to familiarize yourself with the test format and procedure.
+
+
+===============
+begin test instructions
+===============
+
+You are now ready to begin the test.  
+
+When you are ready, please press 'submit'.
+
+
+==============
+boundary acoustics instructions short
+==============
+
+Mark the <font color="red"><b>segment boundaries</b></font> in the speech stream.
+
+
+==============
+prominence acoustics post boundary instructions short
+==============
+
+Mark the <font color="blue"><b>words that stand out</b></font> in the speech stream.
+
+==============
+prominence acoustics instructions short
+==============
+
+Mark the <font color="blue"><b>words that stand out</b></font> in the speech stream.
+
+==============
+boundary meaning instructions short
+==============
+
+Mark the <font color="red">segment boundaries </font> where you would insert a break in the utterance to chunk the speech.
+
+==============
+prominence meaning post boundary instructions short
+==============
+
+Mark the words that you would <font color="blue">highlight for the listener</font>.
+
+==============
+prominence meaning instructions short
+==============
+
+Mark the words that you would <font color="blue">highlight for the listener</font>.
+
+==============
+boundary imagine instructions short
+==============
+
+Mark the words where you would <font color="red">insert a break</font> after if you were saying this casually.
+
+
+==============
+prominence imagine post boundary instructions short
+==============
+
+Mark the words that you would <font color="blue">highlight for the listener</font> if you were saying this casually.
+
+
+
+--------------
+general messages
+--------------
+
+================
+error must play audio at least
+================
+
+You must listen to the audio file at least %d times.
+
+
+================
+error must play audio
+================
+
+You must listen to the audio file %d times.
+
+
+--------------
+section audio test
+--------------
+
+================
+audioTest text
+================
+
+This experiment will involve listening to audio files.  Before continuing, please make sure that you can hear a beep when you press the audio button below.  You may press this button as many times as you like.<br /><br />
+
+If you are unable to hear the audio when the button is pressed please check that the volume on your computer is not muted, that the volume is at a suitable level, and that your headphones are plugged in.  Note that some headphones may have their own volume control switch.<br /><br />
+
+
+================
+audioTest no audio
+================
+
+You have indicated that you cannot hear audio files.  An up-to-date version of Chrome, Firefox, Safari, or Internet Explorer is required for audio playback in this experiment.<br /><br />  
+
+Please try again in another browser or another computer.  If the problem persists, please contact the experiment administrator.
+
+
+================
+audioTest affirm
+================
+
+I was able to hear the audio.
+
+
+================
+audioTest reject
+================
+
+I was <b>not</b> able to hear the audio.
+
+
+================
+error verify audio
+================
+
+Please indicate whether or not you heard the audio file.
+
+
+================
+remote experiment notice
+================
+
+Before you begin the following experiment, please take note of the following points.
+<br /><br />
+
+<b>1)</b> Please <b>read all instructions</b> that appear throughout this experiment carefully.  Do not skip or skim instructions.<br /><br />
+
+<b>2)</b> Please <b>wear headphones or earbuds</b> when listening to audio files.
+<br /><br />
+
+<b>3)</b> <b>You should be in a quiet room</b>, free from distraction for the duration of the experiment.  If there is significant background noise, such as in a cafe or other public area, you may have trouble listening to audio files and concentrating on the experiment.
+<br /><br />
+
+<b>4)</b> Please <b>silence or turn off your cell-phone</b> and other noise-making electronics.
+<br /><br />
+
+<b>5)</b> Please <b>close all other browser windows or tabs</b>--particularly those that issue auditory or visual alerts or status updates such as email providers or social networking websites.
+<br /><br />
+
+<b>6)</b> Unless instructed otherwise, please <b>do not perform other tasks</b> or otherwise stray from the current task while you are doing the experiment.
+<br /><br />
+
+<br />
+
+By clicking 'submit' you acknowledge that you will follow these to the best of your ability.
+
+--------------
+axb page
+--------------
+
+==================
+error select a or b
+==================
+
+Error: Please select either 'a' or 'b'.
+
+==================
+axb query
+==================
+
+Please select the audio file that best matches x.
+
+==================
+axb a
+==================
+
+a
+
+==================
+axb b
+==================
+
+b
+
+==================
+axb x
+==================
+
+x
+
+--------------
+same_different page
+--------------
+
+==================
+same_different text
+==================
+
+Are these two audio files the same or are they different?
+
+==================
+same_different same
+==================
+
+Same
+
+==================
+same_different different
+==================
+
+Different
+
+
+
+--------------
+abn page
+--------------
+
+==================
+abn text
+==================
+
+What do you hear the audio file as?
+
+
+==================
+abn a
+==================
+
+Broad
+
+
+==================
+abn b
+==================
+
+Contrastive
+
+
+==================
+abn n
+==================
+
+Neither
+
+
+--------------
+section finished
+----------------
+
+==================
+section finished
+==================
+
+You have now finished the section you were working on. You have the option to take a short rest before moving on to the next section(s). 
+
+
+
+---------------
+test complete
+---------------
+
+=================
+test complete
+=================
+
+You have reached the end of this study. Thank you for your participation. 
+<br /><br />
+
+
+=================
+blah
+=================
+
+Audio file 1 <br /><br />
+%s
+Audio file 2 <br /><br />
+%s
+
