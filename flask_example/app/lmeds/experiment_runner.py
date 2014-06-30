@@ -20,7 +20,7 @@ cgitb.enable()
 import sys
 
 # This should point to the directory /lmeds/
-sys.path.append("/home/gail/Senior_Project/flask_example/app/")
+sys.path.append("/home/gail/Senior_Project/lmeds/flask_example/app/lmeds/")
 
 
 from lmeds import rptMain
