@@ -8,6 +8,8 @@ to all types of pages.  Abstract pages specific to certain tests should
 go in a more specific file.
 '''
 
+from os.path import join
+
 from lmeds import html
 
 abValidation = """
@@ -80,6 +82,18 @@ class NotDefinedError(Exception):
         return "Variable not defined in child class"
     
 
+class NoCorrectResponseError(Exception):
+    
+    
+    def __str__(self):
+        return "This pageClass does not have right or wrong answers"
+    
+    
+def checkResponseCorrectByIndex(responseList, correctResponseIndex):
+    '''For pages that have a single correct answer among a list of options'''
+    return responseList.index('1') == correctResponseIndex
+
+
 class AbstractPage(object):
     '''
     All pages derive from this page directly or indirectly
@@ -99,6 +113,10 @@ class AbstractPage(object):
         self.numAudioButtons = None
         self.processSubmitList = None
     
+    
+    def checkResponseCorrect(self, responseList, correctResponse):
+        raise NotImplementedError( "Should have implemented this" )
+        
     def getValidation(self):
         raise NotImplementedError( "Should have implemented this" )
     
@@ -148,6 +166,10 @@ class NonRecordingPage(AbstractPage):
     '''
     For pages that don't record any data
     '''
+    
+    def checkResponseCorrect(self, responseList, correctResponse):
+        raise NoCorrectResponseError()
+    
     def getOutput(self, form):
         
         return []
@@ -166,6 +188,20 @@ class NonValidatingPage(NonRecordingPage):
         template = ""
         
         return template
+
+
+class FileDoesNotExist(BaseException):
+    
+    def __init__(self, path, name):
+        self.path = path
+        self.name = name
+        
+    
+    def __str__(self):
+        return "File '%s' does not exist" % join(self.path, self.name)
+        
+
+    
 
     
     
