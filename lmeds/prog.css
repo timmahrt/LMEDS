@@ -1,4 +1,8 @@
 
+td {
+    text-align: center;
+}
+
 .centered_content {
 	float:left; 
 	height:50%; 
