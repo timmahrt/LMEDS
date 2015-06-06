@@ -10,8 +10,6 @@ import codecs
 
 from lmeds import utils
 
-#f = codecs.open('unicode.rst', encoding='utf-8')
-
 
 class BadlyFormattedTextError(Exception):
     '''
@@ -49,13 +47,33 @@ class TextNotInDictionaryException(Exception):
 
 def loadTxt(fn):
     txt = codecs.open(fn, "rU", encoding="utf-8").read()
-    #txt = open(fn, "r").read()
+    txtList = txt.splitlines()
+    
+    txtList = [" ".join(txt.split()) for txt in txtList] # Removes redundant whitespace
+    txtList = [row for row in txtList if row != ""] # Remove empty rows
+
+    return txtList
+
+
+def loadTxtWHTML(fn):
+    txt = codecs.open(fn, "rU", encoding="utf-8").read()
+    
     lineEnding = utils.detectLineEnding(txt)
     if lineEnding == None: # Should be only a single line
         txtList = [txt,]
     else:
         txtList = txt.split(lineEnding)
-    txtList = [" ".join(txt.split()) for txt in txtList] # Removes redundant whitespace
+    
+    newTxtList = []
+    for row in txtList:
+        if row == "":
+            continue
+        if row[0] == "<":
+            newTxtList.append(row)
+        else:
+            newTxtList.extend(" ".join(row.split())) 
+    txtList = newTxtList
+    
     txtList = [row for row in txtList if row != ""] # Remove empty rows
 
     return txtList
@@ -73,6 +91,17 @@ def getNumWords(fnFullPath):
     return numOutputs
 
 
+class TextString(object):
+
+    
+    def __init__(self, wordString):
+        self.wordString = wordString
+
+
+    def __repr__(self):
+        return self.wordString
+
+
 class TextDict(object):
     
     
@@ -83,21 +112,8 @@ class TextDict(object):
         
     def _parse(self):
             
-        data = codecs.open(self.sourceFN, "r", encoding="utf-8").read()
-        lineEnding = utils.detectLineEnding(data)
-        
-        testItemList = data.split(lineEnding)
-        
-#         testItemList = data.split("\n")
-        
-        # Remove lines that users can use to separate sections
-#         testItemList = [line for line in testItemList if not self._isSeparatingString(line)]
-        
-        # Split items into argument lists
-#         keyValueList = testItemList
-#         keyValueList = [row for row in testItemList]
-#         keyValueList = [(row[0], [item for item in row[1:] if item.strip() != ""]) for row in keyValueList
-#                         if row[0].strip() != ""]
+        data = codecs.open(self.sourceFN, "rU", encoding="utf-8").read()
+        testItemList = data.splitlines()
         
         keyValueList = self._findSections(testItemList, "-")
         
@@ -164,14 +180,14 @@ class TextDict(object):
         return sectionDictionary
         
     def getText(self, key):
-        return self.textDict[key]
+        return self.textDict[str(key)]
 
 
 textDict = None # textDict singleton
 def initTextDict(fn):
     global textDict
     textDict = TextDict(fn)
-
+    
 
 def getText(key):
     try:
@@ -180,15 +196,3 @@ def getText(key):
         raise TextNotInDictionaryException(key)
     
     return returnText
-
-
-if __name__ == "__main__":
-    
-    txtList = loadTxt("/Users/tmahrt/Sites/tests/perceptF/txt/A11_03.txt")
-    print 'hello'
-#     dict = TextDict("/Users/tmahrt/Sites/tests/perceptF/french.txt")
-#     print "'%s'" % dict.getText("continue button")
-#     exit()
-    
-
-
