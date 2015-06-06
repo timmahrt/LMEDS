@@ -81,7 +81,7 @@ class WebSurvey(object):
     
     def runDebug(self, page, pageNum=1, cookieTracker=True, userName="testing"):
         
-        testSequence = sequence.TestSequence(self.sequenceFN)
+        testSequence = sequence.TestSequence(self, self.sequenceFN)
         self.buildPage(pageNum, cookieTracker, page, userName, testSequence, self.sourceCGIFN)
 
 
