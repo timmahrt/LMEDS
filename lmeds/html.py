@@ -68,7 +68,7 @@ formTemplate2 = """
 </form>
 """
 
-submitButtonHTML = """<input name="submitButton" type="button" value="%s">"""
+submitButtonHTML = """<input name="submitButton" id="submitButton" type="button" value="%s">"""
 
 
 def getWidgetSubmit(widgetName):
