@@ -498,7 +498,321 @@ class SameDifferentStream(abstractPages.AbstractPage):
                      sameTxt, differentTxt)
     
         return htmlText, pageTemplate, {'embed': embedTxt}
+
+
+class ABN(abstractPages.AbstractPage):
     
+    A_STR = loader.TextString("abn_stream_a")
+    B_STR = loader.TextString("abn_stream_b")
+    N_STR = loader.TextString("abn_stream_n")
+    DESCRIPTION_STR = loader.TextString("abn_stream_description")
+    NO_ITEM_SELECTED_STR = loader.TextString('error_select_a_b_or_n')
+    
+    def __init__(self, pauseDuration, minPlays, maxPlays, beepOption, *args, **kargs):
+        super(ABN, self).__init__(*args, **kargs)
+        
+        self.pauseDuration = pauseDuration
+        self.beepOption = beepOption.lower() == "true"
+        self.minPlays = minPlays
+        self.maxPlays = maxPlays
+        
+        self.wavDir = self.webSurvey.wavDir
+
+        self.submitProcessButtonFlag = False
+
+        self.validationErrorTxt = loader.getText(self.NO_ITEM_SELECTED_STR)
+
+        # Variables that all pages need to define
+#         self.numAudioButtons = 3
+        self.processSubmitList = ["verifyAudioPlayed",]
+        
+    
+    def checkResponseCorrect(self, responseList, correctResponse):
+        '''
+        A: index=0, B: index=1, N: index=2
+        '''
+        return abstractPages.checkResponseCorrectByIndex(responseList, correctResponse)
+    
+    
+    def _getHTMLTxt(self):
+        raise NotImplementedError("Should have implemented this")
+    
+    
+    def getValidation(self):
+        txt = self.validationErrorTxt
+        txt = txt.replace('"', "'")
+        retPage = abValidation % txt
+        
+        return retPage
+    
+    
+    def getNumOutputs(self):
+        return 4
+    
+    
+    def getUniqueAudioFiles(self):
+        raise NotImplementedError( "Should have implemented this" )
+    
+        
+    def getHTML(self):
+        '''
+        Listeners hear two files and decide if they are the same or different
+        '''
+        pageTemplate = join(constants.htmlDir, "axbTemplate.html")
+        
+        if self.beepOption == True:
+            availableFunctions = """<script>
+            function enable_checkboxes() {
+            document.getElementById("0").disabled=false;
+            document.getElementById("1").disabled=false;
+            document.getElementById("2").disabled=false;
+            document.getElementById("3").disabled=false;
+            }
+            function disable_checkboxes() {
+            document.getElementById("0").disabled=true;
+            document.getElementById("1").disabled=true;
+            document.getElementById("2").disabled=true;
+            document.getElementById("3").disabled=true;
+            }
+            </script>
+            """
+        else:
+            availableFunctions = """<script>
+            function enable_checkboxes() {
+            document.getElementById("0").disabled=false;
+            document.getElementById("1").disabled=false;
+            document.getElementById("2").disabled=false;
+            }
+            function disable_checkboxes() {
+            document.getElementById("0").disabled=true;
+            document.getElementById("1").disabled=true;
+            document.getElementById("2").disabled=true;
+            }
+            </script>
+            """
+        
+        embedTxt = audio.getPlayAudioJavaScript(True, self.numAudioButtons, self.maxPlays, 
+                                                self.minPlays,
+                                                executeOnFinishSnippet="enable_checkboxes();")
+        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, self.getUniqueAudioFiles())
+        embedTxt += "\n\n" + availableFunctions
+        
+        description = loader.getText(self.DESCRIPTION_STR)
+        
+        aTxt = loader.getText(self.A_STR)
+        bTxt = loader.getText(self.B_STR)
+        nTxt = loader.getText(self.N_STR)
+        
+        htmlText = description + self._getHTMLTxt()
+        htmlText %= (aTxt, bTxt, nTxt)
+    
+        return htmlText, pageTemplate, {'embed': embedTxt}
+    
+
+
+class ABNOneAudio(ABN):
+
+    sequenceName = "abn_one_audio"
+
+    BEEP_STR = loader.TextString("beep")
+    
+
+    def __init__(self, pauseDuration, minPlays, maxPlays, beepOption, 
+                 audioList, *args, **kargs):
+        super(ABNOneAudio, self).__init__(pauseDuration, minPlays, maxPlays, 
+                                          beepOption, *args, **kargs)
+        self.audioList = audioList
+
+        self.nonstandardSubmitProcessList = [('widget', "abn_one_audio")]
+        
+        # Variables that all pages need to define
+        self.numAudioButtons = 1
+        
+    
+    def _getHTMLTxt(self):
+        
+        radioButton = '<p><input type="radio" name="abn_one_audio" value="%(id)s" id="%(id)s" disabled /> <label for="%(id)s">.</label></p>'
+        
+        if self.beepOption == False:
+            inputTuple = (audio.generateAudioButton(self.audioList, 0, self.pauseDuration, False), 
+                          radioButton % {'id':'0'},
+                          radioButton % {'id':'1'},
+                          radioButton % {'id':'2'},
+                          )
+            
+            htmlTxt = """
+            %s
+        <table class="center">
+        <tr><td>%%s</td><td>%%s</td><td>%%s</td></tr>
+        <tr><td>%s</td><td>%s</td><td>%s</td></tr>
+        </table>""" 
+            
+            htmlTxt %= inputTuple
+        else:
+            inputTuple = (audio.generateAudioButton(self.audioList, 0, self.pauseDuration, False), 
+                          loader.getText(self.BEEP_STR),
+                          radioButton % {'id':'0'},
+                          radioButton % {'id':'1'},
+                          radioButton % {'id':'2'},
+                          radioButton % {'id':'3'}
+                          )
+            
+            htmlTxt = """
+            %s
+        <table class="center">
+        <tr>  <td>%%s</td>  <td>%%s</td>  <td>%%s</td>  <td>%s</td>  </tr>
+        <tr>  <td>%s</td>  <td>%s</td>  <td>%s</td>  <td>%s</td>  </tr>
+        </table>""" 
+            
+            htmlTxt %= inputTuple
+
+        return htmlTxt
+
+
+    def getUniqueAudioFiles(self):
+        return self.audioList
+    
+
+class ABNTwoAudio(ABN):
+    
+    sequenceName = "abn_two_audio"
+    
+    BEEP_STR = loader.TextString("beep")
+    
+    def __init__(self, pauseDuration, minPlays, maxPlays, beepOption, 
+                 audioList1, audioList2, *args, **kargs):
+        super(ABNTwoAudio, self).__init__(pauseDuration, minPlays, maxPlays, 
+                                            beepOption, *args, **kargs)
+        
+        self.audioList1 = audioList1
+        self.audioList2 = audioList2
+        
+        self.nonstandardSubmitProcessList = [('widget', "abn_two_audio")]
+        
+        # Variables that all pages need to define
+        self.numAudioButtons = 2
+
+    
+    def _getHTMLTxt(self):
+        
+        radioButton = '<p><input type="radio" name="abn_two_audio" value="%(id)s" id="%(id)s" disabled /> <label for="%(id)s">.</label></p>'
+        
+        audioButton1 = audio.generateAudioButton(self.audioList1, 0, self.pauseDuration, False)
+        audioButton2 = audio.generateAudioButton(self.audioList2, 1, self.pauseDuration, False)
+
+        
+        if self.beepOption == False:
+            htmlTxt = """
+        <table class="center">
+        <tr><td>%s</td><td>%s</td></tr>
+        <tr><td>%%s</td><td>%%s</td><td>%%s</td></tr>
+        <tr><td>%s</td><td>%s</td><td>%s</td></tr>
+        </table>""" 
+            
+            inputTuple = (audioButton1,
+                         audioButton2,
+                         radioButton % {'id':'0'}, 
+                         radioButton % {'id':'1'},
+                         radioButton % {'id':'2'},)
+            
+            htmlTxt %= tuple(inputTuple)
+        else:
+            htmlTxt = """
+        <table class="center">
+        <tr>  <td>%s</td>  <td>%s</td><td></td>  </tr>
+        <tr>  <td>%%s</td>  <td>%%s</td>  <td>%%s</td> <td>%s</td>  </tr>
+        <tr>  <td>%s</td>  <td>%s</td> <td>%s</td> <td>%s</td>  </tr>
+        </table>""" 
+            
+            inputTuple = (audioButton1,
+                          audioButton2,
+                         loader.getText(self.BEEP_STR),
+                         radioButton % {'id':'0'}, 
+                         radioButton % {'id':'1'},
+                         radioButton % {'id':'2'},
+                         radioButton % {'id':'3'})
+            
+            htmlTxt %= inputTuple
+
+        return htmlTxt
+    
+    
+    def getUniqueAudioFiles(self):
+        return list(set(self.audioList1 + self.audioList2))
+    
+    
+class ABNThreeAudio(ABN):
+    
+    sequenceName = "abn_three_audio"
+    
+    BEEP_STR = loader.TextString("beep")
+    
+    def __init__(self, pauseDuration, minPlays, maxPlays, beepOption, 
+                 audioList1, audioList2, audioList3, *args, **kargs):
+        super(ABNThreeAudio, self).__init__(pauseDuration, minPlays, maxPlays, 
+                                            beepOption, *args, **kargs)
+        
+        self.audioList1 = audioList1
+        self.audioList2 = audioList2
+        self.audioList3 = audioList3
+        
+        self.nonstandardSubmitProcessList = [('widget', "abn_three_audio")]
+        
+        # Variables that all pages need to define
+        self.numAudioButtons = 3
+
+    
+    def _getHTMLTxt(self):
+        
+        radioButton = '<p><input type="radio" name="abn_three_audio" value="%(id)s" id="%(id)s" disabled /> <label for="%(id)s">.</label></p>'
+        
+        audioButton1 = audio.generateAudioButton(self.audioList1, 0, self.pauseDuration, False)
+        audioButton2 = audio.generateAudioButton(self.audioList2, 1, self.pauseDuration, False)
+        audioButton3 = audio.generateAudioButton(self.audioList3, 2, self.pauseDuration, False)
+
+        
+        if self.beepOption == False:
+            htmlTxt = """
+        <table class="center">
+        <tr><td>%s</td><td>%s</td><td>%s</td></tr>
+        <tr><td>%%s</td><td>%%s</td><td>%%s</td></tr>
+        <tr><td>%s</td><td>%s</td><td>%s</td></tr>
+        </table>""" 
+            
+            inputTuple = (audioButton1,
+                         audioButton2,
+                         audioButton3,
+                         radioButton % {'id':'0'}, 
+                         radioButton % {'id':'1'},
+                         radioButton % {'id':'2'})
+            
+            htmlTxt %= tuple(inputTuple)
+        else:
+            htmlTxt = """
+        <table class="center">
+        <tr>  <td>%s</td>  <td>%s</td>  <td>%s</td>  <td></td>  </tr>
+        <tr>  <td>%%s</td>  <td>%%s</td>  <td>%%s</td>  <td>%s</td>  </tr>
+        <tr>  <td>%s</td>  <td>%s</td>  <td>%s</td>  <td>%s</td>  </tr>
+        </table>""" 
+            
+            inputTuple = (audioButton1,
+                          audioButton2,
+                          audioButton3,
+                         loader.getText(self.BEEP_STR),
+                         radioButton % {'id':'0'}, 
+                         radioButton % {'id':'1'},
+                         radioButton % {'id':'2'},
+                         radioButton % {'id':'3'})
+            
+            htmlTxt %= inputTuple
+
+        return htmlTxt
+    
+    
+    def getUniqueAudioFiles(self):
+        return list(set(self.audioList1 + self.audioList2 + self.audioList3))
+
+
     
 class ABPage(abstractPages.AbstractPage):
     
@@ -646,11 +960,151 @@ class AXBPage(abstractPages.AbstractPage):
         return htmlText, pageTemplate, {'embed':embedTxt}
 
 
+class AudioWithResponsePage(abstractPages.AbstractPage):
+    
+    sequenceName = "audio_with_response_page"
+    
+    VALIDATION_STRING = "audio_with_response_validation_string"
+    
+    def __init__(self, timeout, audioList, *args, **kargs):
+        super(AudioWithResponsePage, self).__init__(*args, **kargs)
+        self.audioList = audioList
+        self.minPlays = 1
+        self.maxPlays = 1
+        self.txtboxCols = 100
+        self.txtboxRows = 10
+        self.pauseDuration = 0
+        self.timeout = float(timeout)
+        
+        self.wavDir = self.webSurvey.wavDir
+        self.submitProcessButtonFlag = True
+        
+        self.numAudioButtons = 1
+        self.processSubmitList = []
+    
+    def _getHTMLTxt(self):
+        txtbox = '<textarea name="audio_with_response_page" id="audio_with_response_page" rows="%s" cols="%s" disabled></textarea>' % (self.txtboxRows, self.txtboxCols)
+        return """%s<br /><br />""" + txtbox
+    
+    def getValidation(self):
+#         abnValidation = """
+#         var y=document.forms["languageSurvey"];
+#         if (checkBoxValidate(y["audio_with_response_page"])==true)
+#           {
+#           alert("%s");
+#           return false;
+#           }
+#           return true;
+#         """
+#         
+#         retPage = abnValidation % loader.getText(self.VALIDATION_STRING)#'Error.  Select one of the three options'
+        
+        return
+    
+    def getNumOutputs(self):
+        return 1
+    
+    def getHTML(self):
+    
+        htmlText = self._getHTMLTxt()
+        pageTemplate = join(constants.htmlDir, "axbTemplate.html")
+        
+        htmlText %= audio.generateAudioButton(self.audioList, 0,
+                                              self.pauseDuration,
+                                              False) + "<br />"
+        
+        availableFunctions = """<script>
+        function enable_textbox() {
+        document.getElementById("audio_with_response_page").disabled=false;
+        document.getElementById("audio_with_response_page").focus();
+        }
+        </script>
+        """
+        timeoutJS = "setTimeout(function(){processSubmit()}, %d);" % int(self.timeout*1000)
+        embedTxt = audio.getPlayAudioJavaScript(True, 1, self.maxPlays,
+                                                self.minPlays,
+                                                executeOnFinishSnippet="enable_textbox();" + timeoutJS)
+        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
+                                                 list(set(self.audioList)))
+        embedTxt += availableFunctions
+        
+        return htmlText, pageTemplate, {'embed': embedTxt}
+    
+    def getOutput(self, form):
+        
+        try:
+            value = form.getlist("audio_with_response_page")[0]  # Only one item
+            value = value.decode("utf-8")
+        except IndexError:
+            value = ""  # They didn't enter anything
+        value = value.replace(",", ";")
+        newlineChar = utils.detectLineEnding(value)
+        if newlineChar is not None:
+            value = value.replace(newlineChar, " - ")
+        
+        return value
+
+
+class TextResponsePage(abstractPages.AbstractPage):
+    
+    sequenceName = "text_response_page"
+    
+    def __init__(self, timeout, *args, **kargs):
+        super(TextResponsePage, self).__init__(*args, **kargs)
+        self.txtboxCols = 100
+        self.txtboxRows = 10
+        self.timeout = float(timeout)
+        
+        self.submitProcessButtonFlag = True
+        
+        self.nonstandardSubmitProcessList = []
+        if timeout > 0:
+            self.nonstandardSubmitProcessList.append(('timeout', int(self.timeout)))
+        
+        self.numAudioButtons = 0
+        self.processSubmitList = []
+
+    def _getHTMLTxt(self):
+        txtbox = '<textarea name="audio_with_response_page" id="audio_with_response_page" rows="%s" cols="%s"></textarea>' % (self.txtboxRows, self.txtboxCols)
+        return txtbox
+    
+    
+    def getValidation(self):
+        return
+    
+    
+    def getNumOutputs(self):
+        return 1
+    
+    
+    def getHTML(self):
+    
+        htmlText = self._getHTMLTxt()
+        pageTemplate = join(constants.htmlDir, "axbTemplate.html")
+        
+        return htmlText, pageTemplate, {}
+    
+    def getOutput(self, form):
+        
+        try:
+            value = form.getlist("audio_with_response_page")[0] # Only one item
+            value = value.decode("utf-8")
+        except IndexError:
+            value = "" # They didn't enter anything
+        value = value.replace(",", ";")
+        newlineChar = utils.detectLineEnding(value)
+        if newlineChar is not None:
+            value = value.replace(newlineChar, " - ")
+        
+        return value
+
+    
 class AudioListPage(abstractPages.AbstractPage):
 
     sequenceName = "audio_list"
 
-    def __init__(self, pauseDuration, minPlays, maxPlays, audioList, *args, **kargs):
+    def __init__(self, pauseDuration, minPlays, maxPlays, audioList,
+                 *args, **kargs):
         super(AudioListPage, self).__init__(*args, **kargs)
         self.pauseDuration = pauseDuration
         self.audioList = audioList
