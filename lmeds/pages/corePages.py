@@ -27,6 +27,7 @@ checkboxValidation = """
           return true;
         """
 
+
 class LoginPage(abstractPages.NonRecordingPage):
 
 
@@ -247,9 +248,9 @@ class TextAndAudioPage(abstractPages.NonValidatingPage):
         self.textName = textName
         self.audioList = audioList
         self.wavDir = self.webSurvey.wavDir
-    
+        
         # Variables that all pages need to define
-        self.numAudioButtons = 1
+        self.numAudioButtons = len(audioList)
         self.processSubmitList = []
     
     
@@ -270,7 +271,7 @@ class TextAndAudioPage(abstractPages.NonValidatingPage):
         </div><br />''' % (loader.getText('title'), tmpTxt)
         
         
-        embedTxt = audio.getPlayAudioJavaScript(True, len(audioNameList), [-1,]*len(audioNameList), 1)
+        embedTxt = audio.getPlayAudioJavaScript(True, len(audioNameList), -1, 1)
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, audioNameList)
         
         pageTemplate = join(constants.htmlDir, "basicTemplate.html")
@@ -326,7 +327,7 @@ class AudioTestPage(abstractPages.NonRecordingPage):
         
         htmlText %= audio.generateAudioButton(self.wavName, 0, 0, False) + "<br />"
         
-        embedTxt = audio.getPlayAudioJavaScript(True, 1, [-1,], 1)
+        embedTxt = audio.getPlayAudioJavaScript(True, 1, -1, 1, listenPartialFlag=True)
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, [self.wavName,])
         
         return htmlText, pageTemplate, {'embed':embedTxt}
