@@ -42,7 +42,8 @@ class SurveyPage(abstractPages.NonValidatingPage):
         self.numAudioButtons = 0
         self.processSubmitList = []
 
-        self.surveyItemList = survey.parseSurveyFile(join(self.surveyRoot, self.surveyFN))
+        self.surveyItemList = survey.parseSurveyFile(join(self.surveyRoot,
+                                                          self.surveyFN))
 
 
     def _getHTMLTxt(self):
@@ -56,16 +57,25 @@ class SurveyPage(abstractPages.NonValidatingPage):
             itemElementList = []
             for dataTuple in item.widgetList:
                 elementType, argList = dataTuple
-                widget = html.createWidget(elementType, argList, i)[0]
+                if elementType == "None":
+                    widget = " "
+                else:
+                    widget = html.createWidget(elementType, argList, i)[0]
                 itemElementList.append(widget)
             
+                if elementType == "None":
+                    continue
+                
                 if elementType == "Choicebox":
                     choiceBoxIndexList.append(i)
                 i += 1
             
             elementHTML = " ".join(itemElementList)
             
-            itemHTML = "%s) %s<br />%s" % (item.enumStrId, item.text, elementHTML)
+            if elementHTML.strip() == "":
+                itemHTML = "%s" % item.text
+            else:
+                itemHTML = "%s) %s<br />%s" % (item.enumStrId, item.text, elementHTML)
             
             if item.depth == 1:
                 itemHTML = "<div id='indentedText'>%s</div>" % itemHTML
@@ -91,9 +101,21 @@ class SurveyPage(abstractPages.NonValidatingPage):
 
     def getOutput(self, form):
         
+        def replaceCommas(inputItem):
+            if type(inputItem) == type([]):
+                outputItem = [inputStr.replace(",", "") for inputStr in inputItem]
+            else:
+                outputItem = inputItem.replace(",", "")
+            return outputItem 
+        
         tmpList = []
         k = 0
-        for j, item in enumerate(self.surveyItemList):
+        
+        # Filter out items with no inputs (essentially notes/comments)
+        dataFullList = [item for item in self.surveyItemList
+                        if not all([row[0] == "None" for row in item.widgetList])]
+        
+        for j, item in enumerate(dataFullList):
             
             for i, currentItem in enumerate(item.widgetList):
                 itemType, argList = currentItem
@@ -109,12 +131,13 @@ class SurveyPage(abstractPages.NonValidatingPage):
                     
                     # Remove newlines (because each newline is a new data entry)
                     if itemType == "Multiline_Textbox":
-                        value = value.replace(",", "") # Remove commas (because saved as a CSV file)
+                        value = replaceCommas(value)
                         newlineChar = utils.detectLineEnding(value)
                         if newlineChar != None:
                             value = value.replace(newlineChar, " - ") 
+                            
                     
-                    if itemType in ["Choice", "Choicebox"]:
+                    elif itemType in ["Choice", "Choicebox"]:
                         if itemType == "Choice":
                             index = argList.index(value)
                         elif itemType == "Choicebox":
@@ -122,14 +145,18 @@ class SurveyPage(abstractPages.NonValidatingPage):
                             
                         valueList = ["0" for x in xrange(len(argList))]
                         valueList[index] = "1"
-                        value = ",".join(valueList)
+                        value = ",".join(replaceCommas(valueList))
                         
                     elif itemType in ["Item_List"]:
                         indexList = [argList.index(subVal) for subVal in value]
                         valueList = ["1" if i in indexList else "0" for i in xrange(len(argList))]
-                        value = ",".join(valueList)
+                        value = ",".join(replaceCommas(valueList))
                     
+                    elif itemType == "None":
+                        continue
+                
                 tmpList.append(value)
+                
                 k += 1
         
 #         tmpList = outputList
@@ -240,7 +267,7 @@ class ABNPage(abstractPages.AbstractPage):
         htmlText = description + "<br />" + self._getHTMLTxt()
         htmlText %= (aHTML, a, b, n)
         
-        embedTxt = audio.getPlayAudioJavaScript(True, 1, [self.maxPlays,], self.minPlays,
+        embedTxt = audio.getPlayAudioJavaScript(True, 1, self.maxPlays, self.minPlays,
                                                 executeOnFinishSnippet="enable_checkboxes();")
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, [self.audioName])
         embedTxt += "\n\n" + availableFunctions
@@ -314,7 +341,7 @@ class SameDifferentBeepPage(abstractPages.AbstractPage):
         htmlText = description + self._getHTMLTxt()
         htmlText %= (aHTML, sameTxt, differentTxt, beepTxt)
     
-        embedTxt = audio.getPlayAudioJavaScript(True, 1, [self.maxPlays], self.minPlays)
+        embedTxt = audio.getPlayAudioJavaScript(True, 1, self.maxPlays, self.minPlays)
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, self.audioName1)
 
         return htmlText, pageTemplate, {'embed': embedTxt}
@@ -383,7 +410,7 @@ class SameDifferentPage(abstractPages.AbstractPage):
         htmlText = description + self._getHTMLTxt()
         htmlText %= (aHTML, bHTML, sameTxt, differentTxt)
     
-        embedTxt = audio.getPlayAudioJavaScript(True, 2, [self.maxPlays, self.maxPlays], self.minPlays)
+        embedTxt = audio.getPlayAudioJavaScript(True, 2, self.maxPlays, self.minPlays)
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, [self.audioName1, self.audioName2])
     
         return htmlText, pageTemplate, {'embed': embedTxt}
@@ -456,7 +483,7 @@ class SameDifferentStream(abstractPages.AbstractPage):
         </script>
         """
         
-        embedTxt = audio.getPlayAudioJavaScript(True, 1, [self.maxPlays,], self.minPlays,
+        embedTxt = audio.getPlayAudioJavaScript(True, 1, self.maxPlays, self.minPlays,
                                                 executeOnFinishSnippet="enable_checkboxes();")
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, list(set(self.audioList)))
         embedTxt += "\n\n" + availableFunctions
@@ -536,7 +563,7 @@ class ABPage(abstractPages.AbstractPage):
         htmlText = description + "<br />" + self.getHTML()
         htmlText %= (aHTML, a, b, n)
         
-        embedTxt = audio.getPlayAudioJavaScript(True, 1, [self.maxPlays,], self.minPlays)
+        embedTxt = audio.getPlayAudioJavaScript(True, 1, self.maxPlays, self.minPlays)
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, [self.audioName])
     
         return htmlText, pageTemplate, {'embed':embedTxt}  
@@ -611,7 +638,7 @@ class AXBPage(abstractPages.AbstractPage):
         htmlText = self._getHTMLTxt()
         htmlText %= (xHTML, aHTML, bHTML)
         
-        embedTxt = audio.getPlayAudioJavaScript(True, 3, [self.maxPlays,self.maxPlays,self.maxPlays,], self.minPlays)
+        embedTxt = audio.getPlayAudioJavaScript(True, 3, self.maxPlays, self.minPlays)
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, [self.sourceNameX, self.compareNameA, self.compareNameB])
         
         htmlText = html.makeNoWrap(htmlText)
@@ -657,9 +684,11 @@ class AudioListPage(abstractPages.AbstractPage):
         htmlText = self._getHTMLTxt()
         pageTemplate = join(constants.htmlDir, "axbTemplate.html")
         
-        htmlText %= audio.generateAudioButton(self.audioList, 0, self.pauseDuration, False) + "<br />"
+        htmlText %= audio.generateAudioButton(self.audioList, 0, 
+                                              self.pauseDuration, False) + "<br />"
         
-        embedTxt = audio.getPlayAudioJavaScript(True, 1, [self.maxPlays,], self.minPlays, autosubmitFlag=True)
+        embedTxt = audio.getPlayAudioJavaScript(True, 1, self.maxPlays, 
+                                                self.minPlays, autosubmitFlag=True)
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, list(set(self.audioList)))
         
         return htmlText, pageTemplate, {'embed':embedTxt}
@@ -758,7 +787,8 @@ class MemoryPage(abstractPages.AbstractPage):
         htmlText %= (aHTML, a, b)
         
         if self.showAudio:
-            embedTxt = audio.getPlayAudioJavaScript(True, 1, [self.maxPlays,], self.minPlays)
+            embedTxt = audio.getPlayAudioJavaScript(True, 1, self.maxPlays,
+                                                    self.minPlays)
             embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, [self.name])
         else:
             embedTxt = ""
