@@ -138,17 +138,17 @@ class TestSequence(object):
         while i < len(indexList) - 1:
             tmpData = text[indexList[i][0]:indexList[i][1]].strip()
             if tmpData != "":
-                chunkList.extend((tmpData.split(" ")))
+                chunkList.extend((tmpData.split()))
 #             print indexList[i], text[indexList[i][0]:indexList[i][1]]
             tmpData = text[indexList[i+1][0]:indexList[i+1][1]].strip()
             if tmpData != "":
 #                 chunkList.append(tmpData.replace(" ", ","))
-                chunkList.append(tmpData.split(" "))
+                chunkList.append(tmpData.split())
 #             print indexList[i+1], text[indexList[i+1][0]:indexList[i+1][1]], "\n"
             i += 2
         tmpData = text[indexList[-1][0]:].strip()
         if tmpData != "":
-            chunkList.extend(tmpData.split(" "))
+            chunkList.extend(tmpData.split())
         
         pageName = chunkList.pop(0)
         
@@ -160,7 +160,7 @@ class TestSequence(object):
         
     
     def quickParse(self):
-        data = open(self.sequenceFN, "r").read()
+        data = open(self.sequenceFN, "rU").read()
         testItemList = data.split("\n")
         testItemList = [row.strip() for row in testItemList]
         testItemList = [row for row in testItemList if row != '']
