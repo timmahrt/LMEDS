@@ -39,12 +39,11 @@ var numSoundFiles = %(numSoundFiles)d;
 var numUniqueSoundFiles = $("audio").length;
 var numSoundFilesLoaded = 0;
 var finishedLoading = false;
+var doingPandBPage = false;
+var listenPartial = %(listenPartialFlag)s;
 
 var countDict = {
 %(countDictTxt)s
-};
-var maxDict = {
-%(maxDictTxt)s
 };
 var myTxt = "";
 function increment_audio_loaded_count() {
@@ -78,6 +77,39 @@ function EvalSound() {
   document.getElementById('audioFilePlays'+id.toString()).value = parseInt(document.getElementById('audioFilePlays'+id.toString()).value) + 1;
   countDict[id] = countDict[id] + 1;
   
+  // Enable the submit button if listeners only need to listen to a portion
+  // of the audio (e.g. in an audio test)
+  if (document.getElementById("submitButton") !== null)
+  {
+    if (listenPartial == true)
+    {
+      // Enable the submit button if at least the minimum number of plays is
+      // completed for all audio files
+      var allGreater = true;
+      if (silenceFlag == true && %(minNumPlays)d > 0)
+      {
+        if (doingPandBPage == true) {
+          if (%(minNumPlays)d <= countDict[0]) {
+            document.getElementById("halfwaySubmitButton").disabled=false;
+            doingPandBPage = false;
+          }
+        }
+        else {
+        
+          for (var i=0;i<numSoundFiles;i++) {
+            if (%(minNumPlays)d > countDict[i]) {
+              allGreater = false;
+            }
+          }
+        
+          if (allGreater == true) {
+            document.getElementById("submitButton").disabled=false;
+          }
+        }
+      }
+    }
+  }
+  
   return false;
 }
 function updateProgress(percentComplete) {
@@ -105,28 +137,79 @@ function recPlayAudioList(audioList, pauseDurationMS) {
     if (audioList.length > 0) {
         setTimeout(function(){recPlayAudioList(audioList, pauseDurationMS);}, timeout);
     }
+
+
 }
+
 function loading_progress_show() {
 $("#loading_status_indicator").show();
 }
-function loading_progress_hide() {
-$("#loading_status_indicator").hide();
+function loading_progress_hide()
+{
+    // Disable the submit button if needed
+    if (document.getElementById("submitButton") !== null)
+    {
+      if (%(minNumPlays)d > 0)
+      {
+        document.getElementById("submitButton").disabled=true;
+        if (document.getElementById("halfwaySubmitButton") !== null)
+        {
+          document.getElementById("halfwaySubmitButton").disabled=true;
+          doingPandBPage = true;
+        }
+      }
+    }
+    
+    $("#loading_status_indicator").hide();
 }
+
 function audio_buttons_disable() {
-  for (var j=0;j<numSoundFiles;j++) { 
+  for (var j=0;j<numSoundFiles;j++) {
     document.getElementById("button"+j.toString()).disabled=true;
   }
 }
 
-function audio_buttons_enable() {
-        for (var i=0; i<numSoundFiles;i++)
-        {
-        if (silenceFlag == false || maxDict[i] < 0 || countDict[i] < maxDict[i])
-            {
-            document.getElementById("button"+i.toString()).disabled=false;
-            }
+function audio_buttons_enable() 
+{
+    for (var i=0; i<numSoundFiles;i++)
+    {
+        if (silenceFlag == false || %(maxNumPlays)d < 0 || countDict[i] < %(maxNumPlays)d) {
+          document.getElementById("button"+i.toString()).disabled=false;
+          }
+        else {
+          document.getElementById("button"+i.toString()).disabled=true;
         }
+        }
+        
+      // Enable the submit button if at least the minimum number of plays is
+      // completed for all audio files
+     if (document.getElementById("submitButton") !== null)
+     {
+      var allGreater = true;
+      if (silenceFlag == true && %(minNumPlays)d > 0)
+      {
+        if (doingPandBPage == true) {
+          if (%(minNumPlays)d <= countDict[0]) {
+            document.getElementById("halfwaySubmitButton").disabled=false;
+            doingPandBPage = false;
+          }
+        }
+        else {
+        
+          for (var i=0;i<numSoundFiles;i++) {
+            if (%(minNumPlays)d > countDict[i]) {
+              allGreater = false;
+            }
+          }
+        
+          if (allGreater == true) {
+            document.getElementById("submitButton").disabled=false;
+          }
+        }
+      }
     }
+    
+}
 function verifyAudioPlayed() {
     var doAlert = false;
     var returnValue = true;
@@ -158,21 +241,21 @@ function verifyFirstAudioPlayed() {
 '''
 
 
-def getPlayAudioJavaScript(doSilence, numItems, maxList, minNumPlays, 
-	autosubmitFlag=False, executeOnFinishSnippet=None):
+def getPlayAudioJavaScript(doSilence, numItems, maxNumPlays, minNumPlays, 
+	autosubmitFlag=False, executeOnFinishSnippet=None, listenPartialFlag=False):
 
-    maxList = [int(val) for val in maxList]
+    maxNumPlays = int(maxNumPlays)
     minNumPlays = int(minNumPlays)
 
     if doSilence:
         silenceFlag = 'true'
     else:
         silenceFlag = 'false'
-    
-    maxDictionaryTextList = []
-    for i, maxV in enumerate(maxList):
-        maxDictionaryTextList.append('"%s":%d,' % (i, maxV))
-    maxDictionaryText = "\n".join(maxDictionaryTextList)
+        
+    if listenPartialFlag:
+        listenPartialFlag = "true"
+    else:
+        listenPartialFlag = "false"
     
     dictionaryTextList = []
     for i in xrange(numItems):
@@ -180,7 +263,7 @@ def getPlayAudioJavaScript(doSilence, numItems, maxList, minNumPlays,
     countDictionaryText = "\n".join(dictionaryTextList)
     
     # Get error message and make sure it is formatted correctly
-    if minNumPlays < maxList[0]: # Upper and lower-bound
+    if minNumPlays < maxNumPlays: # Upper and lower-bound
         errorKey = "error must play audio at least"
     else: # No upper-bound
         errorKey = "error must play audio"
@@ -200,11 +283,12 @@ def getPlayAudioJavaScript(doSilence, numItems, maxList, minNumPlays,
     
     jsCode = playAudioFileJS % {"silenceFlag":silenceFlag, 
                                 "numSoundFiles":numItems, 
-                                "countDictTxt":countDictionaryText, 
-                                "maxDictTxt":maxDictionaryText, 
+                                "countDictTxt":countDictionaryText,
                                 "minNumPlays":minNumPlays,
+                                "maxNumPlays":maxNumPlays,
                                 "minNumPlaysErrorMsg":minNumPlaysErrorMsg,
-                                "autosubmit_code":autoSubmitHTML}
+                                "autosubmit_code":autoSubmitHTML,
+                                "listenPartialFlag":listenPartialFlag}
     
     return jsCode
 
@@ -225,11 +309,23 @@ class FileNotFound(Exception):
         return "ERROR: File, %s, does not exist" % self.fn
     
     
-loadAudioSnippet = """
+loadAudioSnippet_no_progress_bar = """
 if (typeof(load_audio) == "function") {
-	loading_progress_show();
 	load_audio();
 	}
+"""
+
+# loading_progress_show() waits for the audio file(s) to be loaded before
+# playing.  For whatever reason, firefox auto aborted so the audio would never
+# load.  However, when someone clicked "play" firefox would load the content
+# correctly.  Anyhow, it seems this code shouldn't be used for now (it's odd
+# though because I thought it was working when I first wrote it).
+# loadAudioSnippet_old_and_broken_on_firefox = """
+loadAudioSnippet = """
+if (typeof(load_audio) == "function") {
+    loading_progress_show();
+    load_audio();
+    }
 """
 
     
@@ -311,6 +407,7 @@ function load_audio() {
             audio.src= '%(path)s/' + audioName + '.ogg';
         }*/
         
+        audio.preload = 'auto';
         document.getElementById('audio_hook').appendChild(audio);
         audio.addEventListener('canplay', increment_audio_loaded_count);
         audio.addEventListener('error', catchFailedAudioLoad);
