@@ -58,7 +58,7 @@ class WebSurvey(object):
         import cgitb
         cgitb.enable()    
         
-        cgiForm = cgi.FieldStorage()
+        cgiForm = cgi.FieldStorage(keep_blank_values=True)
         
         # The user has not started the test
         if not cgiForm.has_key("pageNumber"):
