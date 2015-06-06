@@ -1,7 +1,0 @@
-*Test_Sequence_example
-login
-axb water water water 0 2
-axb water water water 0 2
-axb water water water 0 2
-end
-

@@ -1,5 +1,0 @@
-What did you think of this test?  Any feedback?  Comments?  Complaints?
-Multiline_Textbox 50, 7
-
-Do you have an idea about what we might have been investigating?  If so, what?
-Multiline_Textbox 50, 7
