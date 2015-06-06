@@ -36,14 +36,23 @@ def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textName, sentenc
     
     sentenceListTxtList = []
     for sentence in sentenceList:
-        wordList = sentence.split(" ")
-        tmpHTMLTxt = ""
-        for word in wordList:
-            tmpHTMLTxt += _makeTogglableWord(testType, word, wordIDNum, token)
-            wordIDNum += 1 
+        if '<' in sentence:
+            sentenceListTxtList.append(sentence)
+        else:
+            wordList = sentence.split(" ")
+            tmpHTMLTxt = ""
+            for word in wordList:
+                # If a word is an HTML tag, it isn't togglable.  Otherwise, it is
+                tmpHTMLTxt += _makeTogglableWord(testType, word, wordIDNum, token)
+                wordIDNum += 1 
+
+            sentenceListTxtList.append(tmpHTMLTxt)
         
-        # New sentence, new line
-        sentenceListTxtList.append(tmpHTMLTxt)
+#             # New sentence, new line
+#             if len(sentenceListTxtList) == 0:
+#                 sentenceListTxtList.append(tmpHTMLTxt)
+#             else:
+#                 sentenceListTxtList[-1] += tmpHTMLTxt
     
     newTxt = "<br /><br />\n\n".join(sentenceListTxtList)
 #     htmlTxt += "<br /><br />\n\n"
@@ -158,6 +167,8 @@ if(didPlay == true) {
             }
         }
     }
+
+    $('html, body').animate({ scrollTop: 0 }, 'fast');
 }
 </script>
     
