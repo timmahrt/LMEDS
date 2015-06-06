@@ -6,6 +6,7 @@ Created on Mar 1, 2014
 
 '''
 
+import os
 from os.path import join 
 
 from lmeds import html
@@ -213,6 +214,8 @@ $(document).ready(function(){
 
 class BoundaryOrProminenceAbstractPage(abstractPages.AbstractPage):
     
+    TEXT_STRING_LIST = []
+    
     def __init__(self, name, transcriptName, minPlays, maxPlays, instructions=None, presentAudio="true", boundaryToken=None, doProminence=True, *args, **kargs):
         
         super(BoundaryOrProminenceAbstractPage, self).__init__(*args, **kargs)
@@ -236,6 +239,29 @@ class BoundaryOrProminenceAbstractPage(abstractPages.AbstractPage):
             self.numAudioButtons = 0
         self.processSubmitList = ["verifyAudioPlayed",]
         
+        self.TEXT_STRING_LIST.append(self._buildInstructionsText())
+        
+        self.checkArgs()
+        
+        
+    def checkResponseCorrect(self, responseList, correctResponse):
+        raise abstractPages.NoCorrectResponseError()
+    
+    
+    def checkArgs(self):
+        
+        # Make sure all audio files exist
+        if not os.path.exists(join(self.wavDir, self.name+".ogg")):
+            raise abstractPages.FileDoesNotExist(self.wavDir, self.name+".ogg")
+        
+        # Make sure all text files exist
+        if not os.path.exists(join(self.txtDir, self.transcriptName+".txt")):
+            raise abstractPages.FileDoesNotExist(self.txtDir, self.transcriptName+".txt")
+        
+        # Make sure all text strings are in the dictionary
+        for text in self.TEXT_STRING_LIST:
+            loader.getText(text)        
+        
     
     def getValidation(self):
         template = ""
@@ -248,6 +274,14 @@ class BoundaryOrProminenceAbstractPage(abstractPages.AbstractPage):
         return loader.getNumWords(join(self.txtDir, self.transcriptName+".txt"))
     
     
+    def _buildInstructionsText(self):
+        textName = [self.sequenceName, "instructions short"]
+        
+        if self.instructions != None:
+            textName.insert(1, self.instructions)
+        
+        return " ".join(textName)
+        
     def getHTML(self):
         '''
         Returns html for a page where users mark either breaks or prominence
@@ -260,17 +294,15 @@ class BoundaryOrProminenceAbstractPage(abstractPages.AbstractPage):
         
         sentenceList = loader.loadTxt(txtFN)
         
-        textName = [self.sequenceName, "instructions short"]
+        
         testType = self.sequenceName
         
-        if self.instructions != None:
-            textName.insert(1, self.instructions)
         
         # Construct the HTML here
-        htmlTxt = _doBreaksOrProminence(testType, 0, 0, self.name, " ".join(textName), sentenceList, self.presentAudio, self.boundaryToken)[0]
+        htmlTxt = _doBreaksOrProminence(testType, 0, 0, self.name, self._buildInstructionsText(), sentenceList, self.presentAudio, self.boundaryToken)[0]
     
         if self.presentAudio:
-            embedTxt = audio.getPlayAudioJavaScript(True, 1, [self.maxPlays,], self.minPlays)
+            embedTxt = audio.getPlayAudioJavaScript(True, 1, self.maxPlays, self.minPlays)
             embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, [self.name,])
         else:
             embedTxt = ""
@@ -341,7 +373,15 @@ class BoundaryAndProminencePage(abstractPages.AbstractPage):
         numWords = loader.getNumWords(join(self.txtDir, self.transcriptName+".txt"))
         return numWords * 2 
         
+    
+    def getOutput(self, form):
         
+        try:
+            retList = super(BoundaryAndProminencePage, self).getOutput(form)
+        except abstractPages.KeyNotInFormError:
+            retList = ",".join(["0", ] * self.getNumOutputs())
+            
+        return retList
     def getHTML(self):
         '''
         Returns html for a page where users mark both breaks and prominence
@@ -378,15 +418,16 @@ class BoundaryAndProminencePage(abstractPages.AbstractPage):
         htmlTxt += "<div>%s</div>" % tmpHTMLTxt
     
         # HTML from transitioning from the boundary portion of text to the prominence portion
-        htmlTxt += '<br /><br /><input type="button" value="%s" onclick="ShowHide()"></button>' % loader.getText('continue button')
+        htmlTxt += '<br /><br /><input type="button" value="%s" id="halfwaySubmitButton" onclick="ShowHide()"></button>' % loader.getText('continue button')
         htmlTxt += '</div>\n\n<div id="HiddenDiv" style="DISPLAY: none">\n\n'
         
         # HTML prominence
         instructionsText = ["prominence", "post boundary instructions short"]
-        if self.instructions != None:
+        if self.instructions is not None:
             instructionsText.insert(1, self.instructions)
-        htmlTxt += _doBreaksOrProminence(self.sequenceName, numWords, 1, self.name, 
-                                         " ".join(instructionsText), 
+        htmlTxt += _doBreaksOrProminence(self.sequenceName, numWords, 1,
+                                         self.name,
+                                         " ".join(instructionsText),
                                          sentenceList,
                                          self.presentAudio,
                                          self.boundaryToken)[0]
@@ -397,7 +438,7 @@ class BoundaryAndProminencePage(abstractPages.AbstractPage):
                     
         # Add the javascript and style sheets here
         if self.presentAudio:
-            embedTxt = audio.getPlayAudioJavaScript(True, 2, [self.maxPlays, self.maxPlays,], self.minPlays)
+            embedTxt = audio.getPlayAudioJavaScript(True, 2, self.maxPlays, self.minPlays)
             embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, [self.name,])
         else:
             embedTxt = ""
