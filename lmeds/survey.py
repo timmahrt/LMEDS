@@ -64,12 +64,15 @@ def recParseSurveyFile(dataList, currentDepth):
 #                     argList = ["",] + argList # Implicit null value as default    
                 
                 currentItem.widgetList.append( (elemType, argList) )
-            i += 1
+            
+            if currentItem.text != "None":
+                i += 1
             
         else: # Blank line
             if currentItem.idNum != None: # We are transitioning to a new item
                 retList.append(currentItem)
-                currentItemNum += 1
+                if not all([row[0] == "None" for row in currentItem.widgetList]):
+                    currentItemNum += 1
                 currentItem = SurveyItem()
             else: # Extraneous blank line
                 pass
@@ -80,9 +83,11 @@ def recParseSurveyFile(dataList, currentDepth):
 
 def parseSurveyFile(fn):
     data = codecs.open(fn, "rU", encoding="utf-8").read()
-    lineEnding = utils.detectLineEnding(data)
+#     lineEnding = utils.detectLineEnding(data)
     
-    dataList = data.split(lineEnding)
+#     dataList = data.split(lineEnding)
+    dataList = data.splitlines()
+    dataList += [""] # Parser requires a trailing blank line
     
     itemList = recParseSurveyFile(dataList, 0)[1]
     
