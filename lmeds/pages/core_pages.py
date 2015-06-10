@@ -10,7 +10,7 @@ experiment it is.  Pages that provide information to users, get their
 
 from os.path import join
 
-from lmeds.pages import abstractPages
+from lmeds.pages import abstract_pages
 
 from lmeds import loader
 from lmeds import constants
@@ -28,7 +28,7 @@ return true;
 """
 
 
-class LoginPage(abstractPages.NonRecordingPage):
+class LoginPage(abstract_pages.NonRecordingPage):
     
     sequenceName = "login"
     
@@ -118,7 +118,7 @@ class LoginErrorPage(LoginPage):
         return htmlText, pageTemplate, {}
 
 
-class ConsentPage(abstractPages.NonRecordingPage):
+class ConsentPage(abstract_pages.NonRecordingPage):
     
     sequenceName = "consent"
     
@@ -173,7 +173,7 @@ class ConsentPage(abstractPages.NonRecordingPage):
         return htmlText, pageTemplate, {}
 
     
-class ConsentEndPage(abstractPages.NonValidatingPage):
+class ConsentEndPage(abstract_pages.NonValidatingPage):
     
     sequenceName = "consent_end"
     
@@ -192,7 +192,7 @@ class ConsentEndPage(abstractPages.NonValidatingPage):
         return htmlText, pageTemplate, {}
 
 
-class TextPage(abstractPages.NonValidatingPage):
+class TextPage(abstract_pages.NonValidatingPage):
 
     sequenceName = "text_page"
     
@@ -227,7 +227,7 @@ class TextPage(abstractPages.NonValidatingPage):
         return htmlText, pageTemplate, {}
 
 
-class TextAndAudioPage(abstractPages.NonValidatingPage):
+class TextAndAudioPage(abstract_pages.NonValidatingPage):
     
     sequenceName = "text_and_audio_page"
     
@@ -268,7 +268,7 @@ class TextAndAudioPage(abstractPages.NonValidatingPage):
         return htmlText, pageTemplate, {'embed': embedTxt}
 
 
-class AudioTestPage(abstractPages.NonRecordingPage):
+class AudioTestPage(abstract_pages.NonRecordingPage):
     
     sequenceName = "audio_test"
     
@@ -323,7 +323,7 @@ class AudioTestPage(abstractPages.NonRecordingPage):
         return htmlText, pageTemplate, {'embed': embedTxt}
 
 
-class AudioTestEndPage(abstractPages.NonValidatingPage):
+class AudioTestEndPage(abstract_pages.NonValidatingPage):
     
     sequenceName = "audio_test_end"
     
@@ -341,7 +341,7 @@ class AudioTestEndPage(abstractPages.NonValidatingPage):
         return htmlText, pageTemplate, {}
 
 
-class EndPage(abstractPages.NonValidatingPage):
+class EndPage(abstract_pages.NonValidatingPage):
     
     sequenceName = "end"
     

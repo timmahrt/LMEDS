@@ -7,17 +7,14 @@ Pages in here all some sort of variant of tasks where a stimuli is presented
 and users choose one of a limited number of options.
 '''
 
-import types
 from os.path import join
 
-from lmeds.pages import abstractPages
+from lmeds.pages import abstract_pages
 
-from lmeds import survey
 from lmeds import constants
 from lmeds import html
 from lmeds import loader
 from lmeds import audio
-from lmeds import utils
 
 # Can be used for axb or ab page validation
 abValidation = """
@@ -31,7 +28,7 @@ return true;
 """
 
 
-class SameDifferentBeepPage(abstractPages.AbstractPage):
+class SameDifferentBeepPage(abstract_pages.AbstractPage):
     
     sequenceName = "same_different_beep"
     
@@ -105,7 +102,7 @@ class SameDifferentBeepPage(abstractPages.AbstractPage):
         return htmlText, pageTemplate, {'embed': embedTxt}
     
     
-class SameDifferentPage(abstractPages.AbstractPage):
+class SameDifferentPage(abstract_pages.AbstractPage):
     
     sequenceName = "same_different"
     
@@ -178,7 +175,7 @@ class SameDifferentPage(abstractPages.AbstractPage):
         return htmlText, pageTemplate, {'embed': embedTxt}
 
 
-class SameDifferentStream(abstractPages.AbstractPage):
+class SameDifferentStream(abstract_pages.AbstractPage):
     
     sequenceName = "same_different_stream"
     
@@ -205,8 +202,8 @@ class SameDifferentStream(abstractPages.AbstractPage):
         '''
         Same: index=0, Different: index=1
         '''
-        return abstractPages.checkResponseCorrectByIndex(responseList, 
-                                                         correctResponse)
+        return abstract_pages.checkResponseCorrectByIndex(responseList,
+                                                          correctResponse)
     
     def _getHTMLTxt(self):
         
@@ -274,7 +271,7 @@ class SameDifferentStream(abstractPages.AbstractPage):
         return htmlText, pageTemplate, {'embed': embedTxt}
     
 
-class ABNPage(abstractPages.AbstractPage):
+class ABNPage(abstract_pages.AbstractPage):
     
     sequenceName = "abn"
     
@@ -375,7 +372,7 @@ class ABNPage(abstractPages.AbstractPage):
         return htmlText, pageTemplate, {'embed': embedTxt}
 
 
-class ABN(abstractPages.AbstractPage):
+class ABN(abstract_pages.AbstractPage):
     
     A_STR = loader.TextString("abn_stream_a")
     B_STR = loader.TextString("abn_stream_b")
@@ -406,8 +403,8 @@ class ABN(abstractPages.AbstractPage):
         '''
         A: index=0, B: index=1, N: index=2
         '''
-        return abstractPages.checkResponseCorrectByIndex(responseList,
-                                                         correctResponse)
+        return abstract_pages.checkResponseCorrectByIndex(responseList,
+                                                          correctResponse)
     
     def _getHTMLTxt(self):
         raise NotImplementedError("Should have implemented this")
@@ -705,7 +702,7 @@ class ABNThreeAudio(ABN):
         return list(set(self.audioList1 + self.audioList2 + self.audioList3))
 
 
-class ABPage(abstractPages.AbstractPage):
+class ABPage(abstract_pages.AbstractPage):
     
     sequenceName = "ab"
     
@@ -779,7 +776,7 @@ class ABPage(abstractPages.AbstractPage):
         return htmlText, pageTemplate, {'embed': embedTxt}
 
 
-class AXBPage(abstractPages.AbstractPage):
+class AXBPage(abstract_pages.AbstractPage):
     
     sequenceName = "axb"
 

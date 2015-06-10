@@ -9,7 +9,7 @@ Created on Mar 1, 2014
 import types
 from os.path import join
 
-from lmeds.pages import abstractPages
+from lmeds.pages import abstract_pages
 
 from lmeds import survey
 from lmeds import constants
@@ -19,7 +19,7 @@ from lmeds import audio
 from lmeds import utils
 
 
-class SurveyPage(abstractPages.NonValidatingPage):
+class SurveyPage(abstract_pages.NonValidatingPage):
 
     sequenceName = "survey"
     
@@ -169,7 +169,7 @@ class SurveyPage(abstractPages.NonValidatingPage):
         return htmlText, pageTemplate, {'embed': embedTxt}
 
 
-class AudioWithResponsePage(abstractPages.AbstractPage):
+class AudioWithResponsePage(abstract_pages.AbstractPage):
     
     sequenceName = "audio_with_response_page"
     
@@ -265,7 +265,7 @@ class AudioWithResponsePage(abstractPages.AbstractPage):
         return value
 
 
-class TextResponsePage(abstractPages.AbstractPage):
+class TextResponsePage(abstract_pages.AbstractPage):
     
     sequenceName = "text_response_page"
     
@@ -321,7 +321,7 @@ class TextResponsePage(abstractPages.AbstractPage):
         return value
 
     
-class AudioListPage(abstractPages.AbstractPage):
+class AudioListPage(abstract_pages.AbstractPage):
 
     sequenceName = "audio_list"
 
@@ -370,7 +370,7 @@ class AudioListPage(abstractPages.AbstractPage):
         return htmlText, pageTemplate, {'embed': embedTxt}
 
 
-class MemoryPage(abstractPages.AbstractPage):
+class MemoryPage(abstract_pages.AbstractPage):
     
     sequenceName = "memory_test"
     
@@ -475,7 +475,7 @@ class MemoryPage(abstractPages.AbstractPage):
         return htmlText, pageTemplate, {'embed': embedTxt}
     
 
-class FillInTheBlankPage(abstractPages.AbstractPage):
+class FillInTheBlankPage(abstract_pages.AbstractPage):
     
     sequenceName = "fill_in_the_blank"
     
@@ -540,7 +540,7 @@ class FillInTheBlankPage(abstractPages.AbstractPage):
         return 3
 
     def getOutput(self, form):
-        return abstractPages.getoutput(self.sequenceName, form, True)
+        return abstract_pages.getoutput(self.sequenceName, form, True)
     
     def getHTML(self):
         '''

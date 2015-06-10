@@ -3,7 +3,7 @@ Created on Mar 1, 2014
 
 @author: tmahrt
 
-
+These pages define pages used for rapid prosody transcription. 
 '''
 
 import os
@@ -14,7 +14,7 @@ from lmeds import audio
 from lmeds import constants
 from lmeds import loader
 
-from lmeds.pages import abstractPages
+from lmeds.pages import abstract_pages
 
 
 def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textName,
@@ -219,7 +219,7 @@ $(document).ready(function(){
                          boundaryMarkingCode_showHide}
 
 
-class BoundaryOrProminenceAbstractPage(abstractPages.AbstractPage):
+class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
     
     TEXT_STRING_LIST = []
     
@@ -253,19 +253,19 @@ class BoundaryOrProminenceAbstractPage(abstractPages.AbstractPage):
         self.checkArgs()
         
     def checkResponseCorrect(self, responseList, correctResponse):
-        raise abstractPages.NoCorrectResponseError()
+        raise abstract_pages.NoCorrectResponseError()
     
     def checkArgs(self):
         
         # Make sure all audio files exist
         if not os.path.exists(join(self.wavDir, self.name + ".ogg")):
-            raise abstractPages.FileDoesNotExist(self.wavDir,
-                                                 self.name + ".ogg")
+            raise abstract_pages.FileDoesNotExist(self.wavDir,
+                                                  self.name + ".ogg")
         
         # Make sure all text files exist
         if not os.path.exists(join(self.txtDir, self.transcriptName + ".txt")):
-            raise abstractPages.FileDoesNotExist(self.txtDir,
-                                                 self.transcriptName + ".txt")
+            raise abstract_pages.FileDoesNotExist(self.txtDir,
+                                                  self.transcriptName + ".txt")
         
         # Make sure all text strings are in the dictionary
         for text in self.TEXT_STRING_LIST:
@@ -342,7 +342,7 @@ class ProminencePage(BoundaryOrProminenceAbstractPage):
         super(ProminencePage, self).__init__(*args, **kargs)
         
 
-class BoundaryAndProminencePage(abstractPages.AbstractPage):
+class BoundaryAndProminencePage(abstract_pages.AbstractPage):
 
     sequenceName = 'boundary_and_prominence'
 
@@ -376,7 +376,7 @@ class BoundaryAndProminencePage(abstractPages.AbstractPage):
         self.processSubmitList = ["verifyAudioPlayed", ]
     
     def checkResponseCorrect(self, responseList, correctResponse):
-        raise abstractPages.NoCorrectResponseError()
+        raise abstract_pages.NoCorrectResponseError()
     
     def getValidation(self):
         template = ""
@@ -393,7 +393,7 @@ class BoundaryAndProminencePage(abstractPages.AbstractPage):
         
         try:
             retList = super(BoundaryAndProminencePage, self).getOutput(form)
-        except abstractPages.KeyNotInFormError:
+        except abstract_pages.KeyNotInFormError:
             retList = ",".join(["0", ] * self.getNumOutputs())
             
         return retList

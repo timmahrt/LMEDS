@@ -23,10 +23,10 @@ import sys
 sys.path.append("/Users/tmahrt/Dropbox/workspace/LMEDS/lmeds")
 
 
-from lmeds import rptMain
+from lmeds import rpt_main
 
 
 def runExperiment(leafFolder, sequenceFile, languageFile, disableRefresh):
-    survey = rptMain.WebSurvey(leafFolder, sequenceFile,
-                               languageFile, disableRefresh)
+    survey = rpt_main.WebSurvey(leafFolder, sequenceFile,
+                                languageFile, disableRefresh)
     survey.run()

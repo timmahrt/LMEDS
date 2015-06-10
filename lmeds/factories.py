@@ -4,9 +4,9 @@ Created on Feb 28, 2014
 @author: tmahrt
 '''
 
-from lmeds.pages import simpleExperimentPages
-from lmeds.pages import boundaryPages
-from lmeds.pages import corePages
+from lmeds.pages import assorted_experiment_pages
+from lmeds.pages import boundary_pages
+from lmeds.pages import core_pages
 from lmeds.pages import axb_pages
 
 
@@ -38,26 +38,26 @@ def loadPage(webSurvey, pageName, args=None, kargs=None):
                      axb_pages.ABNTwoAudio,
                      axb_pages.ABNThreeAudio,
                      axb_pages.SameDifferentPage,
-                     simpleExperimentPages.SurveyPage,
-                     simpleExperimentPages.AudioListPage,
-                     simpleExperimentPages.AudioWithResponsePage,
-                     simpleExperimentPages.TextResponsePage,
-                     simpleExperimentPages.MemoryPage,
-                     simpleExperimentPages.FillInTheBlankPage,
+                     assorted_experiment_pages.SurveyPage,
+                     assorted_experiment_pages.AudioListPage,
+                     assorted_experiment_pages.AudioWithResponsePage,
+                     assorted_experiment_pages.TextResponsePage,
+                     assorted_experiment_pages.MemoryPage,
+                     assorted_experiment_pages.FillInTheBlankPage,
                      axb_pages.SameDifferentBeepPage,
                      axb_pages.SameDifferentStream,
-                     corePages.LoginPage,
-                     corePages.LoginErrorPage,
-                     corePages.EndPage,
-                     corePages.AudioTestPage,
-                     corePages.AudioTestEndPage,
-                     corePages.ConsentPage,
-                     corePages.ConsentEndPage,
-                     corePages.TextPage,
-                     corePages.TextAndAudioPage,
-                     boundaryPages.BoundaryAndProminencePage,
-                     boundaryPages.BoundaryPage,
-                     boundaryPages.ProminencePage,
+                     core_pages.LoginPage,
+                     core_pages.LoginErrorPage,
+                     core_pages.EndPage,
+                     core_pages.AudioTestPage,
+                     core_pages.AudioTestEndPage,
+                     core_pages.ConsentPage,
+                     core_pages.ConsentEndPage,
+                     core_pages.TextPage,
+                     core_pages.TextAndAudioPage,
+                     boundary_pages.BoundaryAndProminencePage,
+                     boundary_pages.BoundaryPage,
+                     boundary_pages.ProminencePage,
                      ]
 
     pageDict = dict((pageClass.sequenceName, pageClass)

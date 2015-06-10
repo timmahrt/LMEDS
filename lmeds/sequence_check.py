@@ -11,7 +11,7 @@ sys.path.append(CODE_ROOT)
 from lmeds import sequence
 from lmeds import loader
 
-from lmeds.pages import abstractPages
+from lmeds.pages import abstract_pages
 
 
 def checkSequenceFile(survey):
@@ -24,7 +24,7 @@ def checkSequenceFile(survey):
         except TypeError:
             print "Page %d: Problem with the number of arguments" % pageNum
             raise
-        except (abstractPages.FileDoesNotExist,
+        except (abstract_pages.FileDoesNotExist,
                 loader.TextNotInDictionaryException), e:
             print "Page %d: %s" % (pageNum, e)
             continue
