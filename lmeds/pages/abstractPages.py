@@ -26,37 +26,40 @@ if (checkBoxValidate(y["axb"])==true)
 class KeyNotInFormError(Exception):
     
     def __init__(self, key):
+        super(KeyNotInFormError, self).__init__()
         self.key = key
         
     def __str__(self):
-        return "Attempted to get testoutput but key '%s' not in form." % self.key 
+        errStr = "Attempted to get testoutput but key '%s' not in form."
+        return errStr % self.key
 
 
 def getoutput(key, form, appendDefault=False):
     '''
     
-    Output from the cgi form is the name of the indices that were marked positive.
-    Here we use the convention that checkboxes are ordered and named as such
-    (e.g. "1", "2", "3", etc.).
+    Output from the cgi form is the name of the indices that were marked
+    positive. Here we use the convention that checkboxes are ordered and
+    named as such (e.g. "1", "2", "3", etc.).
     
     This code converts this list into the full list of checked and unchecked
-    boxes, where the index of the item in the row contains the value of the 
+    boxes, where the index of the item in the row contains the value of the
     corresponding checkbox
     e.g. for 'Tom saw Mary' where each word can be selected by the user,
-    the sequence [0, 0, 1] would indicate that 'Mary' was selected and 'Tom' 
+    the sequence [0, 0, 1] would indicate that 'Mary' was selected and 'Tom'
     and 'saw' were not.
     '''
     numItems = int(form.getvalue('num_items'))
     
-    # Prevents data from being lost (if we're expecting something from being there and its not)
-    #     otherwise, LMEDS will silently continue as if nothing was wrong
-    #    This doesn't alert the user in any useful way but at least it alerts
-    #    them that something is wrong
+    # Prevents data from being lost (if we're expecting something from
+    #    being there and its not) otherwise, LMEDS will silently continue
+    #    as if nothing was wrong.  This doesn't alert the user in any useful
+    #    way but at least it alerts them that something is wrong
     if numItems > 0:
-        if not form.has_key(key):
+        if key not in form:
             raise KeyNotInFormError(key)
     
-    # Contains index of all of the positively marked items (ignores unmarked items)
+    # Contains index of all of the positively marked items
+    # (ignores unmarked items)
     outputList = form.getlist(key)
 
     # Assume all items unmarked
@@ -77,13 +80,11 @@ def getoutput(key, form, appendDefault=False):
 
 class NotDefinedError(Exception):
     
-    
     def __str__(self):
         return "Variable not defined in child class"
     
 
 class NoCorrectResponseError(Exception):
-    
     
     def __str__(self):
         return "This pageClass does not have right or wrong answers"
@@ -100,46 +101,45 @@ class AbstractPage(object):
     '''
     sequenceName = None
     
-    
     def __init__(self, webSurvey, *args, **kargs):
         super(AbstractPage, self).__init__(*args, **kargs)
         self.webSurvey = webSurvey
         
         # These are variables that all pages can define
-        self.nonstandardSubmitProcessList = [] # e.g. [('widget', 'myWidget'), ('timeout', 1.0)]
+        
+        # e.g. [('widget', 'myWidget'), ('timeout', 1.0)]
+        self.nonstandardSubmitProcessList = []
+        
         self.submitProcessButtonFlag = True
     
         # Variables that all pages need to define
         self.numAudioButtons = None
         self.processSubmitList = None
     
-    
     def checkResponseCorrect(self, responseList, correctResponse):
-        raise NotImplementedError( "Should have implemented this" )
+        raise NotImplementedError("Should have implemented this")
         
     def getValidation(self):
-        raise NotImplementedError( "Should have implemented this" )
+        raise NotImplementedError("Should have implemented this")
     
     def getHTML(self):
-        raise NotImplementedError( "Should have implemented this" )
+        raise NotImplementedError("Should have implemented this")
     
     def getNumOutputs(self):
         raise NotImplementedError("Should have implemented this")
     
     def getOutput(self, form):
         
-        if self.sequenceName == None:
+        if self.sequenceName is None:
             raise NotDefinedError()
         
         return getoutput(self.sequenceName, form)
     
-    
     def getNumAudioButtons(self):
-        if self.numAudioButtons == None:
+        if self.numAudioButtons is None:
             raise NotDefinedError()
         
         return self.numAudioButtons
-    
     
     def getProcessSubmitFunctions(self):
         '''
@@ -150,7 +150,7 @@ class AbstractPage(object):
         "validateForm" # Ensure all required forms have been filled out
         '''
         
-        if self.processSubmitList == None:
+        if self.processSubmitList is None:
             raise NotDefinedError()
         
         htmlList = []
@@ -174,7 +174,6 @@ class NonRecordingPage(AbstractPage):
         
         return []
     
-
     def getNumOutputs(self):
         
         return 0
@@ -196,12 +195,5 @@ class FileDoesNotExist(BaseException):
         self.path = path
         self.name = name
         
-    
     def __str__(self):
         return "File '%s' does not exist" % join(self.path, self.name)
-        
-
-    
-
-    
-    

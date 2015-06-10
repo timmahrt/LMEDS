@@ -11,28 +11,26 @@ from lmeds.pages import corePages
 
 class ReservedWordException(Exception):
     
-    
     def __str__(self):
-        return "'webSurvey' is a reserved word and cannot be used in dictionary"
-    
-    
-    
+        return ("'webSurvey' is a reserved word and cannot be "
+                "used in dictionary"
+                )
+
+
 def loadPage(webSurvey, pageName, args=None, kargs=None):
     
-    if args == None:
+    if args is None:
         args = []
         
-    if kargs == None:
+    if kargs is None:
         kargs = {}
 
     if 'webSurvey' in kargs.keys():
         raise ReservedWordException()
     
     kargs['webSurvey'] = webSurvey
-
     
-    pageClassList = [
-                     simpleExperimentPages.AXBPage,
+    pageClassList = [simpleExperimentPages.AXBPage,
                      simpleExperimentPages.ABPage,
                      simpleExperimentPages.ABNPage,
                      simpleExperimentPages.ABNOneAudio,
@@ -61,10 +59,7 @@ def loadPage(webSurvey, pageName, args=None, kargs=None):
                      boundaryPages.ProminencePage,
                      ]
 
-    pageDict = dict((pageClass.sequenceName, pageClass) for pageClass in pageClassList)
-
+    pageDict = dict((pageClass.sequenceName, pageClass)
+                    for pageClass in pageClassList)
     
     return pageDict[pageName](*args, **kargs)
-    
-    
-

@@ -6,18 +6,17 @@ Created on Nov 17, 2013
 
 import codecs
 
-from lmeds import utils
-
-alpha = lambda num: unichr(num+96) # ASCII section for lowercase alpha
+alpha = lambda num: unichr(num + 96)  # ASCII section for lowercase alpha
 numTypeList = [int, alpha]
 
 
 class SurveyItem(object):
     
     def __init__(self):
-        self.idNum = None # The absolute id number of this item
+        self.idNum = None  # The absolute id number of this item
         self.depth = None
-        self.enumStrId = None # The id num of this item relative to the group its in
+        # The id num of this item relative to the group its in
+        self.enumStrId = None
         self.text = None
         self.widgetList = []
 
@@ -31,21 +30,22 @@ def recParseSurveyFile(dataList, currentDepth):
     
     while i < len(dataList):
         
-        if dataList[i][:2] == "<s": # Sublist start
-            tmpI, tmpSubList = recParseSurveyFile(dataList[i+1:], currentDepth+1)
+        if dataList[i][:2] == "<s":  # Sublist start
+            tmpI, tmpSubList = recParseSurveyFile(dataList[i + 1:],
+                                                  currentDepth + 1)
             retList.extend(tmpSubList)
             i += tmpI + 1
             
-        elif dataList[i][:3] == "</s": # Sublist end (exit while loop)
-            if currentItem.idNum != None: 
+        elif dataList[i][:3] == "</s":  # Sublist end (exit while loop)
+            if currentItem.idNum is not None:
                 retList.append(currentItem)
                 currentItemNum += 1
                 currentItem = SurveyItem()
             i += 1
             break
             
-        elif dataList[i] != "": # Datafull entry
-            if currentItem.idNum == None:
+        elif dataList[i] != "":  # Datafull entry
+            if currentItem.idNum is None:
                 strChar = str(numType(currentItemNum))
                 currentItem.enumStrId = strChar
                 currentItem.depth = currentDepth
@@ -60,21 +60,20 @@ def recParseSurveyFile(dataList, currentDepth):
                     elemType = splitList[0]
                     argList = []
                 
-#                 if elemType == "Choicebox":
-#                     argList = ["",] + argList # Implicit null value as default    
-                
-                currentItem.widgetList.append( (elemType, argList) )
+                currentItem.widgetList.append((elemType, argList))
             
             if currentItem.text != "None":
                 i += 1
             
-        else: # Blank line
-            if currentItem.idNum != None: # We are transitioning to a new item
+        else:  # Blank line
+            # We are transitioning to a new item
+            if currentItem.idNum is not None:
                 retList.append(currentItem)
-                if not all([row[0] == "None" for row in currentItem.widgetList]):
+                if not all([row[0] == "None"
+                            for row in currentItem.widgetList]):
                     currentItemNum += 1
                 currentItem = SurveyItem()
-            else: # Extraneous blank line
+            else:  # Extraneous blank line
                 pass
             i += 1
             
@@ -83,21 +82,18 @@ def recParseSurveyFile(dataList, currentDepth):
 
 def parseSurveyFile(fn):
     data = codecs.open(fn, "rU", encoding="utf-8").read()
-#     lineEnding = utils.detectLineEnding(data)
-    
-#     dataList = data.split(lineEnding)
     dataList = data.splitlines()
-    dataList += [""] # Parser requires a trailing blank line
+    dataList += [""]  # Parser requires a trailing blank line
     
     itemList = recParseSurveyFile(dataList, 0)[1]
     
     return itemList
 
 
-
-
 if __name__ == "__main__":
     
-    parseSurveyFile("presurvey.txt")
+    a = parseSurveyFile("/Users/tmahrt/Sites/tests/percept_is/postsurvey.txt")
     
-    
+    for x in a:
+        print x.enumStrId, x.text
+    print 'hi'

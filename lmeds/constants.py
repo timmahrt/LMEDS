@@ -18,11 +18,7 @@ rootURL = "http://tmahrt.nfshost.com/rptTest"
 
 rootDir = "../"
 
-# 
+#
 htmlDir = join(rootDir, "html")
 htmlSnippetsDir = join(htmlDir, "snippets")
 instructDir = join(htmlDir, "instructions")
-
-
-
-

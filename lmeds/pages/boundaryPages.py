@@ -7,7 +7,7 @@ Created on Mar 1, 2014
 '''
 
 import os
-from os.path import join 
+from os.path import join
 
 from lmeds import html
 from lmeds import audio
@@ -17,7 +17,8 @@ from lmeds import loader
 from lmeds.pages import abstractPages
 
 
-def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textName, sentenceList, presentAudioFlag, token):
+def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textName,
+                          sentenceList, presentAudioFlag, token):
     '''
     This is a helper function.  It does not construct a full page.
     
@@ -31,7 +32,8 @@ def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textName, sentenc
     htmlTxt += html.makeWrap(instrMsg)
     
     if presentAudioFlag.lower() == 'true':
-        htmlTxt += audio.generateAudioButton(name, audioNum, False) + "<br /><br />\n\n"
+        htmlTxt += audio.generateAudioButton(name, audioNum, False)
+        htmlTxt += "<br /><br />\n\n"
     else:
         htmlTxt += "<br /><br />\n\n"
     
@@ -43,20 +45,15 @@ def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textName, sentenc
             wordList = sentence.split(" ")
             tmpHTMLTxt = ""
             for word in wordList:
-                # If a word is an HTML tag, it isn't togglable.  Otherwise, it is
-                tmpHTMLTxt += _makeTogglableWord(testType, word, wordIDNum, token)
-                wordIDNum += 1 
+                # If a word is an HTML tag, it isn't togglable.
+                # Otherwise, it is
+                tmpHTMLTxt += _makeTogglableWord(testType, word,
+                                                 wordIDNum, token)
+                wordIDNum += 1
 
             sentenceListTxtList.append(tmpHTMLTxt)
-        
-#             # New sentence, new line
-#             if len(sentenceListTxtList) == 0:
-#                 sentenceListTxtList.append(tmpHTMLTxt)
-#             else:
-#                 sentenceListTxtList[-1] += tmpHTMLTxt
     
     newTxt = "<br /><br />\n\n".join(sentenceListTxtList)
-#     htmlTxt += "<br /><br />\n\n"
             
     htmlTxt += newTxt
             
@@ -66,7 +63,9 @@ def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textName, sentenc
 def _getProminenceOrBoundaryWordEmbed(isProminence):
     
     boundaryEmbed = """
-    $(this).closest("label").css({ borderRight: this.checked ? "3px solid #000000":"0px solid #FFFFFF"});
+    $(this).closest("label").css({
+        borderRight: this.checked ? "3px solid #000000":"0px solid #FFFFFF"
+    });
     $(this).closest("label").css({ paddingRight: this.checked ? "0px":"3px"});
     """
     
@@ -115,38 +114,42 @@ $(document).ready(function(){
 def _makeTogglableWord(testType, word, idNum, boundaryToken):
     
     tokenTxt = ""
-    if boundaryToken != None:
+    if boundaryToken is not None:
         tokenTxt = """<span class="hidden">%s</span>""" % boundaryToken
     
     htmlTxt = """
 <label for="%(idNum)d">
-                <input type="checkbox" name="%(testType)s" id="%(idNum)d" value="%(idNum)d"/>
-                %(word)s""" + tokenTxt + """\n</label>\n\n"""
+<input type="checkbox" name="%(testType)s" id="%(idNum)d" value="%(idNum)d"/>
+%(word)s""" + tokenTxt + """\n</label>\n\n"""
 
-    return htmlTxt % {"testType":testType,"word":word, "idNum":idNum}
+    return htmlTxt % {"testType": testType, "word": word, "idNum": idNum}
 
 
 def _getTogglableWordEmbed(numWords, boundaryMarking):
     
-
     boundaryMarkingCode_showHide = """
-            $("#"+x).closest("label").css({ borderRight: "3px solid #000000"});
-            $("#"+x).closest("label").css({ paddingRight: "0px"});
-    """
+        $("#"+x).closest("label").css({
+        borderRight: "3px solid #000000"
+        });
+        $("#"+x).closest("label").css({ paddingRight: "0px"});
+        """
     
-    boundaryMarkingCode_toggle = """    
-    $(this).closest("label").css({ borderRight: this.checked ? "3px solid #000000":"0px solid #FFFFFF"});
-    $(this).closest("label").css({ paddingRight: this.checked ? "0px":"3px"});"""
-    if boundaryMarking != None:
+    boundaryMarkingCode_toggle = """
+        $(this).closest("label").css({
+        borderRight: this.checked ? "3px solid #000000":"0px solid #FFFFFF"
+        });
+        $(this).closest("label").css({
+        paddingRight: this.checked ? "0px":"3px"
+        });"""
+    
+    if boundaryMarking is not None:
         boundaryMarkingCode_toggle = """
-        $(this).next("span").css({ visibility: this.checked ? "visible":"hidden"});
-        """
+            $(this).next("span").css({
+                visibility: this.checked ? "visible":"hidden"
+            });"""
         boundaryMarkingCode_showHide = """
-        $("#"+x).next("span").css({ visibility: "visible"});
-        """
-    
-    
-
+            $("#"+x).next("span").css({ visibility: "visible"});
+            """
     
     javascript = """
 <script type="text/javascript" src="jquery-1.11.0.min.js"></script>
@@ -208,15 +211,21 @@ $(document).ready(function(){
 });
 </script>"""
 
-    return javascript % {"numWords":numWords, "boundaryMarkingCode_toggle":boundaryMarkingCode_toggle,
-                         "boundaryMarkingCode_showHide":boundaryMarkingCode_showHide}
+    return javascript % {"numWords":
+                         numWords,
+                         "boundaryMarkingCode_toggle":
+                         boundaryMarkingCode_toggle,
+                         "boundaryMarkingCode_showHide":
+                         boundaryMarkingCode_showHide}
 
 
 class BoundaryOrProminenceAbstractPage(abstractPages.AbstractPage):
     
     TEXT_STRING_LIST = []
     
-    def __init__(self, name, transcriptName, minPlays, maxPlays, instructions=None, presentAudio="true", boundaryToken=None, doProminence=True, *args, **kargs):
+    def __init__(self, name, transcriptName, minPlays, maxPlays,
+                 instructions=None, presentAudio="true", boundaryToken=None,
+                 doProminence=True, *args, **kargs):
         
         super(BoundaryOrProminenceAbstractPage, self).__init__(*args, **kargs)
         
@@ -237,47 +246,45 @@ class BoundaryOrProminenceAbstractPage(abstractPages.AbstractPage):
             self.numAudioButtons = 1
         else:
             self.numAudioButtons = 0
-        self.processSubmitList = ["verifyAudioPlayed",]
+        self.processSubmitList = ["verifyAudioPlayed", ]
         
         self.TEXT_STRING_LIST.append(self._buildInstructionsText())
         
         self.checkArgs()
         
-        
     def checkResponseCorrect(self, responseList, correctResponse):
         raise abstractPages.NoCorrectResponseError()
-    
     
     def checkArgs(self):
         
         # Make sure all audio files exist
-        if not os.path.exists(join(self.wavDir, self.name+".ogg")):
-            raise abstractPages.FileDoesNotExist(self.wavDir, self.name+".ogg")
+        if not os.path.exists(join(self.wavDir, self.name + ".ogg")):
+            raise abstractPages.FileDoesNotExist(self.wavDir,
+                                                 self.name + ".ogg")
         
         # Make sure all text files exist
-        if not os.path.exists(join(self.txtDir, self.transcriptName+".txt")):
-            raise abstractPages.FileDoesNotExist(self.txtDir, self.transcriptName+".txt")
+        if not os.path.exists(join(self.txtDir, self.transcriptName + ".txt")):
+            raise abstractPages.FileDoesNotExist(self.txtDir,
+                                                 self.transcriptName + ".txt")
         
         # Make sure all text strings are in the dictionary
         for text in self.TEXT_STRING_LIST:
-            loader.getText(text)        
+            loader.getText(text)
         
-    
     def getValidation(self):
         template = ""
         
         return template
         
-        
     def getNumOutputs(self):
         # One binary label for every word
-        return loader.getNumWords(join(self.txtDir, self.transcriptName+".txt"))
-    
+        return loader.getNumWords(join(self.txtDir,
+                                       self.transcriptName + ".txt"))
     
     def _buildInstructionsText(self):
         textName = [self.sequenceName, "instructions short"]
         
-        if self.instructions != None:
+        if self.instructions is not None:
             textName.insert(1, self.instructions)
         
         return " ".join(textName)
@@ -290,27 +297,31 @@ class BoundaryOrProminenceAbstractPage(abstractPages.AbstractPage):
         '''
         pageTemplate = join(constants.htmlDir, "wavTemplate.html")
         
-        txtFN = join(self.txtDir, self.transcriptName+".txt")
+        txtFN = join(self.txtDir, self.transcriptName + ".txt")
         
         sentenceList = loader.loadTxt(txtFN)
         
-        
         testType = self.sequenceName
         
-        
         # Construct the HTML here
-        htmlTxt = _doBreaksOrProminence(testType, 0, 0, self.name, self._buildInstructionsText(), sentenceList, self.presentAudio, self.boundaryToken)[0]
+        htmlTxt = _doBreaksOrProminence(testType, 0, 0, self.name,
+                                        self._buildInstructionsText(),
+                                        sentenceList, self.presentAudio,
+                                        self.boundaryToken)[0]
     
         if self.presentAudio:
-            embedTxt = audio.getPlayAudioJavaScript(True, 1, self.maxPlays, self.minPlays)
-            embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, [self.name,])
+            embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays,
+                                           self.minPlays)
+            embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
+                                                     [self.name, ])
         else:
             embedTxt = ""
-        embedTxt += "\n\n" + _getProminenceOrBoundaryWordEmbed(self.doProminence)
+        embedTxt += "\n\n"
+        embedTxt += _getProminenceOrBoundaryWordEmbed(self.doProminence)
         
         htmlTxt = html.makeNoWrap(htmlTxt)
         
-        return htmlTxt, pageTemplate, {'embed':embedTxt}
+        return htmlTxt, pageTemplate, {'embed': embedTxt}
 
 
 class BoundaryPage(BoundaryOrProminenceAbstractPage):
@@ -335,7 +346,9 @@ class BoundaryAndProminencePage(abstractPages.AbstractPage):
 
     sequenceName = 'boundary_and_prominence'
 
-    def __init__(self, name, transcriptName, minPlays, maxPlays, instructions=None, presentAudio="true", boundaryToken=None, *args, **kargs):
+    def __init__(self, name, transcriptName, minPlays, maxPlays,
+                 instructions=None, presentAudio="true",
+                 boundaryToken=None, *args, **kargs):
         
         super(BoundaryAndProminencePage, self).__init__(*args, **kargs)
         
@@ -356,23 +369,25 @@ class BoundaryAndProminencePage(abstractPages.AbstractPage):
         
         # Variables that all pages need to define
         if presentAudio == "true":
-            self.numAudioButtons = 2 # Only show one at a time, plays the same audio
+            # Only show one at a time, plays the same audio
+            self.numAudioButtons = 2
         else:
             self.numAudioButtons = 0
-        self.processSubmitList = ["verifyAudioPlayed",]
-        
+        self.processSubmitList = ["verifyAudioPlayed", ]
+    
+    def checkResponseCorrect(self, responseList, correctResponse):
+        raise abstractPages.NoCorrectResponseError()
     
     def getValidation(self):
         template = ""
         
         return template
     
-    
     def getNumOutputs(self):
         # 1 binary boundary mark and 1 prominence mark for every word
-        numWords = loader.getNumWords(join(self.txtDir, self.transcriptName+".txt"))
-        return numWords * 2 
-        
+        numWords = loader.getNumWords(join(self.txtDir,
+                                           self.transcriptName + ".txt"))
+        return numWords * 2
     
     def getOutput(self, form):
         
@@ -382,13 +397,14 @@ class BoundaryAndProminencePage(abstractPages.AbstractPage):
             retList = ",".join(["0", ] * self.getNumOutputs())
             
         return retList
+    
     def getHTML(self):
         '''
         Returns html for a page where users mark both breaks and prominence
         
-        Subjects first mark up the boundaries.  They are then shown the same utterance
-        with their original markings still present.  They are then asked to mark
-        boundaries.
+        Subjects first mark up the boundaries.  They are then shown the same
+        utterance with their original markings still present.  They are then
+        asked to mark boundaries.
         
         'focus' - either 'meaning' or 'acoustics' -- used to print the correct
             instructions
@@ -396,7 +412,7 @@ class BoundaryAndProminencePage(abstractPages.AbstractPage):
         
         pageTemplate = join(constants.htmlDir, "wavTemplate.html")
         
-        txtFN = join(self.txtDir, self.transcriptName+".txt")
+        txtFN = join(self.txtDir, self.transcriptName + ".txt")
         
         sentenceList = loader.loadTxt(txtFN)
         
@@ -408,17 +424,23 @@ class BoundaryAndProminencePage(abstractPages.AbstractPage):
     
         # HTML boundaries
         instructionsText = ["boundary", "instructions short"]
-        if self.instructions != None:
+        if self.instructions is not None:
             instructionsText.insert(1, self.instructions)
-        tmpHTMLTxt, numWords = _doBreaksOrProminence(self.sequenceName, wordIDNum, 0,self.name, 
-                                                     " ".join(instructionsText), 
+        instructions = " ".join(instructionsText)
+        tmpHTMLTxt, numWords = _doBreaksOrProminence(self.sequenceName,
+                                                     wordIDNum, 0, self.name,
+                                                     instructions,
                                                      sentenceList,
-                                                     self.presentAudio, 
+                                                     self.presentAudio,
                                                      self.boundaryToken)
         htmlTxt += "<div>%s</div>" % tmpHTMLTxt
     
-        # HTML from transitioning from the boundary portion of text to the prominence portion
-        htmlTxt += '<br /><br /><input type="button" value="%s" id="halfwaySubmitButton" onclick="ShowHide()"></button>' % loader.getText('continue button')
+        # HTML from transitioning from the boundary portion of text
+        # to the prominence portion
+        continueButtonTxt = loader.getText('continue button')
+        htmlTxt += '''<br /><br /><input type="button" value="%s"
+                    id="halfwaySubmitButton"
+                    onclick="ShowHide()"></button>''' % continueButtonTxt
         htmlTxt += '</div>\n\n<div id="HiddenDiv" style="DISPLAY: none">\n\n'
         
         # HTML prominence
@@ -433,22 +455,18 @@ class BoundaryAndProminencePage(abstractPages.AbstractPage):
                                          self.boundaryToken)[0]
         htmlTxt += "</div>"
                     
-        # Closing off the div for the prominence section
-        #htmlTxt += '</div>' # The last div will be closed off by 'formTemplate2'
-                    
         # Add the javascript and style sheets here
         if self.presentAudio:
-            embedTxt = audio.getPlayAudioJavaScript(True, 2, self.maxPlays, self.minPlays)
-            embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, [self.name,])
+            embedTxt = audio.getPlaybackJS(True, 2, self.maxPlays,
+                                           self.minPlays)
+            embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
+                                                     [self.name, ])
         else:
             embedTxt = ""
 
-        embedTxt += "\n\n" + _getTogglableWordEmbed(numWords, self.boundaryToken)
+        embedTxt += "\n\n" + _getTogglableWordEmbed(numWords,
+                                                    self.boundaryToken)
         
         htmlTxt = html.makeNoWrap(htmlTxt)
         
-        return htmlTxt, pageTemplate, {'embed':embedTxt}
-    
-    
-    
-    
+        return htmlTxt, pageTemplate, {'embed': embedTxt}

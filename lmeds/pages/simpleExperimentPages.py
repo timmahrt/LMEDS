@@ -6,6 +6,7 @@ Created on Mar 1, 2014
 
 '''
 
+import types
 from os.path import join
 
 from lmeds.pages import abstractPages
@@ -25,8 +26,9 @@ if (checkBoxValidate(y["axb"])==true)
   alert("%s");
   return false;
   }
-  return true;
+return true;
 """
+
 
 class SurveyPage(abstractPages.NonValidatingPage):
 
@@ -44,7 +46,6 @@ class SurveyPage(abstractPages.NonValidatingPage):
 
         self.surveyItemList = survey.parseSurveyFile(join(self.surveyRoot,
                                                           self.surveyFN))
-
 
     def _getHTMLTxt(self):
         
@@ -75,7 +76,8 @@ class SurveyPage(abstractPages.NonValidatingPage):
             if elementHTML.strip() == "":
                 itemHTML = "%s" % item.text
             else:
-                itemHTML = "%s) %s<br />%s" % (item.enumStrId, item.text, elementHTML)
+                itemHTML = "%s) %s<br />%s"
+                itemHTML %= (item.enumStrId, item.text, elementHTML)
             
             if item.depth == 1:
                 itemHTML = "<div id='indentedText'>%s</div>" % itemHTML
@@ -88,34 +90,37 @@ class SurveyPage(abstractPages.NonValidatingPage):
         
         javascript = """document.getElementById("%d").selectedIndex = -1;"""
         javascriptList = [javascript % i for i in choiceBoxIndexList]
-    
-            
-        embedTxt = """\n<script type="text/javascript">\nfunction setchoiceboxes() {
-        %s
-        }
-        window.addEventListener("load", setchoiceboxes);\n</script>\n""" % "\n".join(javascriptList)
+        
+        embedTxt = ('\n<script type="text/javascript">\n'
+                    'function setchoiceboxes() {\n'
+                    '%s\n'
+                    '}\n'
+                    'window.addEventListener("load", setchoiceboxes);\n'
+                    '</script>\n')
+        embedTxt %= "\n".join(javascriptList)
         
         htmlTxt = "<div id='longText'>%s</div>" % surveyHTML
         return htmlTxt, embedTxt
-
-
+    
     def getOutput(self, form):
         
         def replaceCommas(inputItem):
-            if type(inputItem) == type([]):
-                outputItem = [inputStr.replace(",", "") for inputStr in inputItem]
+            if isinstance(inputItem, types.ListType):
+                outputItem = [inputStr.replace(",", "")
+                              for inputStr in inputItem]
             else:
                 outputItem = inputItem.replace(",", "")
-            return outputItem 
+            return outputItem
         
         tmpList = []
         k = 0
         
         # Filter out items with no inputs (essentially notes/comments)
         dataFullList = [item for item in self.surveyItemList
-                        if not all([row[0] == "None" for row in item.widgetList])]
+                        if not all([row[0] == "None"
+                                    for row in item.widgetList])]
         
-        for j, item in enumerate(dataFullList):
+        for item in dataFullList:
             
             for i, currentItem in enumerate(item.widgetList):
                 itemType, argList = currentItem
@@ -125,17 +130,18 @@ class SurveyPage(abstractPages.NonValidatingPage):
                 if not value:
                     value = ""
                     if itemType in ["Choice", "Item_List", "Choicebox"]:
-                        value = ","*(len(argList)-1) # 1 comma between every element
+                        # 1 comma between every element
+                        value = "," * (len(argList) - 1)
                 else:
                     value = value.decode("utf-8")
                     
-                    # Remove newlines (because each newline is a new data entry)
+                    # Remove newlines
+                    # (because each newline is a new data entry)
                     if itemType == "Multiline_Textbox":
                         value = replaceCommas(value)
                         newlineChar = utils.detectLineEnding(value)
-                        if newlineChar != None:
-                            value = value.replace(newlineChar, " - ") 
-                            
+                        if newlineChar is not None:
+                            value = value.replace(newlineChar, " - ")
                     
                     elif itemType in ["Choice", "Choicebox"]:
                         if itemType == "Choice":
@@ -143,13 +149,14 @@ class SurveyPage(abstractPages.NonValidatingPage):
                         elif itemType == "Choicebox":
                             index = int(value)
                             
-                        valueList = ["0" for x in xrange(len(argList))]
+                        valueList = ["0", ] * len(argList)
                         valueList[index] = "1"
                         value = ",".join(replaceCommas(valueList))
                         
                     elif itemType in ["Item_List"]:
                         indexList = [argList.index(subVal) for subVal in value]
-                        valueList = ["1" if i in indexList else "0" for i in xrange(len(argList))]
+                        valueList = ["1" if i in indexList else "0"
+                                     for i in xrange(len(argList))]
                         value = ",".join(replaceCommas(valueList))
                     
                     elif itemType == "None":
@@ -163,17 +170,14 @@ class SurveyPage(abstractPages.NonValidatingPage):
         
         return ",".join(tmpList)
     
-    
     def getNumOutputs(self):
-        return -1 # TODO: Accurately calculate this
-
+        return -1  # TODO: Accurately calculate this
 
     def getHTML(self):
         htmlText, embedTxt = self._getHTMLTxt()
         pageTemplate = join(constants.htmlDir, "basicTemplate.html")
         
-        return htmlText, pageTemplate, {'embed':embedTxt}
-
+        return htmlText, pageTemplate, {'embed': embedTxt}
 
 
 class ABNPage(abstractPages.AbstractPage):
@@ -199,46 +203,48 @@ class ABNPage(abstractPages.AbstractPage):
         # Variables that all pages need to define
         self.numAudioButtons = 1
         self.processSubmitList = []
-
+    
     def _getHTMLTxt(self):
         
-        radioButton = '<p><input type="radio" name="abn" value="%(id)s" id="%(id)s" disabled /> <label for="%(id)s">.</label></p>'
+        radioButton = ('<p>\n'
+                       '<input type="radio" name="abn" value="%(id)s" \n'
+                       'id="%(id)s" disabled />\n'
+                       '<label for="%(id)s">.</label>\n'
+                       '</p>\n')
         
-        htmlTxt = """
-        %%s
-    <table class="center">
-    <tr><td>%%s</td><td>%%s</td><td>%%s</td></tr>
-    <tr><td>%s</td><td>%s</td><td>%s</td></tr>
-    </table>""" 
+        htmlTxt = ('%%s\n'
+                   '<table class="center">\n'
+                   '<tr><td>%%s</td><td>%%s</td><td>%%s</td></tr>\n'
+                   '<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n'
+                   '</table>\n'
+                   )
         
-        return htmlTxt % (radioButton % {'id':'0'},
-                          radioButton % {'id':'1'},
-                          radioButton % {'id':'2'})
-        
+        return htmlTxt % (radioButton % {'id': '0'},
+                          radioButton % {'id': '1'},
+                          radioButton % {'id': '2'})
         
     def getValidation(self):
-        abnValidation = """
-        var y=document.forms["languageSurvey"];
-        if (checkBoxValidate(y["abn"])==true)
-          {
-          alert("%s");
-          return false;
-          }
-          return true;
-        """
-        
-#         retPage = abnValidation % loader.getText(self.VALIDATION_STRING)#'Error.  Select one of the three options'
+        abnValidation = ('var y=document.forms["languageSurvey"];\n'
+                         'if (checkBoxValidate(y["abn"])==true)\n'
+                         '{\n'
+                         'alert("%s");\n'
+                         'return false;\n'
+                         '}\n'
+                         'return true;\n'
+                         )
+#         #'Error.  Select one of the three options'
+#         retPage = abnValidation % loader.getText(self.VALIDATION_STRING)
         
         return ""
-        
     
     def getNumOutputs(self):
         return 3
     
-    
     def getHTML(self):
         '''
-        Listeners hear one file and decide if its an example of "textA", "textB" or "None"
+        Listeners hear one file and mark one of three options
+        
+        Options are "textA", "textB" or "None"
         '''
         pageTemplate = join(constants.htmlDir, "axbTemplate.html")
         
@@ -250,29 +256,29 @@ class ABNPage(abstractPages.AbstractPage):
         b = loader.getText("abn b")
         n = loader.getText("abn n")
         
-        availableFunctions = """<script>
-        function enable_checkboxes() {
-        document.getElementById("0").disabled=false;
-        document.getElementById("1").disabled=false;
-        document.getElementById("2").disabled=false;
-        }
-        function disable_checkboxes() {
-        document.getElementById("0").disabled=true;
-        document.getElementById("1").disabled=true;
-        document.getElementById("2").disabled=true;
-        }        
-        </script>
-        """
+        availableFunctions = ('<script>\n'
+                              'function enable_checkboxes() {\n'
+                              'document.getElementById("0").disabled=false;\n'
+                              'document.getElementById("1").disabled=false;\n'
+                              'document.getElementById("2").disabled=false;\n'
+                              '}\n'
+                              'function disable_checkboxes() {\n'
+                              'document.getElementById("0").disabled=true;\n'
+                              'document.getElementById("1").disabled=true;\n'
+                              'document.getElementById("2").disabled=true;\n'
+                              '}\n'
+                              '</script>\n'
+                              )
         
         htmlText = description + "<br />" + self._getHTMLTxt()
         htmlText %= (aHTML, a, b, n)
         
-        embedTxt = audio.getPlayAudioJavaScript(True, 1, self.maxPlays, self.minPlays,
-                                                executeOnFinishSnippet="enable_checkboxes();")
+        embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays, self.minPlays,
+                                       runOnFinish="enable_checkboxes();")
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, [self.audioName])
         embedTxt += "\n\n" + availableFunctions
     
-        return htmlText, pageTemplate, {'embed':embedTxt}
+        return htmlText, pageTemplate, {'embed': embedTxt}
 
 
 class SameDifferentBeepPage(abstractPages.AbstractPage):
@@ -289,28 +295,32 @@ class SameDifferentBeepPage(abstractPages.AbstractPage):
         self.wavDir = self.webSurvey.wavDir
 
         self.submitProcessButtonFlag = False
-        self.nonstandardSubmitProcessList = [('widget', "same_different_beep"),]
+        self.nonstandardSubmitProcessList = [('widget', "same_different_beep"),
+                                             ]
 
         # Variables that all pages need to define
         self.numAudioButtons = 1
         self.processSubmitList = []
         
-    
     def _getHTMLTxt(self):
         
-        radioButton = '<p><input type="radio" name="same_different_beep" value="%(id)s" id="%(id)s" /> <label for="%(id)s">.</label></p>'
+        radioButton = ('<p>\n'
+                       '<input type="radio" name="same_different_beep" '
+                       'value="%(id)s" id="%(id)s" /> \n'
+                       '<label for="%(id)s">.</label>'
+                       '</p>\n'
+                       )
         
-        htmlTxt = """
-        <br /><br />%%s<br /><br />
-    <table class="center">
-    <tr><td>%%s</td><td>%%s</td><td>%%s</td></tr>
-    <tr><td>%s</td><td>%s</td><td>%s</td></tr>
-    </table>""" 
+        htmlTxt = ('<br /><br />%%s<br /><br />\n'
+                   '<table class="center">\n'
+                   '<tr><td>%%s</td><td>%%s</td><td>%%s</td></tr>\n'
+                   '<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n'
+                   '</table>\n'
+                   )
         
-        return htmlTxt % (radioButton % {'id':'0'},
-                          radioButton % {'id':'1'},
-                          radioButton % {'id':'2'},)
-    
+        return htmlTxt % (radioButton % {'id': '0'},
+                          radioButton % {'id': '1'},
+                          radioButton % {'id': '2'},)
     
     def getValidation(self):
         txt = loader.getText('error select same or different')
@@ -319,10 +329,8 @@ class SameDifferentBeepPage(abstractPages.AbstractPage):
         
         return retPage
     
-    
     def getNumOutputs(self):
         return 3
-    
         
     def getHTML(self):
         '''
@@ -341,7 +349,7 @@ class SameDifferentBeepPage(abstractPages.AbstractPage):
         htmlText = description + self._getHTMLTxt()
         htmlText %= (aHTML, sameTxt, differentTxt, beepTxt)
     
-        embedTxt = audio.getPlayAudioJavaScript(True, 1, self.maxPlays, self.minPlays)
+        embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays, self.minPlays)
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, self.audioName1)
 
         return htmlText, pageTemplate, {'embed': embedTxt}
@@ -351,7 +359,8 @@ class SameDifferentPage(abstractPages.AbstractPage):
     
     sequenceName = "same_different"
     
-    def __init__(self, audioName1, audioName2, minPlays, maxPlays, *args, **kargs):
+    def __init__(self, audioName1, audioName2, minPlays,
+                 maxPlays, *args, **kargs):
         super(SameDifferentPage, self).__init__(*args, **kargs)
         
         self.audioName1 = audioName1
@@ -365,21 +374,24 @@ class SameDifferentPage(abstractPages.AbstractPage):
         self.numAudioButtons = 2
         self.processSubmitList = []
         
-    
     def _getHTMLTxt(self):
         
-        radioButton = '<p><input type="radio" name="same_different" value="%(id)s" id="%(id)s" /> <label for="%(id)s">.</label></p>'
+        radioButton = ('<p>\n'
+                       '<input type="radio" name="same_different"'
+                       'value="%(id)s" id="%(id)s" />\n'
+                       '<label for="%(id)s">.</label>\n'
+                       '</p>\n'
+                       )
         
-        htmlTxt = """
-        <br /><br />%%s %%s<br /><br />
-    <table class="center">
-    <tr><td>%%s</td><td>%%s</td></tr>
-    <tr><td>%s</td><td>%s</td></tr>
-    </table>""" 
+        htmlTxt = ('<br /><br />%%s %%s<br /><br />\n'
+                   '<table class="center">\n'
+                   '<tr><td>%%s</td><td>%%s</td></tr>\n'
+                   '<tr><td>%s</td><td>%s</td></tr>\n'
+                   '</table>\n'
+                   )
         
-        return htmlTxt % (radioButton % {'id':'0'},
-                          radioButton % {'id':'1'})
-    
+        return htmlTxt % (radioButton % {'id': '0'},
+                          radioButton % {'id': '1'})
     
     def getValidation(self):
         txt = loader.getText('error select same or different')
@@ -388,10 +400,8 @@ class SameDifferentPage(abstractPages.AbstractPage):
         
         return retPage
     
-    
     def getNumOutputs(self):
         return 2
-    
         
     def getHTML(self):
         '''
@@ -410,8 +420,10 @@ class SameDifferentPage(abstractPages.AbstractPage):
         htmlText = description + self._getHTMLTxt()
         htmlText %= (aHTML, bHTML, sameTxt, differentTxt)
     
-        embedTxt = audio.getPlayAudioJavaScript(True, 2, self.maxPlays, self.minPlays)
-        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, [self.audioName1, self.audioName2])
+        embedTxt = audio.getPlaybackJS(True, 2, self.maxPlays, self.minPlays)
+        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
+                                                 [self.audioName1,
+                                                  self.audioName2])
     
         return htmlText, pageTemplate, {'embed': embedTxt}
 
@@ -420,7 +432,8 @@ class SameDifferentStream(abstractPages.AbstractPage):
     
     sequenceName = "same_different_stream"
     
-    def __init__(self, pauseDuration, minPlays, maxPlays, audioList, *args, **kargs):
+    def __init__(self, pauseDuration, minPlays, maxPlays,
+                 audioList, *args, **kargs):
         super(SameDifferentStream, self).__init__(*args, **kargs)
         
         self.pauseDuration = pauseDuration
@@ -431,27 +444,38 @@ class SameDifferentStream(abstractPages.AbstractPage):
         self.wavDir = self.webSurvey.wavDir
 
         self.submitProcessButtonFlag = False
-        self.nonstandardSubmitProcessList = [('widget', "same_different_stream")]
+        self.nonstandardSubmitProcessList = [('widget',
+                                              "same_different_stream")]
 
         # Variables that all pages need to define
         self.numAudioButtons = 1
-        self.processSubmitList = ["verifyAudioPlayed",]
-        
+        self.processSubmitList = ["verifyAudioPlayed", ]
+    
+    def checkResponseCorrect(self, responseList, correctResponse):
+        '''
+        Same: index=0, Different: index=1
+        '''
+        return abstractPages.checkResponseCorrectByIndex(responseList, 
+                                                         correctResponse)
     
     def _getHTMLTxt(self):
         
-        radioButton = '<p><input type="radio" name="same_different_stream" value="%(id)s" id="%(id)s" disabled /> <label for="%(id)s">.</label></p>'
+        radioButton = ('<p>\n'
+                       '<input type="radio" name="same_different_stream" '
+                       'value="%(id)s" id="%(id)s" disabled /> \n'
+                       '<label for="%(id)s">.</label>\n'
+                       '</p>\n'
+                       )
         
-        htmlTxt = """
-        <br /><br />%%s<br /><br />
-    <table class="center">
-    <tr><td>%%s</td><td>%%s</td></tr>
-    <tr><td>%s</td><td>%s</td></tr>
-    </table>""" 
+        htmlTxt = ('<br /><br />%%s<br /><br />\n'
+                   '<table class="center">\n'
+                   '<tr><td>%%s</td><td>%%s</td></tr>\n'
+                   '<tr><td>%s</td><td>%s</td></tr>\n'
+                   '</table>\n'
+                   )
         
-        return htmlTxt % (radioButton % {'id':'0'},
-                          radioButton % {'id':'1'})
-    
+        return htmlTxt % (radioButton % {'id': '0'},
+                          radioButton % {'id': '1'})
     
     def getValidation(self):
         txt = loader.getText('error select same or different')
@@ -460,10 +484,8 @@ class SameDifferentStream(abstractPages.AbstractPage):
         
         return retPage
     
-    
     def getNumOutputs(self):
         return 2
-    
         
     def getHTML(self):
         '''
@@ -471,31 +493,33 @@ class SameDifferentStream(abstractPages.AbstractPage):
         '''
         pageTemplate = join(constants.htmlDir, "axbTemplate.html")
         
-        availableFunctions = """<script>
-        function enable_checkboxes() {
-        document.getElementById("0").disabled=false;
-        document.getElementById("1").disabled=false;
-        }
-        function disable_checkboxes() {
-        document.getElementById("0").disabled=true;
-        document.getElementById("1").disabled=true;
-        }        
-        </script>
-        """
+        availableFunctions = ('<script>\n'
+                              'function enable_checkboxes() {\n'
+                              'document.getElementById("0").disabled=false;\n'
+                              'document.getElementById("1").disabled=false;\n'
+                              '}\n'
+                              'function disable_checkboxes() {\n'
+                              'document.getElementById("0").disabled=true;\n'
+                              'document.getElementById("1").disabled=true;\n'
+                              '}\n'
+                              '</script>\n'
+                              )
         
-        embedTxt = audio.getPlayAudioJavaScript(True, 1, self.maxPlays, self.minPlays,
-                                                executeOnFinishSnippet="enable_checkboxes();")
-        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, list(set(self.audioList)))
+        embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays, self.minPlays,
+                                       runOnFinish="enable_checkboxes();")
+        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
+                                                 list(set(self.audioList)))
         embedTxt += "\n\n" + availableFunctions
         
         description = loader.getText("same_different_question")
         
         sameTxt = loader.getText("same_different_same")
         differentTxt = loader.getText("same_different_different")
-        
+               
+        audioButtonHTML = audio.generateAudioButton(self.audioList, 0,
+                                                    self.pauseDuration, False)
         htmlText = description + self._getHTMLTxt()
-        htmlText %= (audio.generateAudioButton(self.audioList, 0, self.pauseDuration, False) + "<br />",
-                     sameTxt, differentTxt)
+        htmlText %= (audioButtonHTML + "<br />", sameTxt, differentTxt)
     
         return htmlText, pageTemplate, {'embed': embedTxt}
 
@@ -508,7 +532,8 @@ class ABN(abstractPages.AbstractPage):
     DESCRIPTION_STR = loader.TextString("abn_stream_description")
     NO_ITEM_SELECTED_STR = loader.TextString('error_select_a_b_or_n')
     
-    def __init__(self, pauseDuration, minPlays, maxPlays, beepOption, *args, **kargs):
+    def __init__(self, pauseDuration, minPlays, maxPlays,
+                 beepOption, *args, **kargs):
         super(ABN, self).__init__(*args, **kargs)
         
         self.pauseDuration = pauseDuration
@@ -524,19 +549,17 @@ class ABN(abstractPages.AbstractPage):
 
         # Variables that all pages need to define
 #         self.numAudioButtons = 3
-        self.processSubmitList = ["verifyAudioPlayed",]
-        
+        self.processSubmitList = ["verifyAudioPlayed", ]
     
     def checkResponseCorrect(self, responseList, correctResponse):
         '''
         A: index=0, B: index=1, N: index=2
         '''
-        return abstractPages.checkResponseCorrectByIndex(responseList, correctResponse)
-    
+        return abstractPages.checkResponseCorrectByIndex(responseList,
+                                                         correctResponse)
     
     def _getHTMLTxt(self):
         raise NotImplementedError("Should have implemented this")
-    
     
     def getValidation(self):
         txt = self.validationErrorTxt
@@ -545,14 +568,11 @@ class ABN(abstractPages.AbstractPage):
         
         return retPage
     
-    
     def getNumOutputs(self):
         return 4
     
-    
     def getUniqueAudioFiles(self):
-        raise NotImplementedError( "Should have implemented this" )
-    
+        raise NotImplementedError("Should have implemented this")
         
     def getHTML(self):
         '''
@@ -560,42 +580,44 @@ class ABN(abstractPages.AbstractPage):
         '''
         pageTemplate = join(constants.htmlDir, "axbTemplate.html")
         
-        if self.beepOption == True:
-            availableFunctions = """<script>
-            function enable_checkboxes() {
-            document.getElementById("0").disabled=false;
-            document.getElementById("1").disabled=false;
-            document.getElementById("2").disabled=false;
-            document.getElementById("3").disabled=false;
-            }
-            function disable_checkboxes() {
-            document.getElementById("0").disabled=true;
-            document.getElementById("1").disabled=true;
-            document.getElementById("2").disabled=true;
-            document.getElementById("3").disabled=true;
-            }
-            </script>
-            """
+        if self.beepOption is True:
+            jsFuncs = ('<script>\b'
+                       'function enable_checkboxes() {\n'
+                       'document.getElementById("0").disabled=false;\n'
+                       'document.getElementById("1").disabled=false;\n'
+                       'document.getElementById("2").disabled=false;\n'
+                       'document.getElementById("3").disabled=false;\n'
+                       '}\n'
+                       'function disable_checkboxes() {\n'
+                       'document.getElementById("0").disabled=true;\n'
+                       'document.getElementById("1").disabled=true;\n'
+                       'document.getElementById("2").disabled=true;\n'
+                       'document.getElementById("3").disabled=true;\n'
+                       '}\n'
+                       '</script>\n'
+                       )
+            
         else:
-            availableFunctions = """<script>
-            function enable_checkboxes() {
-            document.getElementById("0").disabled=false;
-            document.getElementById("1").disabled=false;
-            document.getElementById("2").disabled=false;
-            }
-            function disable_checkboxes() {
-            document.getElementById("0").disabled=true;
-            document.getElementById("1").disabled=true;
-            document.getElementById("2").disabled=true;
-            }
-            </script>
-            """
+            jsFuncs = ('<script>\n'
+                       'function enable_checkboxes() {\n'
+                       'document.getElementById("0").disabled=false;\n'
+                       'document.getElementById("1").disabled=false;\n'
+                       'document.getElementById("2").disabled=false;\n'
+                       '}\n'
+                       'function disable_checkboxes() {\n'
+                       'document.getElementById("0").disabled=true;\n'
+                       'document.getElementById("1").disabled=true;\n'
+                       'document.getElementById("2").disabled=true;\n'
+                       '}\n'
+                       '</script>\n'
+                       )
         
-        embedTxt = audio.getPlayAudioJavaScript(True, self.numAudioButtons, self.maxPlays, 
-                                                self.minPlays,
-                                                executeOnFinishSnippet="enable_checkboxes();")
-        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, self.getUniqueAudioFiles())
-        embedTxt += "\n\n" + availableFunctions
+        embedTxt = audio.getPlaybackJS(True, self.numAudioButtons,
+                                       self.maxPlays, self.minPlays,
+                                       runOnFinish="enable_checkboxes();")
+        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
+                                                 self.getUniqueAudioFiles())
+        embedTxt += "\n\n" + jsFuncs
         
         description = loader.getText(self.DESCRIPTION_STR)
         
@@ -609,17 +631,15 @@ class ABN(abstractPages.AbstractPage):
         return htmlText, pageTemplate, {'embed': embedTxt}
     
 
-
 class ABNOneAudio(ABN):
 
     sequenceName = "abn_one_audio"
 
     BEEP_STR = loader.TextString("beep")
     
-
-    def __init__(self, pauseDuration, minPlays, maxPlays, beepOption, 
+    def __init__(self, pauseDuration, minPlays, maxPlays, beepOption,
                  audioList, *args, **kargs):
-        super(ABNOneAudio, self).__init__(pauseDuration, minPlays, maxPlays, 
+        super(ABNOneAudio, self).__init__(pauseDuration, minPlays, maxPlays,
                                           beepOption, *args, **kargs)
         self.audioList = audioList
 
@@ -628,47 +648,54 @@ class ABNOneAudio(ABN):
         # Variables that all pages need to define
         self.numAudioButtons = 1
         
-    
     def _getHTMLTxt(self):
         
-        radioButton = '<p><input type="radio" name="abn_one_audio" value="%(id)s" id="%(id)s" disabled /> <label for="%(id)s">.</label></p>'
+        radioButton = ('<p>\n'
+                       '<input type="radio" name="abn_one_audio" '
+                       'value="%(id)s" id="%(id)s" disabled />\n'
+                       '<label for="%(id)s">.</label>\n'
+                       '</p>\n'
+                       )
         
-        if self.beepOption == False:
-            inputTuple = (audio.generateAudioButton(self.audioList, 0, self.pauseDuration, False), 
-                          radioButton % {'id':'0'},
-                          radioButton % {'id':'1'},
-                          radioButton % {'id':'2'},
+        if self.beepOption is False:
+            inputTuple = (audio.generateAudioButton(self.audioList, 0,
+                                                    self.pauseDuration, False),
+                          radioButton % {'id': '0'},
+                          radioButton % {'id': '1'},
+                          radioButton % {'id': '2'},
                           )
             
-            htmlTxt = """
-            %s
-        <table class="center">
-        <tr><td>%%s</td><td>%%s</td><td>%%s</td></tr>
-        <tr><td>%s</td><td>%s</td><td>%s</td></tr>
-        </table>""" 
+            htmlTxt = ('%s\n'
+                       '<table class="center">\n'
+                       '<tr><td>%%s</td><td>%%s</td><td>%%s</td></tr>\n'
+                       '<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n'
+                       '</table>\n'
+                       )
             
             htmlTxt %= inputTuple
         else:
-            inputTuple = (audio.generateAudioButton(self.audioList, 0, self.pauseDuration, False), 
+            inputTuple = (audio.generateAudioButton(self.audioList, 0,
+                                                    self.pauseDuration, False),
                           loader.getText(self.BEEP_STR),
-                          radioButton % {'id':'0'},
-                          radioButton % {'id':'1'},
-                          radioButton % {'id':'2'},
-                          radioButton % {'id':'3'}
+                          radioButton % {'id': '0'},
+                          radioButton % {'id': '1'},
+                          radioButton % {'id': '2'},
+                          radioButton % {'id': '3'}
                           )
             
-            htmlTxt = """
-            %s
-        <table class="center">
-        <tr>  <td>%%s</td>  <td>%%s</td>  <td>%%s</td>  <td>%s</td>  </tr>
-        <tr>  <td>%s</td>  <td>%s</td>  <td>%s</td>  <td>%s</td>  </tr>
-        </table>""" 
+            htmlTxt = ('%s\n'
+                       '<table class="center">\n'
+                       '<tr>  <td>%%s</td>  <td>%%s</td>    '
+                       '<td>%%s</td>  <td>%s</td>  </tr>\n'
+                       '<tr>  <td>%s</td>  <td>%s</td>    '
+                       '<td>%s</td>  <td>%s</td>  </tr>\n'
+                       '</table>\n'
+                       )
             
             htmlTxt %= inputTuple
 
         return htmlTxt
-
-
+    
     def getUniqueAudioFiles(self):
         return self.audioList
     
@@ -679,10 +706,10 @@ class ABNTwoAudio(ABN):
     
     BEEP_STR = loader.TextString("beep")
     
-    def __init__(self, pauseDuration, minPlays, maxPlays, beepOption, 
+    def __init__(self, pauseDuration, minPlays, maxPlays, beepOption,
                  audioList1, audioList2, *args, **kargs):
-        super(ABNTwoAudio, self).__init__(pauseDuration, minPlays, maxPlays, 
-                                            beepOption, *args, **kargs)
+        super(ABNTwoAudio, self).__init__(pauseDuration, minPlays, maxPlays,
+                                          beepOption, *args, **kargs)
         
         self.audioList1 = audioList1
         self.audioList2 = audioList2
@@ -691,51 +718,57 @@ class ABNTwoAudio(ABN):
         
         # Variables that all pages need to define
         self.numAudioButtons = 2
-
     
     def _getHTMLTxt(self):
         
-        radioButton = '<p><input type="radio" name="abn_two_audio" value="%(id)s" id="%(id)s" disabled /> <label for="%(id)s">.</label></p>'
+        radioButton = ('<p>\n'
+                       '<input type="radio" name="abn_two_audio" '
+                       'value="%(id)s" id="%(id)s" disabled />\n'
+                       '<label for="%(id)s">.</label>\n'
+                       '</p>\n'
+                       )
         
-        audioButton1 = audio.generateAudioButton(self.audioList1, 0, self.pauseDuration, False)
-        audioButton2 = audio.generateAudioButton(self.audioList2, 1, self.pauseDuration, False)
-
+        audioButton1 = audio.generateAudioButton(self.audioList1, 0,
+                                                 self.pauseDuration, False)
+        audioButton2 = audio.generateAudioButton(self.audioList2, 1,
+                                                 self.pauseDuration, False)
         
-        if self.beepOption == False:
-            htmlTxt = """
-        <table class="center">
-        <tr><td>%s</td><td>%s</td></tr>
-        <tr><td>%%s</td><td>%%s</td><td>%%s</td></tr>
-        <tr><td>%s</td><td>%s</td><td>%s</td></tr>
-        </table>""" 
-            
-            inputTuple = (audioButton1,
-                         audioButton2,
-                         radioButton % {'id':'0'}, 
-                         radioButton % {'id':'1'},
-                         radioButton % {'id':'2'},)
-            
-            htmlTxt %= tuple(inputTuple)
-        else:
-            htmlTxt = """
-        <table class="center">
-        <tr>  <td>%s</td>  <td>%s</td><td></td>  </tr>
-        <tr>  <td>%%s</td>  <td>%%s</td>  <td>%%s</td> <td>%s</td>  </tr>
-        <tr>  <td>%s</td>  <td>%s</td> <td>%s</td> <td>%s</td>  </tr>
-        </table>""" 
+        if self.beepOption is False:
+            htmlTxt = ('<table class="center">\n'
+                       '<tr><td>%s</td><td>%s</td></tr>\n'
+                       '<tr><td>%%s</td><td>%%s</td><td>%%s</td></tr>\n'
+                       '<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n'
+                       '</table>\n'
+                       )
             
             inputTuple = (audioButton1,
                           audioButton2,
-                         loader.getText(self.BEEP_STR),
-                         radioButton % {'id':'0'}, 
-                         radioButton % {'id':'1'},
-                         radioButton % {'id':'2'},
-                         radioButton % {'id':'3'})
+                          radioButton % {'id': '0'},
+                          radioButton % {'id': '1'},
+                          radioButton % {'id': '2'},)
+            
+            htmlTxt %= tuple(inputTuple)
+        else:
+            htmlTxt = ('<table class="center">\n'
+                       '<tr>  <td>%s</td>  <td>%s</td><td></td>  </tr>\n'
+                       '<tr>  <td>%%s</td>  <td>%%s</td>  <td>%%s</td> '
+                       '<td>%s</td>  </tr>\n'
+                       '<tr>  <td>%s</td>  <td>%s</td> <td>%s</td> '
+                       '<td>%s</td>  </tr>\n'
+                       '</table>\n'
+                       )
+            
+            inputTuple = (audioButton1,
+                          audioButton2,
+                          loader.getText(self.BEEP_STR),
+                          radioButton % {'id': '0'},
+                          radioButton % {'id': '1'},
+                          radioButton % {'id': '2'},
+                          radioButton % {'id': '3'})
             
             htmlTxt %= inputTuple
 
         return htmlTxt
-    
     
     def getUniqueAudioFiles(self):
         return list(set(self.audioList1 + self.audioList2))
@@ -747,9 +780,9 @@ class ABNThreeAudio(ABN):
     
     BEEP_STR = loader.TextString("beep")
     
-    def __init__(self, pauseDuration, minPlays, maxPlays, beepOption, 
+    def __init__(self, pauseDuration, minPlays, maxPlays, beepOption,
                  audioList1, audioList2, audioList3, *args, **kargs):
-        super(ABNThreeAudio, self).__init__(pauseDuration, minPlays, maxPlays, 
+        super(ABNThreeAudio, self).__init__(pauseDuration, minPlays, maxPlays,
                                             beepOption, *args, **kargs)
         
         self.audioList1 = audioList1
@@ -760,60 +793,67 @@ class ABNThreeAudio(ABN):
         
         # Variables that all pages need to define
         self.numAudioButtons = 3
-
     
     def _getHTMLTxt(self):
         
-        radioButton = '<p><input type="radio" name="abn_three_audio" value="%(id)s" id="%(id)s" disabled /> <label for="%(id)s">.</label></p>'
+        radioButton = ('<p>\n'
+                       '<input type="radio" name="abn_three_audio" '
+                       'value="%(id)s" id="%(id)s" disabled />\n'
+                       '<label for="%(id)s">.</label>\n'
+                       '</p>\n'
+                       )
         
-        audioButton1 = audio.generateAudioButton(self.audioList1, 0, self.pauseDuration, False)
-        audioButton2 = audio.generateAudioButton(self.audioList2, 1, self.pauseDuration, False)
-        audioButton3 = audio.generateAudioButton(self.audioList3, 2, self.pauseDuration, False)
-
+        audioButton1 = audio.generateAudioButton(self.audioList1, 0,
+                                                 self.pauseDuration, False)
+        audioButton2 = audio.generateAudioButton(self.audioList2, 1,
+                                                 self.pauseDuration, False)
+        audioButton3 = audio.generateAudioButton(self.audioList3, 2,
+                                                 self.pauseDuration, False)
         
-        if self.beepOption == False:
-            htmlTxt = """
-        <table class="center">
-        <tr><td>%s</td><td>%s</td><td>%s</td></tr>
-        <tr><td>%%s</td><td>%%s</td><td>%%s</td></tr>
-        <tr><td>%s</td><td>%s</td><td>%s</td></tr>
-        </table>""" 
-            
-            inputTuple = (audioButton1,
-                         audioButton2,
-                         audioButton3,
-                         radioButton % {'id':'0'}, 
-                         radioButton % {'id':'1'},
-                         radioButton % {'id':'2'})
-            
-            htmlTxt %= tuple(inputTuple)
-        else:
-            htmlTxt = """
-        <table class="center">
-        <tr>  <td>%s</td>  <td>%s</td>  <td>%s</td>  <td></td>  </tr>
-        <tr>  <td>%%s</td>  <td>%%s</td>  <td>%%s</td>  <td>%s</td>  </tr>
-        <tr>  <td>%s</td>  <td>%s</td>  <td>%s</td>  <td>%s</td>  </tr>
-        </table>""" 
+        if self.beepOption is False:
+            htmlTxt = ('<table class="center">\n'
+                       '<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n'
+                       '<tr><td>%%s</td><td>%%s</td><td>%%s</td></tr>\n'
+                       '<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n'
+                       '</table>\n'
+                       )
             
             inputTuple = (audioButton1,
                           audioButton2,
                           audioButton3,
-                         loader.getText(self.BEEP_STR),
-                         radioButton % {'id':'0'}, 
-                         radioButton % {'id':'1'},
-                         radioButton % {'id':'2'},
-                         radioButton % {'id':'3'})
+                          radioButton % {'id': '0'},
+                          radioButton % {'id': '1'},
+                          radioButton % {'id': '2'})
+            
+            htmlTxt %= tuple(inputTuple)
+        else:
+            htmlTxt = ('<table class="center">\n'
+                       '<tr>  <td>%s</td>  <td>%s</td>  '
+                       '<td>%s</td>  <td></td>  </tr>\n'
+                       '<tr>  <td>%%s</td>  <td>%%s</td>  '
+                       '<td>%%s</td>  <td>%s</td>  </tr>\n'
+                       '<tr>  <td>%s</td>  <td>%s</td>  '
+                       '<td>%s</td>  <td>%s</td>  </tr>\n'
+                       '</table>\n'
+                       )
+            
+            inputTuple = (audioButton1,
+                          audioButton2,
+                          audioButton3,
+                          loader.getText(self.BEEP_STR),
+                          radioButton % {'id': '0'},
+                          radioButton % {'id': '1'},
+                          radioButton % {'id': '2'},
+                          radioButton % {'id': '3'})
             
             htmlTxt %= inputTuple
 
         return htmlTxt
     
-    
     def getUniqueAudioFiles(self):
         return list(set(self.audioList1 + self.audioList2 + self.audioList3))
 
 
-    
 class ABPage(abstractPages.AbstractPage):
     
     sequenceName = "ab"
@@ -829,24 +869,29 @@ class ABPage(abstractPages.AbstractPage):
 
         # Variables that all pages need to define
         self.numAudioButtons = 1
-        self.processSubmitList = ["validateForm",]
+        self.processSubmitList = ["validateForm", ]
         
-    
     def _getHTMLTxt(self):
         
-        radioButton = '<p><input type="radio" name="ab" value="%(id)s" id="%(id)s" /> <label for="%(id)s">.</label></p>'
+        radioButton = ('<p>\n'
+                       '<input type="radio" name="ab" value="%(id)s" '
+                       'id="%(id)s" />\n'
+                       '<label for="%(id)s">.</label>\n'
+                       '</p>\n'
+                       )
         
-        htmlTxt = """Write statement about how the user should select (A) or (B).<br /><br />
-    <table class="center">
-    <tr><td>A</td><td>B</td></tr>
-    <tr><td>%%s</td><td>%%s</td></tr>
-    <tr><td>%s</td><td>%s</td></tr>
-    </table>"""
-        htmlTxt %= (radioButton % {'id':'0'}, 
-                 radioButton % {'id':'1'})
+        htmlTxt = ('Write statement about how the user should select '
+                   '(A) or (B).<br /><br />\n'
+                   '<table class="center">\n'
+                   '<tr><td>A</td><td>B</td></tr>\n'
+                   '<tr><td>%%s</td><td>%%s</td></tr>\n'
+                   '<tr><td>%s</td><td>%s</td></tr>\n'
+                   '</table>\n'
+                   )
+        htmlTxt %= (radioButton % {'id': '0'},
+                    radioButton % {'id': '1'})
         
-        return htmlTxt 
-    
+        return htmlTxt
     
     def getValidation(self):
         txt = loader.getText('error select a or b')
@@ -855,14 +900,14 @@ class ABPage(abstractPages.AbstractPage):
         
         return retPage
     
-    
     def getNumOutputs(self):
         return 2
     
-    
     def getHTML(self):
         '''
-        Listeners hear one file and decide if its an example of "textA", "textB" or "None"
+        Listeners hear one file and decide if its one of three choices
+        
+        The choices are "textA", "textB" or "None"
         '''
         pageTemplate = join(constants.htmlDir, "axbTemplate.html")
         
@@ -877,17 +922,17 @@ class ABPage(abstractPages.AbstractPage):
         htmlText = description + "<br />" + self.getHTML()
         htmlText %= (aHTML, a, b, n)
         
-        embedTxt = audio.getPlayAudioJavaScript(True, 1, self.maxPlays, self.minPlays)
+        embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays, self.minPlays)
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, [self.audioName])
     
-        return htmlText, pageTemplate, {'embed':embedTxt}  
+        return htmlText, pageTemplate, {'embed': embedTxt}
 
 
 class AXBPage(abstractPages.AbstractPage):
     
     sequenceName = "axb"
 
-    def __init__(self,sourceNameX, compareNameA, compareNameB, 
+    def __init__(self, sourceNameX, compareNameA, compareNameB,
                  minPlays, maxPlays, *args, **kargs):
         
         super(AXBPage, self).__init__(*args, **kargs)
@@ -902,34 +947,35 @@ class AXBPage(abstractPages.AbstractPage):
 
         # Variables that all pages need to define
         self.numAudioButtons = 3
-        self.processSubmitList = ["verifyAudioPlayed", "validateForm",]
-        
+        self.processSubmitList = ["verifyAudioPlayed", "validateForm", ]
     
     def _getHTMLTxt(self):
     
-        radioButton = '<p><input type="radio" name="axb" value="%(id)s" id="%(id)s" /> <label for="%(id)s">.</label></p>'
+        radioButton = ('<p>\n'
+                       '<input type="radio" name="axb" value="%(id)s" '
+                       'id="%(id)s" />\n'
+                       '<label for="%(id)s">.</label>\n'
+                       '</p>\n'
+                       )
         
-        htmlTxt = """%s<br /><br /><br />
-    %s<br /> <br />
-    %%s<br /> <br />
-    <table class="center">
-    <tr><td>%s</td><td>%s</td></tr>
-    <tr><td>%%s</td><td>%%s</td></tr>
-    <tr><td>%s</td><td>%s</td></tr>
-    </table>"""
+        htmlTxt = ('%s<br /><br /><br />\n'
+                   '%s<br /> <br />\n'
+                   '%%s<br /> <br />\n'
+                   '<table class="center">\n'
+                   '<tr><td>%s</td><td>%s</td></tr>\n'
+                   '<tr><td>%%s</td><td>%%s</td></tr>\n'
+                   '<tr><td>%s</td><td>%s</td></tr>\n'
+                   '</table>\n'
+                   )
         htmlTxt %= (loader.getText("axb query"),
-                 loader.getText("axb x"),
-                 loader.getText("axb a"),
-                 loader.getText("axb b"),
-                 radioButton % {'id':'0'}, 
-                 radioButton % {'id':'1'})
+                    loader.getText("axb x"),
+                    loader.getText("axb a"),
+                    loader.getText("axb b"),
+                    radioButton % {'id': '0'},
+                    radioButton % {'id': '1'})
         
-    #     html %= ('<p><input type="radio" value="A" id="A" name="gender" /> <label for="A">Male</label></p>',
-    #             '<p><input type="radio" value="B" id="B" name="gender" /> <label for="B ">Female</label></p>')
-        
-        return htmlTxt    
-
-
+        return htmlTxt
+    
     def getValidation(self):
         txt = loader.getText('error select a or b')
         txt = txt.replace('"', "'")
@@ -937,10 +983,8 @@ class AXBPage(abstractPages.AbstractPage):
         
         return retPage
     
-    
     def getNumOutputs(self):
         return 2
-    
     
     def getHTML(self):
         pageTemplate = join(constants.htmlDir, "axbTemplate.html")
@@ -952,12 +996,14 @@ class AXBPage(abstractPages.AbstractPage):
         htmlText = self._getHTMLTxt()
         htmlText %= (xHTML, aHTML, bHTML)
         
-        embedTxt = audio.getPlayAudioJavaScript(True, 3, self.maxPlays, self.minPlays)
-        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, [self.sourceNameX, self.compareNameA, self.compareNameB])
+        audioNameList = [self.sourceNameX, self.compareNameA,
+                         self.compareNameB]
+        embedTxt = audio.getPlaybackJS(True, 3, self.maxPlays, self.minPlays)
+        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, audioNameList)
         
         htmlText = html.makeNoWrap(htmlText)
         
-        return htmlText, pageTemplate, {'embed':embedTxt}
+        return htmlText, pageTemplate, {'embed': embedTxt}
 
 
 class AudioWithResponsePage(abstractPages.AbstractPage):
@@ -983,10 +1029,15 @@ class AudioWithResponsePage(abstractPages.AbstractPage):
         self.processSubmitList = []
     
     def _getHTMLTxt(self):
-        txtbox = '<textarea name="audio_with_response_page" id="audio_with_response_page" rows="%s" cols="%s" disabled></textarea>' % (self.txtboxRows, self.txtboxCols)
+        txtbox = ('<textarea name="audio_with_response_page" '
+                  'id="audio_with_response_page" rows="%s" cols="%s" '
+                  'disabled></textarea>')
+        txtbox %= (self.txtboxRows, self.txtboxCols)
+        
         return """%s<br /><br />""" + txtbox
     
     def getValidation(self):
+        pass
 #         abnValidation = """
 #         var y=document.forms["languageSurvey"];
 #         if (checkBoxValidate(y["audio_with_response_page"])==true)
@@ -996,8 +1047,9 @@ class AudioWithResponsePage(abstractPages.AbstractPage):
 #           }
 #           return true;
 #         """
-#         
-#         retPage = abnValidation % loader.getText(self.VALIDATION_STRING)#'Error.  Select one of the three options'
+#
+#         #'Error.  Select one of the three options'
+#         retPage = abnValidation % loader.getText(self.VALIDATION_STRING)
         
         return
     
@@ -1013,27 +1065,32 @@ class AudioWithResponsePage(abstractPages.AbstractPage):
                                               self.pauseDuration,
                                               False) + "<br />"
         
-        availableFunctions = """<script>
-        function enable_textbox() {
-        document.getElementById("audio_with_response_page").disabled=false;
-        document.getElementById("audio_with_response_page").focus();
-        }
-        </script>
-        """
-        timeoutJS = "setTimeout(function(){processSubmit()}, %d);" % int(self.timeout*1000)
-        embedTxt = audio.getPlayAudioJavaScript(True, 1, self.maxPlays,
-                                                self.minPlays,
-                                                executeOnFinishSnippet="enable_textbox();" + timeoutJS)
+        jsFuncs = ('<script>\n'
+                   'function enable_textbox() {\n'
+                   'document.getElementById("audio_with_response_page"'
+                   ').disabled=false;\n'
+                   'document.getElementById("audio_with_response_page"'
+                   ').focus();\n'
+                   '}\n'
+                   '</script>\n'
+                   )
+        
+        timeoutJS = "setTimeout(function(){processSubmit()}, %d);"
+        timeoutJS %= int(self.timeout * 1000)
+        runOnFinishJS = "enable_textbox();" + timeoutJS
+        embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays, self.minPlays,
+                                       runOnFinish=runOnFinishJS)
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
                                                  list(set(self.audioList)))
-        embedTxt += availableFunctions
+        embedTxt += jsFuncs
         
         return htmlText, pageTemplate, {'embed': embedTxt}
     
     def getOutput(self, form):
         
         try:
-            value = form.getlist("audio_with_response_page")[0]  # Only one item
+            # Only one item
+            value = form.getlist("audio_with_response_page")[0]
             value = value.decode("utf-8")
         except IndexError:
             value = ""  # They didn't enter anything
@@ -1059,38 +1116,40 @@ class TextResponsePage(abstractPages.AbstractPage):
         
         self.nonstandardSubmitProcessList = []
         if timeout > 0:
-            self.nonstandardSubmitProcessList.append(('timeout', int(self.timeout)))
+            self.nonstandardSubmitProcessList.append(('timeout',
+                                                      int(self.timeout)))
         
         self.numAudioButtons = 0
         self.processSubmitList = []
 
     def _getHTMLTxt(self):
-        txtbox = '<textarea name="audio_with_response_page" id="audio_with_response_page" rows="%s" cols="%s"></textarea>' % (self.txtboxRows, self.txtboxCols)
+        txtbox = ('<textarea name="audio_with_response_page" '
+                  'id="audio_with_response_page" rows="%s" cols="%s">'
+                  '</textarea>'
+                  )
+        txtbox %= (self.txtboxRows, self.txtboxCols)
+        
         return txtbox
-    
     
     def getValidation(self):
         return
     
-    
     def getNumOutputs(self):
         return 1
     
-    
     def getHTML(self):
-    
         htmlText = self._getHTMLTxt()
         pageTemplate = join(constants.htmlDir, "axbTemplate.html")
         
         return htmlText, pageTemplate, {}
     
     def getOutput(self, form):
-        
         try:
-            value = form.getlist("audio_with_response_page")[0] # Only one item
+            # Only one item
+            value = form.getlist("audio_with_response_page")[0]
             value = value.decode("utf-8")
         except IndexError:
-            value = "" # They didn't enter anything
+            value = ""  # They didn't enter anything
         value = value.replace(",", ";")
         newlineChar = utils.detectLineEnding(value)
         if newlineChar is not None:
@@ -1110,42 +1169,42 @@ class AudioListPage(abstractPages.AbstractPage):
         self.audioList = audioList
         self.minPlays = minPlays
         self.maxPlays = maxPlays
-    
-    
+        
         self.wavDir = self.webSurvey.wavDir
 
         self.submitProcessButtonFlag = False
 
         # Variables that all pages need to define
-        self.numAudioButtons = 1 # Although there are many files, there is just one button 
-        self.processSubmitList = ["verifyAudioPlayed",]
         
+        # Although there are many files, there is just one button
+        self.numAudioButtons = 1
+        self.processSubmitList = ["verifyAudioPlayed", ]
     
     def _getHTMLTxt(self):
         return "%s<br /><br />"
     
-    
     def getValidation(self):
-        return 
-    
+        return
     
     def getNumOutputs(self):
         return 0
-    
     
     def getHTML(self):
     
         htmlText = self._getHTMLTxt()
         pageTemplate = join(constants.htmlDir, "axbTemplate.html")
         
-        htmlText %= audio.generateAudioButton(self.audioList, 0, 
-                                              self.pauseDuration, False) + "<br />"
+        htmlText %= audio.generateAudioButton(self.audioList,
+                                              0,
+                                              self.pauseDuration,
+                                              False) + "<br />"
         
-        embedTxt = audio.getPlayAudioJavaScript(True, 1, self.maxPlays, 
-                                                self.minPlays, autosubmitFlag=True)
-        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, list(set(self.audioList)))
+        embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays, self.minPlays,
+                                       autosubmit=True)
+        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
+                                                 list(set(self.audioList)))
         
-        return htmlText, pageTemplate, {'embed':embedTxt}
+        return htmlText, pageTemplate, {'embed': embedTxt}
 
 
 class MemoryPage(abstractPages.AbstractPage):
@@ -1160,7 +1219,6 @@ class MemoryPage(abstractPages.AbstractPage):
         super(MemoryPage, self).__init__(*args, **kargs)
         
         self.name = name
-        
         
         if showAudio == "False":
             minPlays = 0
@@ -1178,47 +1236,50 @@ class MemoryPage(abstractPages.AbstractPage):
         
         # Variables that all pages need to define
         self.numAudioButtons = 1
-        self.processSubmitList = ["verifyAudioPlayed", "validateForm",]
-
+        self.processSubmitList = ["verifyAudioPlayed", "validateForm", ]
 
     def _getHTMLTxt(self):
         
-        radioButton = '<p><input type="radio" name="memory_test" value="%(id)s" id="%(id)s" /> <label for="%(id)s">.</label></p>'
+        radioButton = ('<p>'
+                       '<input type="radio" name="memory_test" '
+                       'value="%(id)s" id="%(id)s" /> '
+                       '<label for="%(id)s">.</label>'
+                       '</p>'
+                       )
         
-        htmlTxt = """
-        %%s
-    <table class="center">
-    <tr><td>%%s</td><td>%%s</td></tr>
-    <tr><td>%s</td><td>%s</td></tr>
-    </table>""" 
+        htmlTxt = ('%%s'
+                   '<table class="center">'
+                   '<tr><td>%%s</td><td>%%s</td></tr>'
+                   '<tr><td>%s</td><td>%s</td></tr>'
+                   '</table>'
+                   )
         
-        return htmlTxt % (radioButton % {'id':'0'},
-                          radioButton % {'id':'1'},)
-        
+        return htmlTxt % (radioButton % {'id': '0'},
+                          radioButton % {'id': '1'},)
         
     def getValidation(self):
-        abnValidation = """
-        var y=document.forms["languageSurvey"];
-        if (checkBoxValidate(y["memory_test"])==true)
-          {
-          alert("%s");
-          return false;
-          }
-          return true;
-        """
+        abnValidation = ('var y=document.forms["languageSurvey"];\n'
+                         'if (checkBoxValidate(y["memory_test"])==true)\n'
+                         '{\n'
+                         'alert("%s");\n'
+                         'return false;\n'
+                         '}\n'
+                         'return true;\n'
+                         )
         
-#         retPage = abnValidation % loader.getText(self.VALIDATION_STRING)#'Error.  Select one of the three options'
+#         #  'Error.  Select one of the three options'
+#         retPage = abnValidation % loader.getText(self.VALIDATION_STRING)
         
         return ""
-        
     
     def getNumOutputs(self):
         return 2
     
-    
     def getHTML(self):
         '''
-        Listeners hear one file and decide if its an example of "textA", "textB" or "None"
+        Listeners hear one file and decide if its one of three choices
+        
+        The choices are "textA", "textB" or "None"
         '''
         pageTemplate = join(constants.htmlDir, "axbTemplate.html")
         
@@ -1232,22 +1293,23 @@ class MemoryPage(abstractPages.AbstractPage):
         a = loader.getText("memory_a")
         b = loader.getText("memory_b")
         
-        txtFN = join(self.txtDir, self.name+".txt")
+        txtFN = join(self.txtDir, self.name + ".txt")
         
         sentenceList = loader.loadTxt(txtFN)
         sentenceTxt = "\n".join(sentenceList)
         
-        htmlText = "<i>" + description + "</i><br /><br />" + sentenceTxt + "<br /><br />"  + self._getHTMLTxt()
+        htmlText = "<i>" + description + "</i><br /><br />" + sentenceTxt
+        htmlText += "<br /><br />" + self._getHTMLTxt()
         htmlText %= (aHTML, a, b)
         
         if self.showAudio:
-            embedTxt = audio.getPlayAudioJavaScript(True, 1, self.maxPlays,
-                                                    self.minPlays)
+            embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays,
+                                           self.minPlays)
             embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, [self.name])
         else:
             embedTxt = ""
     
-        return htmlText, pageTemplate, {'embed':embedTxt}
+        return htmlText, pageTemplate, {'embed': embedTxt}
     
 
 class FillInTheBlankPage(abstractPages.AbstractPage):
@@ -1258,7 +1320,8 @@ class FillInTheBlankPage(abstractPages.AbstractPage):
     
     textStringList = [VALIDATION_STRING, ]
     
-    def __init__(self, name, timeout, answer1, answer2, answer3, *args, **kargs):
+    def __init__(self, name, timeout, answer1, answer2, answer3,
+                 *args, **kargs):
         super(FillInTheBlankPage, self).__init__(*args, **kargs)
         
         self.name = name
@@ -1279,46 +1342,48 @@ class FillInTheBlankPage(abstractPages.AbstractPage):
 
     def _getHTMLTxt(self):
         
-        radioButton = '<p><input type="radio" name="fill_in_the_blank" value="%(id)s" id="%(id)s" /> <label for="%(id)s">.</label></p>'
+        radioButton = ('<p><input type="radio" name="fill_in_the_blank" '
+                       'value="%(id)s" id="%(id)s" />\n'
+                       '<label for="%(id)s">.</label>\n'
+                       '</p>\n'
+                       )
         
-        htmlTxt = """
-    <table class="center">
-    <tr><td>%%s</td><td>%%s</td><td>%%s</td></tr>
-    <tr><td>%s</td><td>%s</td><td>%s</td></tr>
-    </table>""" 
+        htmlTxt = ('<table class="center">\n'
+                   '<tr><td>%%s</td><td>%%s</td><td>%%s</td></tr>\n'
+                   '<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n'
+                   '</table>\n'
+                   )
         
-        return htmlTxt % (radioButton % {'id':'0'},
-                          radioButton % {'id':'1'},
-                          radioButton % {'id':'2'})
-        
-        
+        return htmlTxt % (radioButton % {'id': '0'},
+                          radioButton % {'id': '1'},
+                          radioButton % {'id': '2'})
+    
     def getValidation(self):
-        abnValidation = """
-        var y=document.forms["languageSurvey"];
-        if (checkBoxValidate(y["fill_in_the_blank"])==true)
-          {
-          alert("%s");
-          return false;
-          }
-          return true;
-        """
+        validation = ('var y=document.forms["languageSurvey"];\n'
+                      'if (checkBoxValidate(y["fill_in_the_blank"])==true)\n'
+                      '{\n'
+                      'alert("%s");\n'
+                      'return false;\n'
+                      '}\n'
+                      'return true;\n'
+                      )
         
-        retPage = abnValidation % loader.getText(self.VALIDATION_STRING)#'Error.  Select one of the three options'
+        #  'Error.  Select one of the three options'
+        retPage = validation % loader.getText(self.VALIDATION_STRING)
         
         return retPage
-        
     
     def getNumOutputs(self):
         return 3
 
-
     def getOutput(self, form):
         return abstractPages.getoutput(self.sequenceName, form, True)
     
-    
     def getHTML(self):
         '''
-        Listeners hear one file and decide if its an example of "textA", "textB" or "None"
+        Listeners hear one file and decide if its one of three options
+        
+        The three options are: "textA", "textB" or "None"
         '''
         pageTemplate = join(constants.htmlDir, "axbTemplate.html")
         
@@ -1328,14 +1393,13 @@ class FillInTheBlankPage(abstractPages.AbstractPage):
         b = self.answer2
         c = self.answer3
         
-        txtFN = join(self.txtDir, self.name+".txt")
+        txtFN = join(self.txtDir, self.name + ".txt")
         
         sentenceList = loader.loadTxt(txtFN)
         sentenceTxt = "\n".join(sentenceList)
         
-        htmlText = "<i>" + description + "</i><br /><br />" + sentenceTxt + "<br /><br />"  + self._getHTMLTxt()
+        htmlText = "<i>" + description + "</i><br /><br />" + sentenceTxt
+        htmlText += "<br /><br />" + self._getHTMLTxt()
         htmlText %= (a, b, c)
         
-    
-        return htmlText, pageTemplate, {'embed':""}
-
+        return htmlText, pageTemplate, {'embed': ""}

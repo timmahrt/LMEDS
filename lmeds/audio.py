@@ -1,6 +1,7 @@
 #!/usr/local/bin/python
 # -*- coding: utf-8 -*-
 
+import types
 import os
 from os.path import join
 
@@ -9,28 +10,26 @@ import contextlib
 
 from lmeds import loader
 
-embedTemplate = """
-<audio id="%s" preload="none" oncanplaythrough="increment_audio_loaded_count()"> 
-<source src="%s" type="audio/ogg">
-<source src="%s" type="audio/mpeg">
-</audio>
-"""
+embedTemplate = ('<audio id="%s" preload="none" '
+                 'oncanplaythrough="increment_audio_loaded_count()">'
+                 '<source src="%s" type="audio/ogg">'
+                 '<source src="%s" type="audio/mpeg">'
+                 '</audio>'
+                 )
 
-#embedTemplate = """
-#<embed autostart=false width=1 height=1 id="%s" src="%s"
-#enablejavascript="true" hidden="true"></embed>
-#"""
+_tmpButton = ('<input type="button" id="button%%d" '
+              'value="%s" '
+              '''onClick="EvalSound(this, true, '%%d', %%f, '%%s')">'''
+              )
 
-buttonTemplate = """
-<input type="button" id="button%%d" value="%(button_label)s" onClick="EvalSound(this, true, '%%d', %%f, '%%s')">
-"""
-#<input type="button" value="Play Sound" onClick="EvalSound('%s',this, true, 2)">
-#<input type="button" value="Play Sound" onClick="document.getElementById('%s').play()">
+buttonTemplate = _tmpButton
 
-buttonTemplateExample = """
-<input type="button" id="button%%d" value="%(button_label)s" onClick="EvalSound(this, false, '%%d', %%f, %%s')">
-"""
+_tmpButton = ('<input type="button" id="button%%d" '
+              'value="%s" '
+              '''onClick="EvalSound(this, false, '%%d', %%f, '%%s')">'''
+              )
 
+buttonTemplateExample = _tmpButton % 'false'
 
 playAudioFileJS = '''
     <script>
@@ -74,7 +73,9 @@ function EvalSound() {
 
   audio_buttons_disable()
 
-  document.getElementById('audioFilePlays'+id.toString()).value = parseInt(document.getElementById('audioFilePlays'+id.toString()).value) + 1;
+  var tmpId = 'audioFilePlays'+id.toString()
+  var numTimesPlayed = parseInt(document.getElementById(tmpId).value)
+  document.getElementById(tmpId).value = numTimesPlayed + 1;
   countDict[id] = countDict[id] + 1;
   
   // Enable the submit button if listeners only need to listen to a portion
@@ -113,9 +114,11 @@ function EvalSound() {
   return false;
 }
 function updateProgress(percentComplete) {
-    percentUncomplete = 100 - percentComplete;
-    $('#loading_percent_done').css('width', percentComplete.toString() + "%%");
-    $('#loading_percent_left').css('width', percentUncomplete.toString() + "%%");
+    var percentUncomplete = 100 - percentComplete;
+    var percentCompleteStr = percentComplete.toString() + "%%";
+    var percentUncompleteStr = percentUncomplete.toString() + "%%";
+    $('#loading_percent_done').css('width', percentCompleteStr);
+    $('#loading_percent_left').css('width', percentUncompleteStr);
 }
 function recPlayAudioList(audioList, pauseDurationMS) {
     var soundobj = audioList.shift();
@@ -135,9 +138,9 @@ function recPlayAudioList(audioList, pauseDurationMS) {
     
     // After the audio has finished playing, play the next file in the list
     if (audioList.length > 0) {
-        setTimeout(function(){recPlayAudioList(audioList, pauseDurationMS);}, timeout);
+        setTimeout(function(){recPlayAudioList(audioList, pauseDurationMS);},
+                   timeout);
     }
-
 
 }
 
@@ -169,11 +172,12 @@ function audio_buttons_disable() {
   }
 }
 
-function audio_buttons_enable() 
+function audio_buttons_enable()
 {
+  var silence = silenceFlag == false;
     for (var i=0; i<numSoundFiles;i++)
     {
-        if (silenceFlag == false || %(maxNumPlays)d < 0 || countDict[i] < %(maxNumPlays)d) {
+        if (silence || %(maxNumPlays)d < 0 || countDict[i] < %(maxNumPlays)d) {
           document.getElementById("button"+i.toString()).disabled=false;
           }
         else {
@@ -241,8 +245,8 @@ function verifyFirstAudioPlayed() {
 '''
 
 
-def getPlayAudioJavaScript(doSilence, numItems, maxNumPlays, minNumPlays, 
-	autosubmitFlag=False, executeOnFinishSnippet=None, listenPartialFlag=False):
+def getPlaybackJS(doSilence, numItems, maxNumPlays, minNumPlays,
+                  autosubmit=False, runOnFinish=None, listenPartial=False):
 
     maxNumPlays = int(maxNumPlays)
     minNumPlays = int(minNumPlays)
@@ -252,10 +256,10 @@ def getPlayAudioJavaScript(doSilence, numItems, maxNumPlays, minNumPlays,
     else:
         silenceFlag = 'false'
         
-    if listenPartialFlag:
-        listenPartialFlag = "true"
+    if listenPartial:
+        listenPartial = "true"
     else:
-        listenPartialFlag = "false"
+        listenPartial = "false"
     
     dictionaryTextList = []
     for i in xrange(numItems):
@@ -263,46 +267,53 @@ def getPlayAudioJavaScript(doSilence, numItems, maxNumPlays, minNumPlays,
     countDictionaryText = "\n".join(dictionaryTextList)
     
     # Get error message and make sure it is formatted correctly
-    if minNumPlays < maxNumPlays: # Upper and lower-bound
+    if minNumPlays < maxNumPlays:  # Upper and lower-bound
         errorKey = "error must play audio at least"
-    else: # No upper-bound
+    else:  # No upper-bound
         errorKey = "error must play audio"
         
     errorMsg = loader.getText(errorKey)
     if "%d" not in errorMsg:
-        badFormattedText = "Please add a '%d', for the minimum number of required audio plays, in the text file"
+        # Error message from the developer
+        badFormattedText = ("Please add a '%d', for the minimum number of "
+                            "required audio plays, in the text file"
+                            )
         raise loader.BadlyFormattedTextError(badFormattedText, errorKey)
     
     autoSubmitHTML = ""
-    if autosubmitFlag == True:
+    if autosubmit is True:
         autoSubmitHTML = "setTimeout(function(){processSubmit()}, timeout);"
-    if executeOnFinishSnippet != None:
-        autoSubmitHTML += "\n" + executeOnFinishSnippet
+    if runOnFinish is not None:
+        autoSubmitHTML += "\n" + runOnFinish
     
-    minNumPlaysErrorMsg =  errorMsg % int(minNumPlays)
+    minNumPlaysErrorMsg = errorMsg % int(minNumPlays)
     
-    jsCode = playAudioFileJS % {"silenceFlag":silenceFlag, 
-                                "numSoundFiles":numItems, 
-                                "countDictTxt":countDictionaryText,
-                                "minNumPlays":minNumPlays,
-                                "maxNumPlays":maxNumPlays,
-                                "minNumPlaysErrorMsg":minNumPlaysErrorMsg,
-                                "autosubmit_code":autoSubmitHTML,
-                                "listenPartialFlag":listenPartialFlag}
+    jsCode = playAudioFileJS % {"silenceFlag": silenceFlag,
+                                "numSoundFiles": numItems,
+                                "countDictTxt": countDictionaryText,
+                                "minNumPlays": minNumPlays,
+                                "maxNumPlays": maxNumPlays,
+                                "minNumPlaysErrorMsg": minNumPlaysErrorMsg,
+                                "autosubmit_code": autoSubmitHTML,
+                                "listenPartialFlag": listenPartial}
     
     return jsCode
+
 
 class PathDoesNotExist(Exception):
     
     def __init__(self, path):
+        super(PathDoesNotExist, self).__init__()
         self.path = path
         
     def __str__(self):
         return "ERROR: Folder, %s, does not exist" % self.path
-        
+
+
 class FileNotFound(Exception):
     
     def __init__(self, fnFullPath):
+        super(FileNotFound, self).__init__()
         self.fn = fnFullPath
     
     def __str__(self):
@@ -311,8 +322,8 @@ class FileNotFound(Exception):
     
 loadAudioSnippet_no_progress_bar = """
 if (typeof(load_audio) == "function") {
-	load_audio();
-	}
+    load_audio();
+    }
 """
 
 # loading_progress_show() waits for the audio file(s) to be loaded before
@@ -330,35 +341,25 @@ if (typeof(load_audio) == "function") {
 
     
 def generateEmbed(wavDir, fnList):
-#     embedTxt = ""
-#     for fnFullPath in fnList:
-#         fn = os.path.split(fnFullPath)[1]
-#         name = os.path.splitext(fn)[0]
-#         
-#         basePath = os.path.join(wavDir, name)
-# 
-#         oggFN = basePath + ".ogg"
-#         mp3FN = basePath + ".mp3"
-#         
-#         embedTxt += embedTemplate % (name, oggFN, mp3FN)
     
     if not os.path.exists(wavDir):
         raise PathDoesNotExist(wavDir)
         
     for fn in fnList:
-        fnFullPath = join(wavDir, fn+".ogg")
+        fnFullPath = join(wavDir, fn + ".ogg")
         if not os.path.exists(fnFullPath):
             raise FileNotFound(fnFullPath)
     
     fnSet = set(fnList)
-    nameList = ["'%s'" % os.path.splitext(os.path.split(fn)[1])[0] for fn in fnSet]
+    nameList = ["'%s'" % os.path.splitext(os.path.split(fn)[1])[0]
+                for fn in fnSet]
     nameTxtList = "[%s]" % (','.join(nameList))
     
     embedTxt = '''
 <script>
 var catchFailedAudioLoad = function(e) {
-	var errorMsg = "There was a problem with file: " + this.src;
-	var specErrorMsg;
+    var errorMsg = "There was a problem with file: " + this.src;
+    var specErrorMsg;
    // audio playback failed - show a message saying why
    // to get the source of the audio element use $(this).src
    switch (e.target.error.code) {
@@ -370,10 +371,14 @@ var catchFailedAudioLoad = function(e) {
        specErrorMsg = 'A network error caused the audio download to fail.';
        break;
      case e.target.error.MEDIA_ERR_DECODE:
-       specErrorMsg = 'The audio playback was aborted due to a corruption problem or because the video used features your browser did not support.';
+       specErrorMsg = 'The audio playback was aborted due to a corruption ' +
+                      'problem or because the video used features your ' +
+                      'browser did not support.';
        break;
      case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-       specErrorMsg = 'The video audio not be loaded, either because the server or network failed or because the format is not supported.';
+       specErrorMsg = 'The video audio not be loaded, either because the ' +
+                      'server or network failed or because the format is ' +
+                      'not supported.';
        break;
      default:
        specErrorMsg = 'An unknown error occurred.';
@@ -392,18 +397,18 @@ function load_audio() {
         
         
         if (audio.canPlayType('audio/ogg')) {
-        	audio.type= 'audio/ogg';
+            audio.type= 'audio/ogg';
             audio.src= '%(path)s/' + audioName + '.ogg';
         } else {
             audio.type= 'audio/mpeg';
-            audio.src= '%(path)s/' + audioName + '.mp3';        
+            audio.src= '%(path)s/' + audioName + '.mp3';
         }
         /*
         if (audio.canPlayType('audio/mpeg')) {
             audio.type= 'audio/mpeg';
-            audio.src= '%(path)s/' + audioName + '.mp3'; 
+            audio.src= '%(path)s/' + audioName + '.mp3';
         } else {
-        	audio.type= 'audio/ogg';
+            audio.type= 'audio/ogg';
             audio.src= '%(path)s/' + audioName + '.ogg';
         }*/
         
@@ -416,16 +421,15 @@ function load_audio() {
     }
 }
 </script>
-''' % {'nameList':nameTxtList, 'path':wavDir}
+''' % {'nameList': nameTxtList, 'path': wavDir}
     
-    #embedTxt = "function loadAudio() {\n%s\n}" % embedTxt
     return embedTxt
 
     
 def generateAudioButton(name, idNum, pauseDurationSec=0, example=False):
     
     # Accept 'name' to be a list, but if it is, convert it into a string
-    if type(name) == type([]):
+    if isinstance(name, types.ListType):
         name = ",".join(name)
         
     if example:
@@ -448,9 +452,3 @@ def getSoundFileDuration(fn):
         duration = frames / float(rate)
         
     return duration
-    
-    
-if __name__ == "__main__":
-    print getSoundFileDuration("../wav/apples.wav")
-    
-        

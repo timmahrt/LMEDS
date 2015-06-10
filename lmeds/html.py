@@ -24,8 +24,8 @@ pg2HTML = """
 %(choiceA)s %%(consent)s\n
 <br /><br />\n
 %(choiceB)s %%(dissent)s
-""" % {"choiceA":radioButton % "consent",
-       "choiceB":radioButton % "dissent"
+""" % {"choiceA": radioButton % "consent",
+       "choiceB": radioButton % "dissent"
        }
 
 
@@ -34,10 +34,10 @@ formTemplate = """
 <form class="submit" name="languageSurvey" method="POST">
 %(html)s
 
-<input TYPE="hidden" name="page" value="%(page)s"> 
-<input TYPE="hidden" name="pageNumber" value="%(pageNumber)d"> 
-<input TYPE="hidden" name="cookieTracker" value="%(cookieTracker)s"> 
-<input TYPE="hidden" name="user_name" value="%(user_name)s"> 
+<input TYPE="hidden" name="page" value="%(page)s">
+<input TYPE="hidden" name="pageNumber" value="%(pageNumber)d">
+<input TYPE="hidden" name="cookieTracker" value="%(cookieTracker)s">
+<input TYPE="hidden" name="user_name" value="%(user_name)s">
 <input TYPE="hidden" name="num_items" value="%(num_items)d">
 <input TYPE="hidden" name="task_duration" id="task_duration" value="0">
 %(audio_play_tracking_html)s
@@ -46,7 +46,7 @@ formTemplate = """
 </form>
 """
 
-# This is more or less a HACK 
+# This is more or less a HACK
 # -- we needed to hide the submit button, but only in a single situation
 # -- (it reappears after someone clicks another button--handled via javascript)
 formTemplate2 = """
@@ -55,10 +55,10 @@ formTemplate2 = """
 %(html)s
 
 <div id="HiddenForm" style="DISPLAY: none">
-<input TYPE="hidden" name="page" value="%(page)s"> 
-<input TYPE="hidden" name="pageNumber" value="%(pageNumber)d"> 
-<input TYPE="hidden" name="cookieTracker" value="%(cookieTracker)s"> 
-<input TYPE="hidden" name="user_name" value="%(user_name)s"> 
+<input TYPE="hidden" name="page" value="%(page)s">
+<input TYPE="hidden" name="pageNumber" value="%(pageNumber)d">
+<input TYPE="hidden" name="cookieTracker" value="%(cookieTracker)s">
+<input TYPE="hidden" name="user_name" value="%(user_name)s">
 <input TYPE="hidden" name="num_items" value="%(num_items)d">
 <input TYPE="hidden" name="task_duration" id="task_duration" value="0">
 %(audio_play_tracking_html)s
@@ -68,16 +68,21 @@ formTemplate2 = """
 </form>
 """
 
-submitButtonHTML = """<input name="submitButton" id="submitButton" type="button" value="%s">"""
+submitButtonHTML = ('<input name="submitButton" id="submitButton" '
+                    'type="button" value="%s">'
+                    )
 
 
 def getWidgetSubmit(widgetName):
-    '''Associates all widgets with a provided name (%s) with the submit function'''
-    widgetSubmit = """ 
-      var radios = document.getElementsByName("%s");
-      for (var i = [0]; i < radios.length; i++) {
-        radios[i].onclick=processSubmit;
-    }""" % widgetName    
+    '''
+    Associates all widgets with a provided name (%s) with the submit function
+    '''
+    widgetSubmit = ('var radios = document.getElementsByName("%s");\n'
+                    'for (var i = [0]; i < radios.length; i++) {\n'
+                    'radios[i].onclick=processSubmit;\n'
+                    '}\n')
+    widgetSubmit %= widgetName
+    
     return widgetSubmit
 
 
@@ -97,7 +102,7 @@ def constructSubmitAssociation(tupleList):
     return returnStr
 
 
-# Associates a submit button with 
+# Associates a submit button with
 taskDurationCode = """
 <script type="text/javascript">
 
@@ -116,8 +121,8 @@ function calcDuration() {
     var seconds = Math.floor(time / 100) / 10;
     var minutes = Math.floor(seconds / 60);
     seconds = seconds - (minutes * 60);
-    if(Math.round(seconds) == seconds) { 
-        seconds += '.0'; 
+    if(Math.round(seconds) == seconds) {
+        seconds += '.0';
     }
     var param1 = minutes.toString();
     var param2 = Number(seconds).toFixed(1);
@@ -126,14 +131,17 @@ function calcDuration() {
 </script>
 """
 
-audioPlayTrackingTemplate = '<input TYPE="hidden" name="audioFilePlays%(id)d" id="audioFilePlays%(id)d" value="0" />\n'
+audioPlayTrackingTemplate = ('<input TYPE="hidden" '
+                             'name="audioFilePlays%(id)d" '
+                             'id="audioFilePlays%(id)d" value="0" />\n'
+                             )
 
 
 def createChoice(textList, i, checkboxFlag=False):
     
-    widgetTemplate = """<input type="radio" name="%s" id="%s" value="%s">"""
+    widgetTemplate = '<input type="radio" name="%s" id="%s" value="%s">'
     if checkboxFlag:
-        widgetTemplate = """<input type="checkbox" name="%s" id="%s" value="%s">"""
+        widgetTemplate = '<input type="checkbox" name="%s" id="%s" value="%s">'
         
     choiceList = []
     for text in textList:
@@ -142,14 +150,12 @@ def createChoice(textList, i, checkboxFlag=False):
     
     txtSeparator = "&nbsp;" * 4
     
-    return "%s" %  txtSeparator.join(choiceList), i + 1
+    return "%s" % txtSeparator.join(choiceList), i + 1
 
 
 def createChoicebox(textList, i):
     
     widgetTemplate = """<option value="%s">%s</option>"""
-    
-#     textList = ["",] + textList # Default value is blank
     
     choiceList = []
     for j, text in enumerate(textList):
@@ -168,16 +174,20 @@ def createTextbox(i):
 
 
 def createTextfield(i, argList):
-    width = argList[0] # Units in number of characters
+    width = argList[0]  # Units in number of characters
     numRows = argList[1]
-    return """<textarea name="%s" id="%s" rows="%s" cols="%s"></textarea>""" % (str(i), str(i), numRows, width), i + 1
+    
+    txtFieldStr = '<textarea name="%s" id="%s" rows="%s" cols="%s"></textarea>'
+    txtFieldStr %= (str(i), str(i), numRows, width)
+    
+    return txtFieldStr, i + 1
 
     
 def createWidget(widgetType, argList, i):
 
-    elementDictionary = {"Choice":createChoice,
-                         "Item_List":partial(createChoice, checkboxFlag=True),
-                         "Choicebox":createChoicebox,
+    elementDictionary = {"Choice": createChoice,
+                         "Item_List": partial(createChoice, checkboxFlag=True),
+                         "Choicebox": createChoicebox,
                          }
     
     if widgetType == "Textbox":
@@ -190,9 +200,6 @@ def createWidget(widgetType, argList, i):
     return widgetHTML, i
 
 
-
-        
-        
 def getLoadingNotification():
     loadingText = "- %s - " % loader.getText("loading_progress")
     progressBarTemplate = """
@@ -201,19 +208,20 @@ def getLoadingNotification():
     %s
     <dl class="progress">
         <dt>Completed:</dt>
-        <dd id="loading_percent_done" class="done" style="width:0%%"><a href="/"></a></dd>
+        <dd id="loading_percent_done" class="done" style="width:0%%">
+            <a href="/"></a>
+        </dd>
     
         <dt >Left:</dt>
-        <dd id="loading_percent_left" class="left" style="width:100%%"><a href="/"></a></dd>
+        <dd id="loading_percent_left" class="left" style="width:100%%">
+            <a href="/"></a>
+        </dd>
     </dl>
 
     </div>
     </div>
     """
-    # A button users can use to reload their audio if 
-    #<input type="button" id="reload_button" value="Reload" onClick="reload_audio()">
-    # htmlMsg: If you suspect the audio has failed to load (e.g. due to a poor internet connection) please press this button to attempt to reload the audio.
-
+    
     return progressBarTemplate % loadingText
     
 
@@ -223,10 +231,14 @@ def getProgressBar():
     progressBarTemplate = progressBarText + """
     <dl class="progress">
         <dt>Completed:</dt>
-        <dd class="done" style="width:%(percentComplete)s%%%%"><a href="/"></a></dd>
+        <dd class="done" style="width:%(percentComplete)s%%%%">
+            <a href="/"></a>
+        </dd>
     
         <dt >Left:</dt>
-        <dd class="left" style="width:%(percentUnfinished)s%%%%"><a href="/"></a></dd>
+        <dd class="left" style="width:%(percentUnfinished)s%%%%">
+            <a href="/"></a>
+        </dd>
     </dl>
     """
     
@@ -250,11 +262,13 @@ def validateAndUpdateCookie(pageNum):
         oldPageNum = int(cookie["lastPage"].value)
     except(Cookie.CookieError, KeyError):
         if pageNum != 0:
-            print "\n\nERROR: Page number is %d according to index.cgi but no cookies found" % pageNum
+            print(("\n\nERROR: Page number is %d according to index.cgi "
+                   "but no cookies found") % pageNum)
             exit(0)
     else:
         if pageNum <= oldPageNum and pageNum != 0:
-            print "\n\nERROR: Back button or refresh detected", pageNum, oldPageNum
+            print("\n\nERROR: Back button or refresh detected",
+                  pageNum, oldPageNum)
             exit(0)
     
 #    # Set expiration five minutes from now
@@ -267,7 +281,10 @@ def validateAndUpdateCookie(pageNum):
 
 def printCGIHeader(pageNum, disableRefreshFlag):
     '''
-    This header must get printed before the website will render new text as html
+    Prints the html header
+    
+    This header must get printed before the website will render
+    new text as html
     
     A double newline '\n\n' indicates the end of the header.
     '''
@@ -279,7 +296,7 @@ def printCGIHeader(pageNum, disableRefreshFlag):
         print "Cache-Control: no-cache, no-store, must-revalidate"
         print "Pragma: no-cache"
         print "Expires: 0"
-        cookieStr= validateAndUpdateCookie(pageNum)[0]
+        cookieStr = validateAndUpdateCookie(pageNum)[0]
         print cookieStr
     print "\n\n"
 
@@ -324,13 +341,10 @@ if (returnValue == true) {
 document.languageSurvey.submit()
 }
 
-return returnValue;    
+return returnValue;
 }
 </script>
 """
 
-
-
 if __name__ == "__main__":
     loader.initTextDict("../english.txt")
-

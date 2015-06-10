@@ -31,7 +31,6 @@ class BadlyFormattedTextError(Exception):
         return prefixStr + self.errorTxt
 
 
-    
 class TextNotInDictionaryException(Exception):
     
     def __init__(self, txtKey):
@@ -40,7 +39,8 @@ class TextNotInDictionaryException(Exception):
         self.dictionaryFN = textDict.sourceFN
         
     def __str__(self):
-        errorTxt = "Text key <<%s>> not in dictionary file <<%s>\n\nPlease add text key to dictionary and try again."
+        errorTxt = ("Text key <<%s>> not in dictionary file <<%s>\n\n"
+                    "Please add text key to dictionary and try again.")
         
         return errorTxt % (self.txtKey, self.dictionaryFN)
     
@@ -49,8 +49,11 @@ def loadTxt(fn):
     txt = codecs.open(fn, "rU", encoding="utf-8").read()
     txtList = txt.splitlines()
     
-    txtList = [" ".join(txt.split()) for txt in txtList] # Removes redundant whitespace
-    txtList = [row for row in txtList if row != ""] # Remove empty rows
+    # Removes redundant whitespace
+    txtList = [" ".join(txt.split()) for txt in txtList]
+    
+    # Remove empty rows
+    txtList = [row for row in txtList if row != ""]
 
     return txtList
 
@@ -59,8 +62,8 @@ def loadTxtWHTML(fn):
     txt = codecs.open(fn, "rU", encoding="utf-8").read()
     
     lineEnding = utils.detectLineEnding(txt)
-    if lineEnding == None: # Should be only a single line
-        txtList = [txt,]
+    if lineEnding is None:  # Should be only a single line
+        txtList = [txt, ]
     else:
         txtList = txt.split(lineEnding)
     
@@ -71,10 +74,10 @@ def loadTxtWHTML(fn):
         if row[0] == "<":
             newTxtList.append(row)
         else:
-            newTxtList.extend(" ".join(row.split())) 
+            newTxtList.extend(" ".join(row.split()))
     txtList = newTxtList
     
-    txtList = [row for row in txtList if row != ""] # Remove empty rows
+    txtList = [row for row in txtList if row != ""]  # Remove empty rows
 
     return txtList
 
@@ -93,10 +96,8 @@ def getNumWords(fnFullPath):
 
 class TextString(object):
 
-    
     def __init__(self, wordString):
         self.wordString = wordString
-
 
     def __repr__(self):
         return self.wordString
@@ -104,12 +105,10 @@ class TextString(object):
 
 class TextDict(object):
     
-    
     def __init__(self, fn):
         self.sourceFN = fn
         self.textDict = self._parse()
-        
-        
+    
     def _parse(self):
             
         data = codecs.open(self.sourceFN, "rU", encoding="utf-8").read()
@@ -119,7 +118,7 @@ class TextDict(object):
         
         parsedTextDict = {}
         for key, subList in keyValueList.items():
-            subKeyValueList = self._findSections(['',] + subList, "=")
+            subKeyValueList = self._findSections(['', ] + subList, "=")
             parsedTextDict.update(subKeyValueList)
              
         for key, textList in parsedTextDict.items():
@@ -127,7 +126,6 @@ class TextDict(object):
             
         return parsedTextDict
     
-        
     def _isSeparatingString(self, text):
         '''
         Returns false if there is at least one alphanumeric character
@@ -137,12 +135,11 @@ class TextDict(object):
             isComment &= not char.isalnum()
             
         return isComment
-
-
+    
     def _findSections(self, textList, demarcator):
         
         def newSection(key, valueList, someDict):
-            if key != None:
+            if key is not None:
                 someDict[key] = valueList
                 valueList = []
                 
@@ -165,9 +162,10 @@ class TextDict(object):
         while i < len(textList):
             
             # New section
-            if safeCheck(textList, i, demarcator) and safeCheck(textList,i+2,demarcator):
+            firstCheck = safeCheck(textList, i, demarcator)
+            if firstCheck and safeCheck(textList, i + 2, demarcator):
                 newSection(lastKey, lastList, sectionDictionary)
-                lastKey = textList[i+1]
+                lastKey = textList[i + 1]
                 lastList = []
                 i += 3
             # Still on old section
@@ -183,7 +181,9 @@ class TextDict(object):
         return self.textDict[str(key)]
 
 
-textDict = None # textDict singleton
+textDict = None  # textDict singleton
+
+
 def initTextDict(fn):
     global textDict
     textDict = TextDict(fn)

@@ -6,7 +6,7 @@ Created on Nov 17, 2013
 
 
 def detectLineEnding(txt):
-    returnText = None # A file may have no newlines
+    returnText = None  # A file may have no newlines
     endingsList = ["\r\n", "\n", "\r"]
     truthList = []
     
@@ -21,5 +21,3 @@ def detectLineEnding(txt):
 #     assert(sum(truthList) <= 1)
     
     return returnText
-
-
