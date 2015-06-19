@@ -254,7 +254,7 @@ class WebSurvey(object):
     
         htmlOutput = pageTemplate % htmlDict
         
-        print htmlOutput.encode('utf-8')
+        print(htmlOutput.encode('utf-8'))
     
     def _getLeafSequenceName(self, page):
         '''

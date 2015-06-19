@@ -22,16 +22,16 @@ def checkSequenceFile(survey):
         try:
             page = seq.getPage(pageNum)
         except TypeError:
-            print "Page %d: Problem with the number of arguments" % pageNum
+            print("Page %d: Problem with the number of arguments" % pageNum)
             raise
         except (abstract_pages.FileDoesNotExist,
                 loader.TextNotInDictionaryException), e:
-            print "Page %d: %s" % (pageNum, e)
+            print("Page %d: %s" % (pageNum, e))
             continue
         
         try:
             page = page.getHTML()
         except:
             errStr = "Page %d: Problem with at least one of the arguments: %s"
-            print errStr % (pageNum, seq.testItemList[pageNum])
+            print(errStr % (pageNum, seq.testItemList[pageNum]))
             raise

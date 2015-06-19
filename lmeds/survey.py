@@ -95,5 +95,5 @@ if __name__ == "__main__":
     a = parseSurveyFile("/Users/tmahrt/Sites/tests/percept_is/postsurvey.txt")
     
     for x in a:
-        print x.enumStrId, x.text
-    print 'hi'
+        print("%s, %s" % (x.enumStrId, x.text))
+    print('hi')

@@ -288,17 +288,17 @@ def printCGIHeader(pageNum, disableRefreshFlag):
     
     A double newline '\n\n' indicates the end of the header.
     '''
-    print 'Content-Type: text/html'
+    print('Content-Type: text/html')
     
     if disableRefreshFlag:
-        print "Pragma-directive: no-cache"
-        print "Cache-directive: no-cache"
-        print "Cache-Control: no-cache, no-store, must-revalidate"
-        print "Pragma: no-cache"
-        print "Expires: 0"
+        print("Pragma-directive: no-cache\n"
+              "Cache-directive: no-cache\n"
+              "Cache-Control: no-cache, no-store, must-revalidate\n"
+              "Pragma: no-cache\n"
+              "Expires: 0\n")
         cookieStr = validateAndUpdateCookie(pageNum)[0]
-        print cookieStr
-    print "\n\n"
+        print(cookieStr)
+    print("\n\n")
 
 
 def checkForAudioTag():

@@ -168,7 +168,7 @@ if __name__ == "__main__":
     survey = rptMain.WebSurvey("demo", "sequence2.txt", "english.txt", False)
     ts = TestSequence(survey, "/Users/tmahrt/Sites/tests/demo/sequence2.txt")
     for tmpPageNum in xrange(ts.getNumPages()):
-        print ts.getPageStr(tmpPageNum)
+        print(ts.getPageStr(tmpPageNum))
     
 #     page = ts.getPage(3)
-#     print page.getHTML()
+#     print(page.getHTML())
