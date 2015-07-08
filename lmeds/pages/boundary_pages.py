@@ -17,7 +17,7 @@ from lmeds import loader
 from lmeds.pages import abstract_pages
 
 
-def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textName,
+def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textNameStr,
                           sentenceList, presentAudioFlag, token):
     '''
     This is a helper function.  It does not construct a full page.
@@ -28,7 +28,7 @@ def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textName,
     
     htmlTxt = ""
     
-    instrMsg = ("%s<br /><br />\n\n" % loader.getText(textName))
+    instrMsg = ("%s<br /><br />\n\n" % textNameStr)
     htmlTxt += html.makeWrap(instrMsg)
     
     if presentAudioFlag.lower() == 'true':
@@ -221,8 +221,6 @@ $(document).ready(function(){
 
 class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
     
-    TEXT_STRING_LIST = []
-    
     def __init__(self, name, transcriptName, minPlays, maxPlays,
                  instructions=None, presentAudio="true", boundaryToken=None,
                  doProminence=True, *args, **kargs):
@@ -241,14 +239,20 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         self.txtDir = self.webSurvey.txtDir
         self.wavDir = self.webSurvey.wavDir
     
+        # Strings used in this page
+        txtKeyList = [self.sequenceName, "instructions short"]
+        
+        if self.instructions is not None:
+            txtKeyList.append(self.instructions)
+        txtKeyList.extend(abstract_pages.audioTextKeys)
+        self.textDict.update(loader.batchGetText(txtKeyList))
+    
         # Variables that all pages need to define
         if presentAudio == "true":
             self.numAudioButtons = 1
         else:
             self.numAudioButtons = 0
         self.processSubmitList = ["verifyAudioPlayed", ]
-        
-        self.TEXT_STRING_LIST.append(self._buildInstructionsText())
         
         self.checkArgs()
         
@@ -266,10 +270,6 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         if not os.path.exists(join(self.txtDir, self.transcriptName + ".txt")):
             raise abstract_pages.FileDoesNotExist(self.txtDir,
                                                   self.transcriptName + ".txt")
-        
-        # Make sure all text strings are in the dictionary
-        for text in self.TEXT_STRING_LIST:
-            loader.getText(text)
         
     def getValidation(self):
         template = ""
@@ -299,12 +299,13 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         
         txtFN = join(self.txtDir, self.transcriptName + ".txt")
         
-        sentenceList = loader.loadTxt(txtFN)
+        sentenceList = loader.loadTxtFile(txtFN)
         
         testType = self.sequenceName
         
         # Construct the HTML here
-        htmlTxt = _doBreaksOrProminence(testType, 0, 0, self.name,
+        htmlTxt = _doBreaksOrProminence(testType, 0, 0,
+                                        self.textDict[self.name],
                                         self._buildInstructionsText(),
                                         sentenceList, self.presentAudio,
                                         self.boundaryToken)[0]
@@ -367,6 +368,11 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         self.txtDir = self.webSurvey.txtDir
         self.wavDir = self.webSurvey.wavDir
         
+        # Strings used in this page
+        txtKeyList = ['continue_button']
+        txtKeyList.extend(abstract_pages.audioTextKeys)
+        self.textDict.update(loader.batchGetText(txtKeyList))
+        
         # Variables that all pages need to define
         if presentAudio == "true":
             # Only show one at a time, plays the same audio
@@ -414,7 +420,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         
         txtFN = join(self.txtDir, self.transcriptName + ".txt")
         
-        sentenceList = loader.loadTxt(txtFN)
+        sentenceList = loader.loadTxtFile(txtFN)
         
         # Construct the HTML here
         # There are two passes of the utterance.  The first is for boundaries.
@@ -428,7 +434,8 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
             instructionsText.insert(1, self.instructions)
         instructions = " ".join(instructionsText)
         tmpHTMLTxt, numWords = _doBreaksOrProminence(self.sequenceName,
-                                                     wordIDNum, 0, self.name,
+                                                     wordIDNum, 0,
+                                                     self.textDict[self.name],
                                                      instructions,
                                                      sentenceList,
                                                      self.presentAudio,
@@ -437,7 +444,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
     
         # HTML from transitioning from the boundary portion of text
         # to the prominence portion
-        continueButtonTxt = loader.getText('continue button')
+        continueButtonTxt = self.textDict['continue_button']
         htmlTxt += '''<br /><br /><input type="button" value="%s"
                     id="halfwaySubmitButton"
                     onclick="ShowHide()"></button>''' % continueButtonTxt
@@ -448,7 +455,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         if self.instructions is not None:
             instructionsText.insert(1, self.instructions)
         htmlTxt += _doBreaksOrProminence(self.sequenceName, numWords, 1,
-                                         self.name,
+                                         self.textDict[self.name],
                                          " ".join(instructionsText),
                                          sentenceList,
                                          self.presentAudio,

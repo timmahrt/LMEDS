@@ -22,6 +22,8 @@ if (checkBoxValidate(y["axb"])==true)
   return true;
 """
 
+audioTextKeys = ["error_must_play_audio_at_least", "error_must_play_audio",
+                 'play_button']
 
 class KeyNotInFormError(Exception):
     
@@ -112,6 +114,9 @@ class AbstractPage(object):
         
         self.submitProcessButtonFlag = True
     
+        # Page text strings are stored here
+        self.textDict = {}
+    
         # Variables that all pages need to define
         self.numAudioButtons = None
         self.processSubmitList = None
@@ -160,8 +165,8 @@ class AbstractPage(object):
         htmlTxt = "\n".join(htmlList)
     
         return html.processSubmitHTML % htmlTxt
-
-
+        
+        
 class NonRecordingPage(AbstractPage):
     '''
     For pages that don't record any data

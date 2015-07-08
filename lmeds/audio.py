@@ -268,9 +268,9 @@ def getPlaybackJS(doSilence, numItems, maxNumPlays, minNumPlays,
     
     # Get error message and make sure it is formatted correctly
     if minNumPlays < maxNumPlays:  # Upper and lower-bound
-        errorKey = "error must play audio at least"
+        errorKey = "error_must_play_audio_at_least"
     else:  # No upper-bound
-        errorKey = "error must play audio"
+        errorKey = "error_must_play_audio"
         
     errorMsg = loader.getText(errorKey)
     if "%d" not in errorMsg:
@@ -437,7 +437,7 @@ def generateAudioButton(name, idNum, pauseDurationSec=0, example=False):
     else:
         template = buttonTemplate
 
-    template = template % {'button_label': loader.getText('play button')}
+    template = template % {'button_label': loader.getText('play_button')}
 
     return template % (idNum, idNum, float(pauseDurationSec), name)
 

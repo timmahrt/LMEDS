@@ -185,6 +185,11 @@ class AudioWithResponsePage(abstract_pages.AbstractPage):
         self.pauseDuration = 0
         self.timeout = float(timeout)
         
+        # Strings used in this page
+        txtKeyList = ["memory_instruct", "memory_a", "memory_b"]
+        txtKeyList.extend(abstract_pages.audioTextKeys)
+        self.textDict.update(loader.batchGetText(txtKeyList))
+        
         self.wavDir = self.webSurvey.wavDir
         self.submitProcessButtonFlag = True
         
@@ -212,7 +217,7 @@ class AudioWithResponsePage(abstract_pages.AbstractPage):
 #         """
 #
 #         #'Error.  Select one of the three options'
-#         retPage = abnValidation % loader.getText(self.VALIDATION_STRING)
+#         retPage = abnValidation % self.textDict[self.VALIDATION_STRING]
         
         return
     
@@ -337,6 +342,11 @@ class AudioListPage(abstract_pages.AbstractPage):
 
         self.submitProcessButtonFlag = False
 
+        # Strings used in this page
+        txtKeyList = ["memory_instruct", "memory_a", "memory_b"]
+        txtKeyList.extend(abstract_pages.audioTextKeys)
+        self.textDict.update(loader.batchGetText(txtKeyList))
+
         # Variables that all pages need to define
         
         # Although there are many files, there is just one button
@@ -397,6 +407,11 @@ class MemoryPage(abstract_pages.AbstractPage):
         self.wavDir = self.webSurvey.wavDir
         self.txtDir = self.webSurvey.txtDir
         
+        # Strings used in this page
+        txtKeyList = ["memory_instruct", "memory_a", "memory_b"]
+        txtKeyList.extend(abstract_pages.audioTextKeys)
+        self.textDict.update(loader.batchGetText(txtKeyList))
+        
         # Variables that all pages need to define
         self.numAudioButtons = 1
         self.processSubmitList = ["verifyAudioPlayed", "validateForm", ]
@@ -431,7 +446,7 @@ class MemoryPage(abstract_pages.AbstractPage):
                          )
         
 #         #  'Error.  Select one of the three options'
-#         retPage = abnValidation % loader.getText(self.VALIDATION_STRING)
+#         retPage = abnValidation % self.textDict[self.VALIDATION_STRING]
         
         return ""
     
@@ -451,14 +466,14 @@ class MemoryPage(abstract_pages.AbstractPage):
         else:
             aHTML = ""
         
-        description = loader.getText("memory_instruct")
+        description = self.textDict["memory_instruct"]
         
-        a = loader.getText("memory_a")
-        b = loader.getText("memory_b")
+        a = self.textDict["memory_a"]
+        b = self.textDict["memory_b"]
         
         txtFN = join(self.txtDir, self.name + ".txt")
         
-        sentenceList = loader.loadTxt(txtFN)
+        sentenceList = loader.loadTxtFile(txtFN)
         sentenceTxt = "\n".join(sentenceList)
         
         htmlText = "<i>" + description + "</i><br /><br />" + sentenceTxt
@@ -479,10 +494,6 @@ class FillInTheBlankPage(abstract_pages.AbstractPage):
     
     sequenceName = "fill_in_the_blank"
     
-    VALIDATION_STRING = "three_option_validation"
-    
-    textStringList = [VALIDATION_STRING, ]
-    
     def __init__(self, name, timeout, answer1, answer2, answer3,
                  *args, **kargs):
         super(FillInTheBlankPage, self).__init__(*args, **kargs)
@@ -498,6 +509,10 @@ class FillInTheBlankPage(abstract_pages.AbstractPage):
         self.submitProcessButtonFlag = False
         self.nonstandardSubmitProcessList = [('timeout', timeout),
                                              ('widget', "fill_in_the_blank")]
+        
+        # Strings used in this page
+        txtKeyList = ["three_option_validation", "fill_in_the_blank_instruct"]
+        self.textDict.update(loader.batchGetText(txtKeyList))
         
         # Variables that all pages need to define
         self.processSubmitList = []
@@ -532,7 +547,7 @@ class FillInTheBlankPage(abstract_pages.AbstractPage):
                       )
         
         #  'Error.  Select one of the three options'
-        retPage = validation % loader.getText(self.VALIDATION_STRING)
+        retPage = validation % self.textDict['three_option_validation']
         
         return retPage
     
@@ -550,7 +565,7 @@ class FillInTheBlankPage(abstract_pages.AbstractPage):
         '''
         pageTemplate = join(constants.htmlDir, "axbTemplate.html")
         
-        description = loader.getText("fill_in_the_blank_instruct")
+        description = self.textDict["fill_in_the_blank_instruct"]
         
         a = self.answer1
         b = self.answer2
@@ -558,7 +573,7 @@ class FillInTheBlankPage(abstract_pages.AbstractPage):
         
         txtFN = join(self.txtDir, self.name + ".txt")
         
-        sentenceList = loader.loadTxt(txtFN)
+        sentenceList = loader.loadTxtFile(txtFN)
         sentenceTxt = "\n".join(sentenceList)
         
         htmlText = "<i>" + description + "</i><br /><br />" + sentenceTxt

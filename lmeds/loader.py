@@ -45,7 +45,7 @@ class TextNotInDictionaryException(Exception):
         return errorTxt % (self.txtKey, self.dictionaryFN)
     
 
-def loadTxt(fn):
+def loadTxtFile(fn):
     txt = codecs.open(fn, "rU", encoding="utf-8").read()
     txtList = txt.splitlines()
     
@@ -58,7 +58,7 @@ def loadTxt(fn):
     return txtList
 
 
-def loadTxtWHTML(fn):
+def loadTxtFileWHTML(fn):
     txt = codecs.open(fn, "rU", encoding="utf-8").read()
     
     lineEnding = utils.detectLineEnding(txt)
@@ -86,7 +86,7 @@ def getNumWords(fnFullPath):
     '''
     Get number of words in a transcript
     '''
-    wordList = loadTxt(fnFullPath)
+    wordList = loadTxtFile(fnFullPath)
     numOutputs = 0
     for line in wordList:
         numOutputs += len(line.split(" "))
@@ -196,3 +196,11 @@ def getText(key):
         raise TextNotInDictionaryException(key)
     
     return returnText
+
+
+def batchGetText(keyList):
+    retDict = {}
+    for key in keyList:
+        retDict[key] = getText(key)
+    
+    return retDict

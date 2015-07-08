@@ -37,6 +37,14 @@ class WebSurvey(object):
         
         self.disableRefreshFlag = disableRefreshFlag
         
+        # Strings used by all web surveys
+        txtKeyList = ["continue_button", "metadata_description",
+                      "back_button_warning"]
+        # Common strings not used directly by WebSurvey
+        externalKeyList = ["progress", "loading_progress"]
+        txtKeyList.extend(externalKeyList)
+        self.textDict = loader.batchGetText(txtKeyList)
+        
         # The sourceCGIFN is the CGI file that was requested from the server
         # (basically the cgi file that started the websurvey)
         self.sourceCGIFN = None
@@ -140,7 +148,7 @@ class WebSurvey(object):
         numOutputs = 0  # All non-trial pages do not have any outputs
         if testType in ['prominence', 'boundary', 'oldProminence',
                         'oldBoundary', 'boundary_and_prominence']:
-            wordList = loader.loadTxt(fnFullPath)
+            wordList = loader.loadTxtFile(fnFullPath)
             numOutputs = 0
             for line in wordList:
                 numOutputs += len(line.split(" "))
@@ -191,7 +199,7 @@ class WebSurvey(object):
         
         submitWidgetList = []
         if page.submitProcessButtonFlag:
-            continueButtonTxt = loader.getText('continue button')
+            continueButtonTxt = self.textDict['continue_button']
             submitButtonHTML = html.submitButtonHTML % continueButtonTxt
             submitWidgetList.append(('widget', "submitButton"),)
         else:
@@ -218,12 +226,8 @@ class WebSurvey(object):
         progressBarDict = {'percentComplete': percentComplete,
                            'percentUnfinished': 100 - percentComplete, }
         progressBarHTML = html.getProgressBar() % progressBarDict
-                
-        # FIXME: Optional for now.  Will be required in the future
-        try:
-            metaDescription = loader.getText("metadata_description")
-        except loader.TextNotInDictionaryException:
-            metaDescription = ""
+
+        metaDescription = self.textDict["metadata_description"]
                 
         audioPlayTrackingHTML = ""
         for i in xrange(page.getNumAudioButtons()):
@@ -245,7 +249,7 @@ class WebSurvey(object):
                     'submit_button_slot': submitButtonHTML,
                     }
         
-        backButtonTxt = loader.getText('back button warning')
+        backButtonTxt = self.textDict['back_button_warning']
         pageTemplate = open(pageTemplateFN, "r").read()
         pageTemplate %= {'form': formHTML,
                          'progressBar': progressBarHTML,

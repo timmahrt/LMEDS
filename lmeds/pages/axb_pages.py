@@ -45,6 +45,14 @@ class SameDifferentBeepPage(abstract_pages.AbstractPage):
         self.nonstandardSubmitProcessList = [('widget', "same_different_beep"),
                                              ]
 
+        # Strings used in this page
+        txtKeyList = ['error_select_same_or_different', "same_different_text",
+                      "same_different_same", "same_different_different",
+                      "same_different_beep",
+                      ]
+        txtKeyList.extend(abstract_pages.audioTextKeys)
+        self.textDict.update(loader.batchGetText(txtKeyList))
+
         # Variables that all pages need to define
         self.numAudioButtons = 1
         self.processSubmitList = []
@@ -70,7 +78,7 @@ class SameDifferentBeepPage(abstract_pages.AbstractPage):
                           radioButton % {'id': '2'},)
     
     def getValidation(self):
-        txt = loader.getText('error select same or different')
+        txt = self.textDict['error_select_same_or_different']
         txt = txt.replace('"', "'")
         retPage = abValidation % txt
         
@@ -87,11 +95,11 @@ class SameDifferentBeepPage(abstract_pages.AbstractPage):
         
         aHTML = audio.generateAudioButton(self.audioName1, 0, 0, False)
         
-        description = loader.getText("same_different text")
+        description = self.textDict["same_different_text"]
         
-        sameTxt = loader.getText("same_different same")
-        differentTxt = loader.getText("same_different different")
-        beepTxt = loader.getText("same_different beep")
+        sameTxt = self.textDict["same_different_same"]
+        differentTxt = self.textDict["same_different_different"]
+        beepTxt = self.textDict["same_different_beep"]
         
         htmlText = description + self._getHTMLTxt()
         htmlText %= (aHTML, sameTxt, differentTxt, beepTxt)
@@ -117,6 +125,12 @@ class SameDifferentPage(abstract_pages.AbstractPage):
         
         self.wavDir = self.webSurvey.wavDir
 
+        # Strings used in this page
+        txtKeyList = ['error_select_same_or_different', "same_different_text",
+                      "same_different_same", "same_different_different"]
+        txtKeyList.extend(abstract_pages.audioTextKeys)
+        self.textDict.update(loader.batchGetText(txtKeyList))
+
         # Variables that all pages need to define
         self.numAudioButtons = 2
         self.processSubmitList = []
@@ -141,7 +155,7 @@ class SameDifferentPage(abstract_pages.AbstractPage):
                           radioButton % {'id': '1'})
     
     def getValidation(self):
-        txt = loader.getText('error select same or different')
+        txt = self.textDict['error_select_same_or_different']
         txt = txt.replace('"', "'")
         retPage = abValidation % txt
         
@@ -159,10 +173,10 @@ class SameDifferentPage(abstract_pages.AbstractPage):
         aHTML = audio.generateAudioButton(self.audioName1, 0, 0, False)
         bHTML = audio.generateAudioButton(self.audioName2, 1, 0, False)
         
-        description = loader.getText("same_different text")
+        description = self.textDict["same_different_text"]
         
-        sameTxt = loader.getText("same_different same")
-        differentTxt = loader.getText("same_different different")
+        sameTxt = self.textDict["same_different_same"]
+        differentTxt = self.textDict["same_different_different"]
         
         htmlText = description + self._getHTMLTxt()
         htmlText %= (aHTML, bHTML, sameTxt, differentTxt)
@@ -193,6 +207,13 @@ class SameDifferentStream(abstract_pages.AbstractPage):
         self.submitProcessButtonFlag = False
         self.nonstandardSubmitProcessList = [('widget',
                                               "same_different_stream")]
+
+        # Strings used in this page
+        txtKeyList = ['error_select_same_or_different',
+                      "same_different_question", "same_different_same",
+                      "same_different_different"]
+        txtKeyList.extend(abstract_pages.audioTextKeys)
+        self.textDict.update(loader.batchGetText(txtKeyList))
 
         # Variables that all pages need to define
         self.numAudioButtons = 1
@@ -225,7 +246,7 @@ class SameDifferentStream(abstract_pages.AbstractPage):
                           radioButton % {'id': '1'})
     
     def getValidation(self):
-        txt = loader.getText('error select same or different')
+        txt = self.textDict['error_select_same_or_different']
         txt = txt.replace('"', "'")
         retPage = abValidation % txt
         
@@ -258,10 +279,10 @@ class SameDifferentStream(abstract_pages.AbstractPage):
                                                  list(set(self.audioList)))
         embedTxt += "\n\n" + availableFunctions
         
-        description = loader.getText("same_different_question")
+        description = self.textDict["same_different_question"]
         
-        sameTxt = loader.getText("same_different_same")
-        differentTxt = loader.getText("same_different_different")
+        sameTxt = self.textDict["same_different_same"]
+        differentTxt = self.textDict["same_different_different"]
                
         audioButtonHTML = audio.generateAudioButton(self.audioList, 0,
                                                     self.pauseDuration, False)
@@ -290,6 +311,11 @@ class ABNPage(abstract_pages.AbstractPage):
         
         self.submitProcessButtonFlag = False
         self.nonstandardSubmitProcessList = [('widget', "abn")]
+        
+        # Strings used in this page
+        txtKeyList = ["abn_text", "abn_a", "abn_b", "abn_n"]
+        txtKeyList.extend(abstract_pages.audioTextKeys)
+        self.textDict.update(loader.batchGetText(txtKeyList))
         
         # Variables that all pages need to define
         self.numAudioButtons = 1
@@ -324,7 +350,7 @@ class ABNPage(abstract_pages.AbstractPage):
                          'return true;\n'
                          )
 #         #'Error.  Select one of the three options'
-#         retPage = abnValidation % loader.getText(self.VALIDATION_STRING)
+#         retPage = abnValidation % self.textDict[self.VALIDATION_STRING]
         
         return ""
     
@@ -341,11 +367,11 @@ class ABNPage(abstract_pages.AbstractPage):
         
         aHTML = audio.generateAudioButton(self.audioName, 0, 0, False)
         
-        description = loader.getText("abn text")
+        description = self.textDict["abn_text"]
         
-        a = loader.getText("abn a")
-        b = loader.getText("abn b")
-        n = loader.getText("abn n")
+        a = self.textDict["abn_a"]
+        b = self.textDict["abn_b"]
+        n = self.textDict["abn_n"]
         
         availableFunctions = ('<script>\n'
                               'function enable_checkboxes() {\n'
@@ -374,12 +400,6 @@ class ABNPage(abstract_pages.AbstractPage):
 
 class ABN(abstract_pages.AbstractPage):
     
-    A_STR = loader.TextString("abn_stream_a")
-    B_STR = loader.TextString("abn_stream_b")
-    N_STR = loader.TextString("abn_stream_n")
-    DESCRIPTION_STR = loader.TextString("abn_stream_description")
-    NO_ITEM_SELECTED_STR = loader.TextString('error_select_a_b_or_n')
-    
     def __init__(self, pauseDuration, minPlays, maxPlays,
                  beepOption, *args, **kargs):
         super(ABN, self).__init__(*args, **kargs)
@@ -393,7 +413,13 @@ class ABN(abstract_pages.AbstractPage):
 
         self.submitProcessButtonFlag = False
 
-        self.validationErrorTxt = loader.getText(self.NO_ITEM_SELECTED_STR)
+        # Strings used in this page
+        txtKeyList = ["abn_stream_a", "abn_stream_b", "abn_stream_n",
+                      "abn_stream_description", 'error_select_a_b_or_n']
+        txtKeyList.extend(abstract_pages.audioTextKeys)
+        self.textDict.update(loader.batchGetText(txtKeyList))
+        
+        self.validationErrorTxt = self.textDict['error_select_a_b_or_n']
 
         # Variables that all pages need to define
 #         self.numAudioButtons = 3
@@ -467,11 +493,11 @@ class ABN(abstract_pages.AbstractPage):
                                                  self.getUniqueAudioFiles())
         embedTxt += "\n\n" + jsFuncs
         
-        description = loader.getText(self.DESCRIPTION_STR)
+        description = self.textDict['abn_stream_description']
         
-        aTxt = loader.getText(self.A_STR)
-        bTxt = loader.getText(self.B_STR)
-        nTxt = loader.getText(self.N_STR)
+        aTxt = self.textDict["abn_stream_a"]
+        bTxt = self.textDict["abn_stream_b"]
+        nTxt = self.textDict["abn_stream_c"]
         
         htmlText = description + self._getHTMLTxt()
         htmlText %= (aTxt, bTxt, nTxt)
@@ -482,8 +508,6 @@ class ABN(abstract_pages.AbstractPage):
 class ABNOneAudio(ABN):
 
     sequenceName = "abn_one_audio"
-
-    BEEP_STR = loader.TextString("beep")
     
     def __init__(self, pauseDuration, minPlays, maxPlays, beepOption,
                  audioList, *args, **kargs):
@@ -492,6 +516,10 @@ class ABNOneAudio(ABN):
         self.audioList = audioList
 
         self.nonstandardSubmitProcessList = [('widget', "abn_one_audio")]
+        
+        # Strings used in this page
+        txtKeyList = ['beep']
+        self.textDict.update(loader.batchGetText(txtKeyList))
         
         # Variables that all pages need to define
         self.numAudioButtons = 1
@@ -524,7 +552,7 @@ class ABNOneAudio(ABN):
         else:
             inputTuple = (audio.generateAudioButton(self.audioList, 0,
                                                     self.pauseDuration, False),
-                          loader.getText(self.BEEP_STR),
+                          self.textDict['beep'],
                           radioButton % {'id': '0'},
                           radioButton % {'id': '1'},
                           radioButton % {'id': '2'},
@@ -608,7 +636,7 @@ class ABNTwoAudio(ABN):
             
             inputTuple = (audioButton1,
                           audioButton2,
-                          loader.getText(self.BEEP_STR),
+                          self.textDict['beep'],
                           radioButton % {'id': '0'},
                           radioButton % {'id': '1'},
                           radioButton % {'id': '2'},
@@ -688,7 +716,7 @@ class ABNThreeAudio(ABN):
             inputTuple = (audioButton1,
                           audioButton2,
                           audioButton3,
-                          loader.getText(self.BEEP_STR),
+                          self.textDict['beep'],
                           radioButton % {'id': '0'},
                           radioButton % {'id': '1'},
                           radioButton % {'id': '2'},
@@ -714,6 +742,12 @@ class ABPage(abstract_pages.AbstractPage):
         self.maxPlays = maxPlays
         
         self.wavDir = self.webSurvey.wavDir
+
+        # Strings used in this page
+        txtKeyList = ['error_select_a_or_b', "abn_text",
+                      "abn_a", "abn_b", "abn_n"]
+        txtKeyList.extend(abstract_pages.audioTextKeys)
+        self.textDict.update(loader.batchGetText(txtKeyList))
 
         # Variables that all pages need to define
         self.numAudioButtons = 1
@@ -742,7 +776,7 @@ class ABPage(abstract_pages.AbstractPage):
         return htmlTxt
     
     def getValidation(self):
-        txt = loader.getText('error select a or b')
+        txt = self.textDict['error_select_a_or_b']
         txt = txt.replace('"', "'")
         retPage = abValidation % txt
         
@@ -761,11 +795,11 @@ class ABPage(abstract_pages.AbstractPage):
         
         aHTML = audio.generateAudioButton(self.audioName, 0, 0, False)
         
-        description = loader.getText("abn text")
+        description = self.textDict["abn_text"]
         
-        a = loader.getText("abn a")
-        b = loader.getText("abn b")
-        n = loader.getText("abn n")
+        a = self.textDict["abn_a"]
+        b = self.textDict["abn_b"]
+        n = self.textDict["abn_n"]
         
         htmlText = description + "<br />" + self.getHTML()
         htmlText %= (aHTML, a, b, n)
@@ -793,6 +827,12 @@ class AXBPage(abstract_pages.AbstractPage):
         
         self.wavDir = self.webSurvey.wavDir
 
+        # Strings used in this page
+        txtKeyList = ['axb_query', 'axb_x', 'axb_a', 'axb_b',
+                      'error_select_a_or_b']
+        txtKeyList.extend(abstract_pages.audioTextKeys)
+        self.textDict.update(loader.batchGetText(txtKeyList))
+
         # Variables that all pages need to define
         self.numAudioButtons = 3
         self.processSubmitList = ["verifyAudioPlayed", "validateForm", ]
@@ -815,17 +855,17 @@ class AXBPage(abstract_pages.AbstractPage):
                    '<tr><td>%s</td><td>%s</td></tr>\n'
                    '</table>\n'
                    )
-        htmlTxt %= (loader.getText("axb query"),
-                    loader.getText("axb x"),
-                    loader.getText("axb a"),
-                    loader.getText("axb b"),
+        htmlTxt %= (self.textDict["axb_query"],
+                    self.textDict["axb_x"],
+                    self.textDict["axb_a"],
+                    self.textDict["axb_b"],
                     radioButton % {'id': '0'},
                     radioButton % {'id': '1'})
         
         return htmlTxt
     
     def getValidation(self):
-        txt = loader.getText('error select a or b')
+        txt = self.textDict['error_select_a_or_b']
         txt = txt.replace('"', "'")
         retPage = abValidation % txt
         
