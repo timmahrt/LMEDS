@@ -18,6 +18,13 @@ from lmeds import sequence
 from lmeds import loader
 from lmeds import constants
 
+# Strings used by all web surveys
+TXT_KEY_LIST = ["continue_button", "metadata_description",
+                "back_button_warning"]
+# Common strings not used directly by WebSurvey
+TXT_EXTERNAL_KEY_LIST = ["progress", "loading_progress"]
+TXT_KEY_LIST.extend(TXT_EXTERNAL_KEY_LIST)
+
 
 class WebSurvey(object):
     
@@ -37,13 +44,7 @@ class WebSurvey(object):
         
         self.disableRefreshFlag = disableRefreshFlag
         
-        # Strings used by all web surveys
-        txtKeyList = ["continue_button", "metadata_description",
-                      "back_button_warning"]
-        # Common strings not used directly by WebSurvey
-        externalKeyList = ["progress", "loading_progress"]
-        txtKeyList.extend(externalKeyList)
-        self.textDict = loader.batchGetText(txtKeyList)
+        self.textDict = loader.batchGetText(TXT_KEY_LIST)
         
         # The sourceCGIFN is the CGI file that was requested from the server
         # (basically the cgi file that started the websurvey)

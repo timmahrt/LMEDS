@@ -31,6 +31,20 @@ class BadlyFormattedTextError(Exception):
         return prefixStr + self.errorTxt
 
 
+class SpaceInKeyError(Exception):
+    
+    def __init__(self, key):
+        super(SpaceInKeyError, self).__init__()
+        
+        self.key = key
+        
+    def __str__(self):
+        errorStr = ("Spaces not allowed in dictionary keys.  "
+                    "Space found in key '%s'")
+        
+        return errorStr % self.key
+
+
 class TextNotInDictionaryException(Exception):
     
     def __init__(self, txtKey):
@@ -190,6 +204,9 @@ def initTextDict(fn):
     
 
 def getText(key):
+    if " " in key:
+        raise SpaceInKeyError(key)
+    
     try:
         returnText = textDict.getText(key)
     except KeyError:

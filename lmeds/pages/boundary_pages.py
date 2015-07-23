@@ -219,6 +219,14 @@ $(document).ready(function(){
                          boundaryMarkingCode_showHide}
 
 
+def _buildInstructionsText(textNameList, instructions):
+    
+    if instructions is not None:
+        textNameList.insert(1, instructions)
+    
+    return "_".join(textNameList)
+
+
 class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
     
     def __init__(self, name, transcriptName, minPlays, maxPlays,
@@ -239,12 +247,14 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         self.txtDir = self.webSurvey.txtDir
         self.wavDir = self.webSurvey.wavDir
     
+        instructTextList = [self.sequenceName, "instructions_short"]
+        self.instructText = _buildInstructionsText(instructTextList,
+                                                   instructions)
+    
         # Strings used in this page
-        txtKeyList = [self.sequenceName, "instructions short"]
-        
-        if self.instructions is not None:
-            txtKeyList.append(self.instructions)
+        txtKeyList = []
         txtKeyList.extend(abstract_pages.audioTextKeys)
+        txtKeyList.append(self.instructText)
         self.textDict.update(loader.batchGetText(txtKeyList))
     
         # Variables that all pages need to define
@@ -280,14 +290,6 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         # One binary label for every word
         return loader.getNumWords(join(self.txtDir,
                                        self.transcriptName + ".txt"))
-    
-    def _buildInstructionsText(self):
-        textName = [self.sequenceName, "instructions short"]
-        
-        if self.instructions is not None:
-            textName.insert(1, self.instructions)
-        
-        return " ".join(textName)
         
     def getHTML(self):
         '''
@@ -305,8 +307,8 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         
         # Construct the HTML here
         htmlTxt = _doBreaksOrProminence(testType, 0, 0,
-                                        self.textDict[self.name],
-                                        self._buildInstructionsText(),
+                                        self.name,
+                                        self.textDict[self.instructText],
                                         sentenceList, self.presentAudio,
                                         self.boundaryToken)[0]
     
@@ -368,9 +370,19 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         self.txtDir = self.webSurvey.txtDir
         self.wavDir = self.webSurvey.wavDir
         
+        instructTextList = ["boundary", "instructions_short"]
+        self.stepOneInstructText = _buildInstructionsText(instructTextList,
+                                                          self.instructions)
+        
+        instructTextList = ["prominence", "post_boundary_instructions_short"]
+        self.stepTwoInstructText = _buildInstructionsText(instructTextList,
+                                                          self.instructions)
+        
         # Strings used in this page
         txtKeyList = ['continue_button']
         txtKeyList.extend(abstract_pages.audioTextKeys)
+        txtKeyList.extend([self.stepOneInstructText,
+                           self.stepTwoInstructText])
         self.textDict.update(loader.batchGetText(txtKeyList))
         
         # Variables that all pages need to define
@@ -429,14 +441,11 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         htmlTxt = '<div id="ShownDiv" style="DISPLAY: block">'
     
         # HTML boundaries
-        instructionsText = ["boundary", "instructions short"]
-        if self.instructions is not None:
-            instructionsText.insert(1, self.instructions)
-        instructions = " ".join(instructionsText)
+        stepOneInstructText = self.textDict[self.stepOneInstructText]
         tmpHTMLTxt, numWords = _doBreaksOrProminence(self.sequenceName,
                                                      wordIDNum, 0,
-                                                     self.textDict[self.name],
-                                                     instructions,
+                                                     self.name,
+                                                     stepOneInstructText,
                                                      sentenceList,
                                                      self.presentAudio,
                                                      self.boundaryToken)
@@ -451,12 +460,10 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         htmlTxt += '</div>\n\n<div id="HiddenDiv" style="DISPLAY: none">\n\n'
         
         # HTML prominence
-        instructionsText = ["prominence", "post boundary instructions short"]
-        if self.instructions is not None:
-            instructionsText.insert(1, self.instructions)
+        stepTwoInstructText = self.textDict[self.stepTwoInstructText]
         htmlTxt += _doBreaksOrProminence(self.sequenceName, numWords, 1,
-                                         self.textDict[self.name],
-                                         " ".join(instructionsText),
+                                         self.name,
+                                         stepTwoInstructText,
                                          sentenceList,
                                          self.presentAudio,
                                          self.boundaryToken)[0]
