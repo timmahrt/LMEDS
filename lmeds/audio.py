@@ -18,7 +18,7 @@ embedTemplate = ('<audio id="%s" preload="none" '
                  )
 
 _tmpButton = ('<input type="button" id="button%%d" '
-              'value="%s" '
+              'value="%(button_label)s" '
               '''onClick="EvalSound(this, true, '%%d', %%f, '%%s')">'''
               )
 
@@ -421,7 +421,9 @@ function load_audio() {
     }
 }
 </script>
-''' % {'nameList': nameTxtList, 'path': wavDir}
+''' % {'nameList': nameTxtList,
+       'path': wavDir.replace("\\", "/")  # We use '/' regardless of OS
+       }
     
     return embedTxt
 
