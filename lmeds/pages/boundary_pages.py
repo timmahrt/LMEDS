@@ -74,8 +74,9 @@ def _getProminenceOrBoundaryWordEmbed(isProminence):
     """
     
     javascript = """
-<script type="text/javascript" src="jquery-1.11.0.min.js"></script>
-
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script>if (!window.jQuery) { document.write('<script src="../html/jquery-1.11.0.min.js"><\/script>'); }
+</script>
     
 <style type="text/css">
            /* Style the label so it looks like a button */
@@ -152,8 +153,10 @@ def _getTogglableWordEmbed(numWords, boundaryMarking):
             """
     
     javascript = """
-<script type="text/javascript" src="jquery-1.11.0.min.js"></script>
-    
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script>if (!window.jQuery) { document.write('<script src="../html/jquery-1.11.0.min.js"><\/script>'); }
+</script>
+
 <script>
 function ShowHide()
 {
