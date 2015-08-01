@@ -121,7 +121,7 @@ class TextDict(object):
     
     def __init__(self, fn):
         self.sourceFN = fn
-        self.textDict = self._parse()
+        self.textDict, self.sectionsDict = self._parse()
     
     def _parse(self):
             
@@ -131,14 +131,17 @@ class TextDict(object):
         keyValueList = self._findSections(testItemList, "-")
         
         parsedTextDict = {}
+        sectionsDict = {}
         for key, subList in keyValueList.items():
-            subKeyValueList = self._findSections(['', ] + subList, "=")
-            parsedTextDict.update(subKeyValueList)
+            subKeyValueDict = self._findSections(['', ] + subList, "=")
+            parsedTextDict.update(subKeyValueDict)
+            
+            sectionsDict[key] = subKeyValueDict.keys()
              
         for key, textList in parsedTextDict.items():
             parsedTextDict[key] = "\n".join(textList).strip()
             
-        return parsedTextDict
+        return parsedTextDict, sectionsDict
     
     def _isSeparatingString(self, text):
         '''
