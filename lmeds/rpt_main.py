@@ -134,12 +134,12 @@ class WebSurvey(object):
                               userName, sequenceTitle)
         
         # Go to a special end state if the user does not consent to the study
-        if lastPage.sequenceName == 'consent':
+        if lastPage.pageName == 'consent':
             if form['radio'].value == 'dissent':
                 nextPage = factories.loadPage(self, "consent_end")
     
         # Go to a special end state if the user cannot play audio files
-        if lastPage.sequenceName == 'audio_test':
+        if lastPage.pageName == 'audio_test':
             if form['radio'].value == 'dissent':
                 nextPage = factories.loadPage(self, "audio_test_end", [], {})
     
@@ -184,7 +184,7 @@ class WebSurvey(object):
         
         htmlTxt, pageTemplateFN, updateDict = page.getHTML()
         htmlTxt = html.getLoadingNotification() + htmlTxt
-        testType = page.sequenceName
+        testType = page.pageName
         
         numItems = page.getNumOutputs()
         
@@ -317,7 +317,7 @@ class WebSurvey(object):
         numPlays2 = form.getvalue('audioFilePlays1')
         taskDuration = form.getvalue('task_duration')
         
-        key = page.sequenceName
+        key = page.pageName
         value = page.getOutput(form)
         
         # Serialize data

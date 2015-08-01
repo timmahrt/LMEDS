@@ -21,7 +21,7 @@ from lmeds import utils
 
 class SurveyPage(abstract_pages.NonValidatingPage):
 
-    sequenceName = "survey"
+    pageName = "survey"
     
     def __init__(self, surveyName, *args, **kargs):
         super(SurveyPage, self).__init__(*args, **kargs)
@@ -171,7 +171,7 @@ class SurveyPage(abstract_pages.NonValidatingPage):
 
 class AudioWithResponsePage(abstract_pages.AbstractPage):
     
-    sequenceName = "audio_with_response_page"
+    pageName = "audio_with_response_page"
     
     VALIDATION_STRING = "audio_with_response_validation_string"
     
@@ -272,7 +272,7 @@ class AudioWithResponsePage(abstract_pages.AbstractPage):
 
 class TextResponsePage(abstract_pages.AbstractPage):
     
-    sequenceName = "text_response_page"
+    pageName = "text_response_page"
     
     def __init__(self, timeout, *args, **kargs):
         super(TextResponsePage, self).__init__(*args, **kargs)
@@ -328,7 +328,7 @@ class TextResponsePage(abstract_pages.AbstractPage):
     
 class AudioListPage(abstract_pages.AbstractPage):
 
-    sequenceName = "audio_list"
+    pageName = "audio_list"
 
     def __init__(self, pauseDuration, minPlays, maxPlays, audioList,
                  *args, **kargs):
@@ -382,7 +382,7 @@ class AudioListPage(abstract_pages.AbstractPage):
 
 class MemoryPage(abstract_pages.AbstractPage):
     
-    sequenceName = "memory_test"
+    pageName = "memory_test"
     
     VALIDATION_STRING = "validation_string"
     
@@ -492,7 +492,7 @@ class MemoryPage(abstract_pages.AbstractPage):
 
 class FillInTheBlankPage(abstract_pages.AbstractPage):
     
-    sequenceName = "fill_in_the_blank"
+    pageName = "fill_in_the_blank"
     
     def __init__(self, name, timeout, answer1, answer2, answer3,
                  *args, **kargs):
@@ -555,7 +555,7 @@ class FillInTheBlankPage(abstract_pages.AbstractPage):
         return 3
 
     def getOutput(self, form):
-        return abstract_pages.getoutput(self.sequenceName, form, True)
+        return abstract_pages.getoutput(self.pageName, form, True)
     
     def getHTML(self):
         '''

@@ -101,7 +101,7 @@ class AbstractPage(object):
     '''
     All pages derive from this page directly or indirectly
     '''
-    sequenceName = None
+    pageName = None
     
     def __init__(self, webSurvey, *args, **kargs):
         super(AbstractPage, self).__init__(*args, **kargs)
@@ -135,10 +135,10 @@ class AbstractPage(object):
     
     def getOutput(self, form):
         
-        if self.sequenceName is None:
+        if self.pageName is None:
             raise NotDefinedError()
         
-        return getoutput(self.sequenceName, form)
+        return getoutput(self.pageName, form)
     
     def getNumAudioButtons(self):
         if self.numAudioButtons is None:

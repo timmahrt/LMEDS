@@ -250,7 +250,7 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         self.txtDir = self.webSurvey.txtDir
         self.wavDir = self.webSurvey.wavDir
     
-        instructTextList = [self.sequenceName, "instructions_short"]
+        instructTextList = [self.pageName, "instructions_short"]
         self.instructText = _buildInstructionsText(instructTextList,
                                                    instructions)
     
@@ -306,7 +306,7 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         
         sentenceList = loader.loadTxtFile(txtFN)
         
-        testType = self.sequenceName
+        testType = self.pageName
         
         # Construct the HTML here
         htmlTxt = _doBreaksOrProminence(testType, 0, 0,
@@ -332,7 +332,7 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
 
 class BoundaryPage(BoundaryOrProminenceAbstractPage):
     
-    sequenceName = "boundary"
+    pageName = "boundary"
     
     def __init__(self, *args, **kargs):
         kargs["doProminence"] = False
@@ -341,7 +341,7 @@ class BoundaryPage(BoundaryOrProminenceAbstractPage):
     
 class ProminencePage(BoundaryOrProminenceAbstractPage):
     
-    sequenceName = "prominence"
+    pageName = "prominence"
     
     def __init__(self, *args, **kargs):
         kargs["doProminence"] = True
@@ -350,7 +350,7 @@ class ProminencePage(BoundaryOrProminenceAbstractPage):
 
 class BoundaryAndProminencePage(abstract_pages.AbstractPage):
 
-    sequenceName = 'boundary_and_prominence'
+    pageName = 'boundary_and_prominence'
 
     def __init__(self, name, transcriptName, minPlays, maxPlays,
                  instructions=None, presentAudio="true",
@@ -445,7 +445,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
     
         # HTML boundaries
         stepOneInstructText = self.textDict[self.stepOneInstructText]
-        tmpHTMLTxt, numWords = _doBreaksOrProminence(self.sequenceName,
+        tmpHTMLTxt, numWords = _doBreaksOrProminence(self.pageName,
                                                      wordIDNum, 0,
                                                      self.name,
                                                      stepOneInstructText,
@@ -464,7 +464,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         
         # HTML prominence
         stepTwoInstructText = self.textDict[self.stepTwoInstructText]
-        htmlTxt += _doBreaksOrProminence(self.sequenceName, numWords, 1,
+        htmlTxt += _doBreaksOrProminence(self.pageName, numWords, 1,
                                          self.name,
                                          stepTwoInstructText,
                                          sentenceList,

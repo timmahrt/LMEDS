@@ -30,7 +30,7 @@ return true;
 
 class LoginPage(abstract_pages.NonRecordingPage):
     
-    sequenceName = "login"
+    pageName = "login"
     
     def __init__(self, *args, **kargs):
         
@@ -91,7 +91,7 @@ class LoginPage(abstract_pages.NonRecordingPage):
 
 class LoginErrorPage(LoginPage):
     
-    sequenceName = "login_bad_user_name"
+    pageName = "login_bad_user_name"
         
     def __init__(self, userName, *args, **kargs):
         
@@ -130,7 +130,7 @@ class LoginErrorPage(LoginPage):
 
 class ConsentPage(abstract_pages.NonRecordingPage):
     
-    sequenceName = "consent"
+    pageName = "consent"
     
     def __init__(self, consentName, *args, **kargs):
         
@@ -192,7 +192,7 @@ class ConsentPage(abstract_pages.NonRecordingPage):
     
 class ConsentEndPage(abstract_pages.NonValidatingPage):
     
-    sequenceName = "consent_end"
+    pageName = "consent_end"
     
     def __init__(self, *args, **kargs):
 
@@ -215,7 +215,7 @@ class ConsentEndPage(abstract_pages.NonValidatingPage):
 
 class TextPage(abstract_pages.NonValidatingPage):
 
-    sequenceName = "text_page"
+    pageName = "text_page"
     
     def __init__(self, textName, *args, **kargs):
 
@@ -254,7 +254,7 @@ class TextPage(abstract_pages.NonValidatingPage):
 
 class TextAndAudioPage(abstract_pages.NonValidatingPage):
     
-    sequenceName = "text_and_audio_page"
+    pageName = "text_and_audio_page"
     
     def __init__(self, textName, audioList, *args, **kargs):
         
@@ -300,7 +300,7 @@ class TextAndAudioPage(abstract_pages.NonValidatingPage):
 
 class AudioTestPage(abstract_pages.NonRecordingPage):
     
-    sequenceName = "audio_test"
+    pageName = "audio_test"
     
     def __init__(self, wavName, *args, **kargs):
         super(AudioTestPage, self).__init__(*args, **kargs)
@@ -361,7 +361,7 @@ class AudioTestPage(abstract_pages.NonRecordingPage):
 
 class AudioTestEndPage(abstract_pages.NonValidatingPage):
     
-    sequenceName = "audio_test_end"
+    pageName = "audio_test_end"
     
     def __init__(self, *args, **kargs):
         super(AudioTestEndPage, self).__init__(*args, **kargs)
@@ -383,7 +383,7 @@ class AudioTestEndPage(abstract_pages.NonValidatingPage):
 
 class EndPage(abstract_pages.NonValidatingPage):
     
-    sequenceName = "end"
+    pageName = "end"
     
     def __init__(self, *args, **kargs):
         super(EndPage, self).__init__(*args, **kargs)

@@ -60,7 +60,7 @@ def loadPage(webSurvey, pageName, args=None, kargs=None):
                      boundary_pages.ProminencePage,
                      ]
 
-    pageDict = dict((pageClass.sequenceName, pageClass)
+    pageDict = dict((pageClass.pageName, pageClass)
                     for pageClass in pageClassList)
     
     return pageDict[pageName](*args, **kargs)

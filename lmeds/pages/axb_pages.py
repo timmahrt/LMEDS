@@ -30,7 +30,7 @@ return true;
 
 class SameDifferentBeepPage(abstract_pages.AbstractPage):
     
-    sequenceName = "same_different_beep"
+    pageName = "same_different_beep"
     
     def __init__(self, audioName1, minPlays, maxPlays, *args, **kargs):
         super(SameDifferentBeepPage, self).__init__(*args, **kargs)
@@ -112,7 +112,7 @@ class SameDifferentBeepPage(abstract_pages.AbstractPage):
     
 class SameDifferentPage(abstract_pages.AbstractPage):
     
-    sequenceName = "same_different"
+    pageName = "same_different"
     
     def __init__(self, audioName1, audioName2, minPlays,
                  maxPlays, *args, **kargs):
@@ -191,7 +191,7 @@ class SameDifferentPage(abstract_pages.AbstractPage):
 
 class SameDifferentStream(abstract_pages.AbstractPage):
     
-    sequenceName = "same_different_stream"
+    pageName = "same_different_stream"
     
     def __init__(self, pauseDuration, minPlays, maxPlays,
                  audioList, *args, **kargs):
@@ -294,7 +294,7 @@ class SameDifferentStream(abstract_pages.AbstractPage):
 
 class ABNPage(abstract_pages.AbstractPage):
     
-    sequenceName = "abn"
+    pageName = "abn"
     
     VALIDATION_STRING = "validation_string"
     
@@ -507,7 +507,7 @@ class ABN(abstract_pages.AbstractPage):
 
 class ABNOneAudio(ABN):
 
-    sequenceName = "abn_one_audio"
+    pageName = "abn_one_audio"
     
     def __init__(self, pauseDuration, minPlays, maxPlays, beepOption,
                  audioList, *args, **kargs):
@@ -578,7 +578,7 @@ class ABNOneAudio(ABN):
 
 class ABNTwoAudio(ABN):
     
-    sequenceName = "abn_two_audio"
+    pageName = "abn_two_audio"
     
     BEEP_STR = loader.TextString("beep")
     
@@ -652,7 +652,7 @@ class ABNTwoAudio(ABN):
     
 class ABNThreeAudio(ABN):
     
-    sequenceName = "abn_three_audio"
+    pageName = "abn_three_audio"
     
     BEEP_STR = loader.TextString("beep")
     
@@ -732,7 +732,7 @@ class ABNThreeAudio(ABN):
 
 class ABPage(abstract_pages.AbstractPage):
     
-    sequenceName = "ab"
+    pageName = "ab"
     
     def __init__(self, audioName, minPlays, maxPlays, *args, **kargs):
         super(ABPage, self).__init__(*args, **kargs)
@@ -812,7 +812,7 @@ class ABPage(abstract_pages.AbstractPage):
 
 class AXBPage(abstract_pages.AbstractPage):
     
-    sequenceName = "axb"
+    pageName = "axb"
 
     def __init__(self, sourceNameX, compareNameA, compareNameB,
                  minPlays, maxPlays, *args, **kargs):
