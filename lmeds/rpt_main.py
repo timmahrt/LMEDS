@@ -39,7 +39,10 @@ class WebSurvey(object):
         self.surveyName = surveyName
         self.sequenceFN = join(self.surveyRoot, sequenceFN)
         self.testSequence = sequence.TestSequence(self, self.sequenceFN)
-        self.languageFileFN = join(self.surveyRoot, languageFileFN)
+        if languageFileFN is not None:
+            languageFileFN = join(self.surveyRoot, languageFileFN)
+        self.languageFileFN = languageFileFN
+        
         loader.initTextDict(self.languageFileFN)
         
         self.disableRefreshFlag = disableRefreshFlag

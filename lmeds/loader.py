@@ -195,12 +195,21 @@ class TextDict(object):
         return self.textDict[str(key)]
 
 
+class EmptyDict(object):
+    
+    def getText(self, key):
+        return None
+
+
 textDict = None  # textDict singleton
 
 
-def initTextDict(fn):
+def initTextDict(fn=None):
     global textDict
-    textDict = TextDict(fn)
+    if fn is not None:
+        textDict = TextDict(fn)
+    else:
+        textDict = EmptyDict()
     
 
 def getText(key):
