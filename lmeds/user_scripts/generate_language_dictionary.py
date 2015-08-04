@@ -73,10 +73,14 @@ def generateLanguageDictionary(mode, testName, sequenceFN, outputFN):
     # Load the regular cases
     for i in xrange(ts.getNumPages()):
         page = ts.getPage(i)
-        if page.pageName not in pageNameList:
+
+        txtKeyList = page.textDict.keys()
+        
+        # Only consider pages that have associated text strings
+        if page.pageName not in pageNameList and len(txtKeyList) > 0:
             pageNameList.append(page.pageName)
         
-        for txtKey in page.textDict.keys():
+        for txtKey in txtKeyList:
             txtKeyDict.setdefault(txtKey, [])
             txtKeyDict[txtKey].append(page.pageName)
 
@@ -161,7 +165,7 @@ if __name__ == "__main__":
                               "the dictionary any textkeys not used in the "
                               "sequence file."
                               "'new' (the default option) creates a new "
-                              "dictionary from scratch. If a dictionary "
+                              "dictionary from scratch--and if a dictionary "
                               "already exists, then it does nothing."
                               ))
     parser.add_argument('test_name', action='store',
