@@ -4,12 +4,15 @@ Created on Jul 15, 2014
 @author: tmahrt
 '''
 
+import os
 import sys
-CODE_ROOT = ""
-sys.path.append(CODE_ROOT)
+from os.path import dirname, abspath
 
-from lmeds import sequence
-from lmeds import loader
+os.chdir(dirname(dirname(abspath(__file__))))
+sys.path.append(dirname(dirname(os.path.split(abspath(__file__))[0])))
+
+from lmeds.io import sequence
+from lmeds.io import loader
 
 from lmeds.pages import abstract_pages
 
@@ -23,7 +26,7 @@ def checkSequenceFile(survey):
             page = seq.getPage(pageNum)
         except TypeError:
             print("Page %d: Problem with the number of arguments" % pageNum)
-            raise
+            continue
         except (abstract_pages.FileDoesNotExist,
                 loader.TextNotInDictionaryException), e:
             print("Page %d: %s" % (pageNum, e))
@@ -34,4 +37,7 @@ def checkSequenceFile(survey):
         except:
             errStr = "Page %d: Problem with at least one of the arguments: %s"
             print(errStr % (pageNum, seq.testItemList[pageNum]))
-            raise
+            continue
+
+if __name__ == "__main__":
+    pass

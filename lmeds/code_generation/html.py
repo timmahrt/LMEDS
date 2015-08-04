@@ -12,7 +12,7 @@ import Cookie
 
 from functools import partial
 
-from lmeds import loader
+from lmeds.io import loader
 
 choice = """<input type="radio" name="radio">"""
 img = """<img src="data/%s">"""

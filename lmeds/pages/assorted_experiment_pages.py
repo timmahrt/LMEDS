@@ -11,12 +11,12 @@ from os.path import join
 
 from lmeds.pages import abstract_pages
 
-from lmeds import survey
-from lmeds import constants
-from lmeds import html
-from lmeds import loader
-from lmeds import audio
-from lmeds import utils
+from lmeds.io import survey
+from lmeds.io import loader
+from lmeds.code_generation import html
+from lmeds.code_generation import audio
+from lmeds.utilities import constants
+from lmeds.utilities import utils
 
 
 class SurveyPage(abstract_pages.NonValidatingPage):

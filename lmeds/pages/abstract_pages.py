@@ -10,7 +10,7 @@ go in a more specific file.
 
 from os.path import join
 
-from lmeds import html
+from lmeds.code_generation import html
 
 abValidation = """
 var y=document.forms["languageSurvey"];

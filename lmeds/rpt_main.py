@@ -11,12 +11,12 @@ import __main__
 
 import codecs
 
-from lmeds import factories
-from lmeds import html
-from lmeds import audio
-from lmeds import sequence
-from lmeds import loader
-from lmeds import constants
+from lmeds.pages import factories
+from lmeds.code_generation import html
+from lmeds.code_generation import audio
+from lmeds.io import sequence
+from lmeds.io import loader
+from lmeds.utilities import constants
 
 # Strings used by all web surveys
 TXT_KEY_LIST = ["continue_button", "metadata_description",

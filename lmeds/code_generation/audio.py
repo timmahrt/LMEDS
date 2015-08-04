@@ -8,7 +8,7 @@ from os.path import join
 import wave
 import contextlib
 
-from lmeds import loader
+from lmeds.io import loader
 
 embedTemplate = ('<audio id="%s" preload="none" '
                  'oncanplaythrough="increment_audio_loaded_count()">'

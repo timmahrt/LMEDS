@@ -11,15 +11,17 @@ import sys
 import argparse
 import shutil
 
-
+from os import path
 from os.path import dirname, abspath
 
-os.chdir(dirname(dirname(abspath(__file__))))
-sys.path.append(dirname(dirname(os.path.split(abspath(__file__))[0])))
 
-from lmeds import sequence
+os.chdir(dirname(dirname(abspath(__file__))))
+sys.path.append("..")
+
+from lmeds.io import sequence
 from lmeds import rpt_main
-from lmeds import loader
+from lmeds.io import loader
+from lmeds.utilities import user_script_helper
 
 sectionHeaderLength = 30
 keywordLength = 20
@@ -171,11 +173,10 @@ if __name__ == "__main__":
     parser.add_argument('output_fn', action='store',
                         help=("The dictionary .txt to output textkeys and "
                               "their value strings"))
+    
     try:
-        cmdArgs = parser.parse_args()
-    except SystemExit:
-        print ("Not running from the command line.  "
-               "Switching to interactive mode (ignore the red text):")
+        cmdArgs = user_script_helper.runScriptLogic(parser)
+    except user_script_helper.InteractiveModeException:
         _mode = raw_input("Enter a mode (update, crop, or new):\n")
         _test_name = raw_input(("Enter the name of your test "
                                 "(the root folder):\n"))

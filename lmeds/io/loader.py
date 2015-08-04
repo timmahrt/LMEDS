@@ -8,7 +8,7 @@ Created on Mar 28, 2013
 
 import codecs
 
-from lmeds import utils
+from lmeds.utilities import utils
 
 
 class BadlyFormattedTextError(Exception):

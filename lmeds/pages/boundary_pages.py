@@ -9,11 +9,10 @@ These pages define pages used for rapid prosody transcription.
 import os
 from os.path import join
 
-from lmeds import html
-from lmeds import audio
-from lmeds import constants
-from lmeds import loader
-
+from lmeds.code_generation import html
+from lmeds.code_generation import audio
+from lmeds.utilities import constants
+from lmeds.io import loader
 from lmeds.pages import abstract_pages
 
 
