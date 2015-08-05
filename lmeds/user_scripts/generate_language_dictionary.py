@@ -10,10 +10,9 @@ from os.path import join
 import sys
 import argparse
 import shutil
+import codecs
 
-from os import path
 from os.path import dirname, abspath
-
 
 os.chdir(dirname(dirname(abspath(__file__))))
 sys.path.append("..")
@@ -22,6 +21,8 @@ from lmeds.io import sequence
 from lmeds import rpt_main
 from lmeds.io import loader
 from lmeds.utilities import user_script_helper
+from lmeds.pages import core_pages
+from lmeds.pages import factories
 
 sectionHeaderLength = 30
 keywordLength = 20
@@ -84,6 +85,34 @@ def generateLanguageDictionary(mode, testName, sequenceFN, outputFN):
             txtKeyDict.setdefault(txtKey, [])
             txtKeyDict[txtKey].append(page.pageName)
 
+    # Load txtkeys from implicit pages
+    # These pages are never called directly but may appear if another page
+    # is called.
+    implicitPageNameList = []
+    implicitDict = {core_pages.AudioTestPage.pageName:
+                    core_pages.AudioTestEndPage.pageName,
+                    core_pages.ConsentPage.pageName:
+                    core_pages.ConsentEndPage.pageName,
+                    core_pages.LoginPage.pageName:
+                    core_pages.LoginErrorPage.pageName
+                    }
+    for pageName in pageNameList:
+        args = []
+        kargs = {}
+        if pageName == core_pages.LoginPage.pageName:
+            args.append('')  # Fake user name
+        
+        if pageName in implicitDict.keys():
+            page = factories.loadPage(webSurvey, implicitDict[pageName],
+                                      args, kargs)
+            implicitPageNameList.append(page.pageName)
+            
+            for txtKey in page.textDict.keys():
+                txtKeyDict.setdefault(txtKey, [])
+                txtKeyDict[txtKey].append(page.pageName)
+            
+    pageNameList.extend(implicitPageNameList)
+    
     # Preserve keys in the dictionary but not in the sequence file
     # A bit tricky, because pageNames in the dictionary are already classified
     # as alone or grouped with other pages.  We'll split them out here if
@@ -103,7 +132,6 @@ def generateLanguageDictionary(mode, testName, sequenceFN, outputFN):
                     txtKeyDict.setdefault(txtKey, [])
                     txtKeyDict[txtKey].append(tmpPageName)
 
-    
     # Invert the txtKeyDict so we can reference keys by pages
     invKeyDict = {}
     for txtString in txtKeyDict.keys():
@@ -121,6 +149,9 @@ def generateLanguageDictionary(mode, testName, sequenceFN, outputFN):
     # Build output
     outputTxt = "\n\n"
     for pageTuple in outputPageNameList:
+        # Some pages don't have any unique keys
+        if pageTuple not in invKeyDict.keys():
+            continue
         keyStringList = invKeyDict[pageTuple]
         keyStringList.sort()
         
@@ -150,7 +181,7 @@ def generateLanguageDictionary(mode, testName, sequenceFN, outputFN):
                     "_autobackup.txt")
         shutil.copy(outputFNFullPath, backupFN)
 
-    open(outputFNFullPath, "w").write(outputTxt)
+    codecs.open(outputFNFullPath, "w", encoding="utf-8").write(outputTxt)
     
 
 if __name__ == "__main__":

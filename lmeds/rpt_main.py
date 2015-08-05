@@ -223,7 +223,7 @@ class WebSurvey(object):
                       'jquery-1.11.0.min.js"></script>'
                       '<script>if (!window.jQuery) { document.write'
                       '''('<script src="../html/jquery-1.11.0.min.js">'''
-                      '''<\/script>'); }</script>)''')
+                      '''<\/script>'); }</script>''')
         processSubmitHTML = jqueryCode + processSubmitHTML
             
         if 'embed' in updateDict.keys():

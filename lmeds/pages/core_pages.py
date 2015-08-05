@@ -100,7 +100,7 @@ class LoginErrorPage(LoginPage):
         self.userName = userName
         
         # Strings used in this page
-        txtKeyList = ['error user name exists', ]
+        txtKeyList = ['error_user_name_exists', ]
         self.textDict.update(loader.batchGetText(txtKeyList))
         
     def _getHTMLTxt(self):
@@ -108,7 +108,7 @@ class LoginErrorPage(LoginPage):
         pg0HTML = super(LoginErrorPage, self)._getHTMLTxt()
         pg0HTML = pg0HTML
         
-        textKey = 'error user name exists'
+        textKey = 'error_user_name_exists'
         userNameErrorTxt = self.textDict[textKey]
     
         if '%s' not in userNameErrorTxt:
