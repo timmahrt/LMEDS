@@ -1,0 +1,510 @@
+\documentclass[12pt, oneside]{scrbook}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps"ß with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage{amssymb}
+
+\title{LMEDS 2.0 Instruction Manual}
+\titlehead{\centering\includegraphics{lmedslogo}}
+\author{Tim Mahrt}
+\date{August 5, 2015}				% Activate to display a given date or no date
+
+
+\renewcommand\thesection{\arabic{section}}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+
+It is my hope that you will find this document useful in working with LMEDS. This document contains information for all aspects of LMEDS, from installation and setup, to creating experiments, running experiments, and obtaining and analyzing test results.  If you have any questions, comments, or other feedback, please contact me at timmahrt@gmail.com
+
+\tableofcontents
+
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%
+\section{User-Defined Test Components}
+%%%%%%%%%%%%%%%%%%%%%
+
+An LMEDS test has the following components
+
+\subsection{Audio files}
+
+Audio file can be any common type (.mp3, .wav, etc.).   Some web browsers are unable to play audio in certain file types.  Personally, use both .mp3 and .ogg
+
+See this page for more information on browser compatibility:
+http://www.w3schools.com/tags/tag\_audio.asp
+
+Audacity makes it very easy to convert entire directories of audio files into multiple audio formats.  
+
+\subsection{Transcription files}
+
+The transcript for an audio file needs to have the same name as the audio file, except for the extension (e.g. the transcript for "Äòwater.wav"Äô should be "water.txt"Äô).  Only raw txt files with the extension .txt are accepted.
+
+For long excerpts, you should specify the line breaks explicitly.  For a long excerpt, if all of the text lies on one line, the text will run off the page in LMEDS.
+
+\subsection{Sequence file (see section 4)}
+
+The file that specifies the control flow of a test.  It specifies what instructions and stimuli users will be presented with in a test and in what order. 
+
+Multiple sequence files can exist for a set of audio and transcription files (e.g. one could have a sequence with the stimuli in a certain order and another sequence with the stimuli in a different order or with different instructions, etc.).
+
+\subsection{Dictionary file(s) (see section 2)}
+
+The file that contains all text that will be seen by users in your experiment.  This file is independent of a sequence file"Äîso one could write a sequence and present it in both English and Russian.
+
+\subsection{Survey file(s) (see section 3)}
+
+These are optional file(s).  A survey file can be used to get various kinds of feedback, such as might be needed for a longform survey or a short-answer question.  Supports text boxes, checkboxes, and radio buttons.
+
+Each "Äòsurvey"Äô requires its own survey file (e.g. presurvey.txt, postsurvey.txt).
+
+The difference between a survey and a regular page in LMEDS (which was defined in python, such as a boundary annotation page) is that a survey page is fairly constrained in how the items are rendered while a non-survey page is very flexible but its creation is significantly more involved.
+
+\subsection{.CGI file}
+
+This is a file that currently the LMEDS administrator maintains and creates.  It is used to "Äòglue"Äô together all of the components that make up a test (sequence file and language file).  It is the only part of a test that is directly accessible to users.
+
+This is not a file that you normally need to create, unless you are the LMEDS administrator.  A template of a typical .cgi file can be found in the section 7.
+
+
+\section{Dictionary File Specification}
+
+LMEDS uses "Äúdictionaries"Äù for multi-lingual support.  A set of descriptive unique keys are created and used (unchanged) across each language.   When that key is used in a page, LMEDS looks for the corresponding text for that key in the target language.  E.g. the key "Äòdictionary"Äô will fetch the text "ÄúDictionary"Äù for English and  "ÄúDictionnaire"Äù for French.  Each dictionary file is created by the user.
+
+Some keys are defined within the python code.  Other keys are user-defined.  Eventually a tool will exist that will generate a template dictionary file for a sequence.  Right now, the best way to create a custom dictionary is to start with a dictionary file used in a prior test.
+
+A dictionary files has the following components (a complete example follows these):
+
+\subsection{Sections}
+
+A section is denoted with "Äò-"Äò characters on the line above and below the section name.  
+
+Sections are actually ignored in the code.  Their only purpose is to help structure dictionaries"Äîperhaps most naturally by page.
+
+\subsection{Keys}
+
+A key is denoted in the same with "Äò="Äô characters.  Keys must be the same, regardless of the language. 
+
+\subsection{Texts}
+
+A "Äòtext"Äô appears after a key and before another key or section.  Unlike sections and keys, text is undecorated text.  
+
+Text is rendered in HTML.  This means HTML markup is allowed.  It also means that whitespace other than a single space is ignored.  If you want a line break, for example, you will need to insert one used <br />
+
+Here is a short, concrete example
+
+---------------
+login page
+---------------
+
+===============
+progress
+===============
+
+Progress
+
+===============
+title
+===============
+
+Perception of Spoken Discourse
+
+The section denotes that these keys are used in the login page.  Whenever LMEDS needs to display the title, it will look at the text for the key "Äòtitle"Äô"Äîin this case "ÄòPerception of Spoken Discourse"Äô.
+
+%%%%%%%%%%%%%%%%%%%%%
+\section{SurveyÄô file specification}
+%%%%%%%%%%%%%%%%%%%%%
+
+The surveyù format allows for the simple creation of short or long questionnaires.  The format is simple-the first line in a survey question contains the text prompt, subsequent lines specify one or more data entry fields that users can use to answer the question, and, finally, a blank line signals that the current item is complete (an example is at the bottom of this section).
+
+A note on arguments: For data entry fields that have arguments, arguments should be separated from the data entry field name by a space and from each other by a comma e.g.
+
+Choice English, Arabic, Other
+
+Here is the list of data entry fields available:
+
+\subsection{Choice}
+
+Users can select exactly one item out of many.
+
+e.g.
+Sex:
+Choice Male, Female
+
+\subsection{Item\_List}
+
+Users can select as many items as they want out of many.
+
+e.g.
+Indicate the language(s) that you are familiar with.
+Item\_List English, French, Spanish, Italian, German
+
+\subsection{Choicebox}
+
+A dropdown box.  Users can select one item from many.  Similar to a Choice but is more efficient in space for large lists of items.
+
+e.g.
+Level of education completed:
+Choicebox High School, Some College, Bachelor's Degree, Master's Degree, PhD
+
+\subsection{Textbox}
+
+A single line for users to enter a small amount of information.  A textbox takes no arguments.
+
+e.g.
+Occupation
+Textbox
+
+\subsection{Multiline\_Textbox}
+
+A longer-form textbox that can span several lines.  It takes exactly two arguments: the number of characters across and the number of lines.
+
+e.g.
+What did you think of this test?  Please provide any feedback.
+Multiline\_Textbox 50, 7
+
+There is one more feature for creating surveys.  It is possible to designate a group of items as subquestions of the previous question.  These items will be displayed tabbed and have a new numbering scheme.  To do this, encapsulate the relevant items in the following tag:
+<sublist>
+</sublist>
+
+Here is a short concrete example demonstrating the key features discussed above
+
+Sex: 
+Choice Male, Female
+
+Age:
+Textbox
+
+Country of birth:
+Choice United States, Other
+Textbox
+
+<sublist>
+If United States, list city/state:
+Textbox
+
+If other, how old were you when you moved to the USA?
+Textbox
+</sublist>
+
+Thus we have a survey with 5 items in total (2 being subitems to item 3).  Item 3 shows how multiple data entry fields can be placed on a single question (if the user selects "Äòother"Äô for the first question they are expected to specify what they meant in the Textbox).
+
+%%%%%%%%%%%%%%%%%%%%%
+\section{Sequence file specification}
+%%%%%%%%%%%%%%%%%%%%%
+
+The sequence file contains the items that will be presented in a test.  The first line in a test is the test name which should be prefixed with a "Äò*"Äô (e.g. *My\_Test\_Sequence).  The second item must be "Äòlogin"Äô where users create a name to associate their data with.  If login is not the item on the second line, unexpected behavior can result.
+Subsequent items are presented in a linear fashion as users progress through the sequence.  The last item in the sequence must be "Äòend"Äô.
+
+Most pages take arguments.  Arguments are separated from one another and from the page type by a space.  Audio files and textfiles included in an argument should not include their file extension (.txt, .wav, etc.)"ÄîLMEDS will determine the appropriate extension to be used.  An optional feature that can be used with arguments is found at the bottom of this section.
+
+Here is a list of page types currently supported, broken into two sets: administration and stimuli presentation.  See the bottom of this section for a complete example of a sequence file.
+
+\subsection{login}
+
+This is the first page that users see.  They enter their name here.  Names must be unique.  If someone has already attempted to start a test under that user name the user will not be able to proceed from the login page.
+
+"Äòlogin"Äô takes no arguments.
+
+\subsection{audio\_test}
+
+Some users have reported an inability to hear audio in LMEDS"Äîthis is usually related to a particular browser on a particular computer.  For this reason there is the audio\_test page.  This page can be presented right after a user logs in to save them time in the event that their browser is not correctly playing audio.
+
+"Äòaudio\_test"Äô takes a single audio file as an argument.  I recommend using a short pure tone.
+
+e.g.
+audio\_test test\_tone
+
+\subsection{consent}
+
+Presents the consent form.  If users opt not to consent, the test ends immediately.  If they consent, they proceed to the next page.
+
+"Äòconsent"Äô takes one argument which specifies the consent form to display to users (the consent form is contained within the language dictionary)
+
+e.g.
+consent main\_consent
+
+\subsection{text\_page}
+
+A page that displays nothing but the text from a single text key.  This page could be used to provide task instructions to users, indicate that they should take a break, etc.
+
+Unlike other pages, text\_pages are interpreted as only having a single argument, even if the key contains spaces. 
+
+e.g.
+text\_page first block instructions
+
+\subsection{survey}
+
+Specifies a survey page (see Section 3 for info on surveys).
+
+"Äòsurvey"Äô takes a single argument, the file name of the survey that it should load
+
+e.g.
+survey presurvey
+
+This would load the survey called "Äòpresurvey.txt"Äô
+
+\subsection{end}
+
+The final page of the test.  
+
+"Äòend"Äô takes no arguments.
+
+Here is a list of page types involving stimuli presentation
+
+\subsection{prominence}
+
+Users are presented with an audio file and the associated transcript.  They can click on a word to indicate that it is prominent.  This changes the selected word to "Äòred"Äô.
+
+"Äòprominence"Äô takes the following arguments:
+- audioFileName "Äì the name of the audio file
+- minPlays "Äì the minimum number of times the audio file has to be played before the user can continue 
+- maxPlays "Äì the maximum number of times the audio file can be played before the audio button is disabled
+- instructions - the type of instructions to show (e.g. meaning vs acoustics) (default None "Äì no special instructions)
+- presentAudio "Äì either "Äútrue"Äù or "Äúfalse"Äù, specifies whether the audio is hidden or presented (default True).  If "Äòfalse"Äô the values for "ÄòminPlays"Äô and "ÄòmaxPlays"Äô are ignored.
+
+e.g.
+prominence water 1 3 acoustics true
+
+\subsection{boundary}
+
+Users are present with an audio file and the associated transcript.  They can click on a word to mark the presence of a boundary after it.  This places a solid line after the word.
+
+"Äòboundary"Äô takes the following arguments:
+- audioFileName "Äì the name of the audio file
+- minPlays "Äì the minimum number of times the audio file has to be played before the user can continue 
+- maxPlays "Äì the maximum number of times the audio file can be played before the audio button is disabled
+- instructions - the type of instructions to show (e.g. meaning vs acoustics) (default None "Äì no special instructions)
+- presentAudio "Äì either "Äútrue"Äù or "Äúfalse"Äù, specifies whether the audio is hidden or presented (default True). If "Äòfalse"Äô the values for "ÄòminPlays"Äô and "ÄòmaxPlays"Äô are ignored.
+- boundaryToken "Äì can use a token other than the default.  (default None "Äì the default value is not a font character, but a border between words).
+
+e.g.
+boundary water 1 3 acoustics true \&
+
+
+\subsection{boundary\_and\_prominence}
+
+A combination of A) and B).  Users first mark boundaries.  They then can mark prominences.  While marking prominences they can see but not change the boundaries that they marked"Äîthis is the only difference between this page and splitting the prominence and boundary task across two pages.
+
+The arguments for boundary\_and\_prominence are the same as for boundary pages.
+
+e.g.
+boundary\_and\_prominence water 0 3 acoustics true
+
+\subsection{same\_different}
+
+The user is presented with two audio files and has to decide whether they are the same or different.
+
+"Äòsame\_different"Äô takes the following arguments
+- audioName1
+- audioName2
+- minPlays
+- maxPlays
+
+e.g.
+same\_different water1 water2 0 3
+
+\subsection{axb}
+
+The user is presented with three audio files: A, X, and B.  They have to decide if X is more like A or more like B.
+
+"Äòaxb"Äô takes the following arguments
+- sourceNameX "Äì the name of the audio file for X
+- sourceNameA "Äì "Äú for A
+- sourceNameB "Äì "Äú for B
+- minPlays
+-maxPlays
+
+e.g.
+axb water1 water2 water3 1 2
+
+\subsection{abn}
+
+The user hears one audio file and decides if it is an example of text prompt A, B, or neither A or B.
+
+"Äòabn"Äô takes the following arguments
+- audioName
+- minPlays
+-maxPlays
+
+e.g.
+abn water 0 2
+
+A Note on Default Values
+
+This is a completely optional feature.  If you find it confusing you can skip it.
+
+Some page types, such as "Äòprominence"Äô have default values for some arguments.   An argument might have a default value if alternative values are uncommon or to support new functionality without requiring changes to pre-existing code.
+
+Arguments that have default values do not have to be specified in a sequence file if you are ok with the defaults"Äîthis can make your sequence file cleaner and easier to read and maintain.
+
+There are two ways that you can specify an optional value.  One is to list it as normal e.g.
+prominence water 1 3 acoustics true
+
+A second way is to refer to it explicitly by its name as described above. e.g.
+
+prominence water 1 3 instructions=acoustics presentAudio=true
+
+This second way is useful, for example, if you wanted to specify the value for a later variable such as "ÄòpresentAudio"Äô but not "Äòinstructions"Äô.  The only way to do this is by naming the variable 
+
+	Prominence water 1 3 presentAudio=true
+
+If one attempted
+
+	Prominence water 1 3 true
+
+This would set "Äòinstructions=true"Äô which would cause an error unless instructions named "Äòtrue"Äô existed in the dictionary file.
+
+%%%%%%%%%%%%%%%%%%%%%
+\section{Parsing the LMEDS output}
+%%%%%%%%%%%%%%%%%%%%%
+
+The output to LMEDS is quite simple.  Each line has 4 components:
+\begin{itemize}
+\item	the page type
+\item	the argument list
+\item	peripheral information collected on the page (number of times users listened to audio files, time spent on the page, etc.)
+\item	the users input in data-entry fields presented on the page
+\end{itemize}
+
+For most needs, A and D contain the most important bits of information.  A is separated from the rest of the row by the occurrence of the first comma.  D is separated from the rest of the row by the sequence "Äò;,"Äô.  If you need something from B or C, you will need to parse it"ÄîB and C both vary depending on A.  
+
+D is a string of comma-separated values.  Every individual item in a data-entry field, except for textboxes, is represented by a 0 or 1, where 0 indicates the user did not choose that item and 1 indicates the user did choose that item.  So if the user has a choice between A or B and selects A, their output will look like 1, 0.  And if they select B: 0, 1.  For a boundary\_and\_prominence page, each word gets two digits in the output (one for boundary and one for prominence) so the output string can easily contain over 100 values.
+
+Let"Äôs look at a real example.  Here we have the sequence:
+
+same\_different water water 1 -1
+axb water water water 0 2
+abn water 0 2
+
+And here is one possible output for it
+
+same\_different,water;water;1;-1,0,0,0:4.8;,1,0
+axb,water;water;water;0;2,0,0,0:6.7;,0,1
+abn,water;0;2,0,0,0:3.3;,1,0,0
+
+If we separate out just A and D we can easily see the data that we want to analyze: 
+
+	same\_different;,1,0
+	axb;,0,1
+	abn;,1,0,0
+
+LMEDS offers some useful post-processing that can help prep data for analysis.  Otherwise, with the above information, you should have everything you need to do your own analysis.
+
+%%%%%%%%%%%%%%%%%%%%%
+\section{Data post-processing}
+%%%%%%%%%%%%%%%%%%%%%
+
+Aggregation and analysis is an ongoing development.  The data generated by LMEDS is user-centric"Äîeach user has one file with all of their data in that file.  However, researchers are often not interested in this user-centric view but a stimuli-centric view"Äîhow does a user"Äôs data compare to other users for a given stimuli item.
+LMEDS can automatically aggregate and transform survey data and prominence and boundary data to have this stimuli-centric view"Äîwhere all data for a given stimuli is stored within one file.
+
+LMEDS also can automatically calculate various statistical measures of the data.  However, this is currently one of the least developed aspects of LMEDS.
+
+%%%%%%%%%%%%%%%%%%%%%
+\section{Creating your own LMEDS installation}
+%%%%%%%%%%%%%%%%%%%%%
+
+LMEDS is very quite easy to install for someone working in an IT department but will be quite difficult for someone not familiar with setting up and maintaining a server.  That said, plans are underway to further automate the process and to simplify the installation of new tests.
+
+Setting Up the Server
+
+If you are installing a server from scratch, you"Äôll need to make sure it comes with hooks to python"Äîwhich is fortunately fairly typical these days.  In your httpd.conf file you"Äôll want to enable .cgi files.  That is all!  LMEDS only uses standard python libraries and is based on python 2.7 (although I don"Äôt believe any 2.7-specific features are being used).
+
+Setting Up the Directory Structure
+
+Under the root page of LMEDS are the following folders:
+
+\subsection{cgi-bin}
+
+In the source code is a subfolder called /lmeds/"Äîdump the contents of that folder into cgi-bin
+
+Create a .cgi file for all tests that you want to run (see below for a template .cgi file).  Make sure the tests are executable.
+
+\subsection{html}
+
+Contains a few shared html templates and snippets.  Copy these over from the source code folder /resources/html/
+
+\subsection{imgs}
+
+Contains a few shared images.  Copy these over from the source code folder /resources/imgs/.
+
+\subsection{tests}
+
+Under /tests/ you will create a subfolder for each dataset that you are using.  Experiments being run with over the same data can be run from the same subfolder but with different sequence files (to provide different instructions or different order to stimuli items, etc.).
+
+The first line of every sequence file contains a name prefixed by a * character.  Create a subfolder under /tests/<<Test name>>/output/ with the name given in that first line.  Change the file permissions to read and write (but not execute!) for everyone.
+
+Congratulations!  You are ready to begin running subjects!
+
+%%%%%%%%%%%%%%%%%%%%%
+\section{CGI Template}
+%%%%%%%%%%%%%%%%%%%%%
+
+"Äú"Äù"Äù
+\#!/usr/bin/env python
+\# -*- coding: utf-8 -*-
+
+import cgi
+import cgitb
+cgitb.enable()
+
+import rptMain
+
+if \_\_name\_\_ == "\_\_main\_\_":
+    \# disableRefreshFlag=False is useful when you want to debug a problem
+    survey = rptMain.WebSurvey("name\_of\_folder\_inside\_subfolder\_<tests>", "sequence\_name.txt", "language\_dictionary\_name.txt", disableRefreshFlag=True)
+    survey.run()
+"Äú"Äù"Äù
+
+%%%%%%%%%%%%%%%%%%%%%
+\section{LMEDS Change History}
+%%%%%%%%%%%%%%%%%%%%%
+
+August 2015 - LMEDS 2.0
+
+\begin{itemize}
+\item First public release.  
+\item Inclusion of user script utilities.
+\item Numerous bugfixes and stability improvements (audio is significantly less error prone).  
+\item Offline server for running experiments locally.
+\item Companion website.
+\end{itemize}
+
+May 2014 - LMEDS 1.5
+
+\begin{itemize}
+\item Object oriented refactor.
+\item Numerous bugfixes and stability improvements.
+\end{itemize}
+
+November 2013 "Äì LMEDS 1.0
+
+\begin{itemize}
+\item First official release.  
+\item First official experiments run using LMEDS.
+\end{itemize}
+
+May 2013 "Äì LMEDS 0.0
+
+\begin{itemize}
+\item Work begins on LMEDS
+\end{itemize}
+
+
+\section{LMEDS Manual Change History}
+
+August 5, 2015
+
+Second release.  Move from Word to LaTeX for easier tracking of changes.
+
+December 17, 2013
+
+First release
+
+\end{document}
