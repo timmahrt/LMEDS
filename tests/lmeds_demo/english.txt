@@ -1,0 +1,434 @@
+
+
+------------------------------
+lmeds_interface
+------------------------------
+
+====================
+loading_progress
+====================
+
+Loading.  Please wait.
+
+====================
+metadata_description
+====================
+
+A demonstration of the kinds of pages that can be presented to subjects via LMEDS.
+
+====================
+progress
+====================
+
+Progress
+
+------------------------------
+text_page
+------------------------------
+
+====================
+audio_list_instructions
+====================
+
+On the next page you'll listen to a list of audio files separated by a brief pause.
+
+====================
+boundary_and_prominence_constrained_instructions
+====================
+
+On the next page you'll perform the same text as before, but this time you have to listen to the audio exactly 2 times for each task.
+
+====================
+boundary_and_prominence_mechanics_instructions
+====================
+
+<p style="text-align:center;font-weight: bold; text-decoration: underline;">
+Experimental Procedure
+</p>
+
+You will be annotating excerpts of recorded conversations.  Each page contains the transcript for the excerpt and may also contain the audio recording.  For each excerpt, you will complete two tasks.  First you will break the text into smaller sequences of words.  Second, you will mark certain words.<br /><br />
+
+In the first task, based on some criteria (see next page) you will select a word and a vertical bar will be appear after that word:<br /><br />
+word word <b>word</b> | word word ...<br /><br /> 
+
+If you change your mind after selecting a word, just select it again and the bar will disappear. In each utterance, you will be able to select as many words that match the necessary criteria. When you have finished, click 'submit'. This will transition you to the next task. <br /><br />
+
+In the <b>second task</b> you will again select words (based on different criteria—see next page), however, this time, once you select a word its color will change to red:<br /><br />
+word word <font color="red">word</font> word ...<br /><br />
+
+If you change your mind, just select the word again and it will revert back to black.   During this phase, you will see where you marked the boundaries from the earlier task. When you are finished click <b>submit</b> to move on to the next excerpt.
+
+====================
+boundary_and_prominence_nonspecific_instructions
+====================
+
+As instructed previously, for each audio file, you will conduct two tasks. <br /><br />
+
+In normal speech, speakers group words in a way that helps listeners interpret the utterance. <br /><br />
+
+In the <b>first task</b>, break the text into chunks that reflect this grouping. <br /><br />
+
+In normal speech, speakers pronounce some word or words in a sentence with more prominence than others. The prominent words are in a sense highlighted for the listener, and stand out from other non-prominent words.  <br /><br />
+
+In the <b>second task</b>, mark words that you hear as prominent in this way. <br /><br />
+
+There are <b>sixteen audio excerpts</b>.  Please use the second playback to review your work.  You will <b>not</b> be able to listen to the audio more than twice.
+
+====================
+fill_in_the_blank_instructions
+====================
+
+On the next page, please select the word that appears in the audio given.
+
+====================
+first_page
+====================
+
+Welcome to a demonstration of LMEDS functionality.  The stimuli items that will
+be presented were simplified for this experiment but the instructions are all 
+appropriate for the tasks.  <br /><br />
+
+Before each task, you'll be presented with some explanatory text.  The next few slides
+contain information we give to subjects participating from remote places.  Then there
+is a consent form, and a demographics survey.<br /><br />
+
+This demo should only take about 5 minutes to complete.
+
+====================
+multingual_support
+====================
+
+Before continuing, note that LMEDS is multilingual. (translations provided by google translate).<br /><br />
+続行する前に、LMEDS推定は、多言語であることに注意<br /><br />
+Antes de continuar, tenga en cuenta que LMEDS es multilingüe.<br /><br />
+जारी रखने से पहले, LMEDS बहुभाषी है कि ध्यान दें<br /><br />
+
+====================
+post_survey_instructions
+====================
+
+The next page features an actual post-experiment survey used in past studies conducted
+over LMEDS.
+
+====================
+presurvey_instructions
+====================
+
+On the next page you'll fill out a demographics page.  These questions are derived
+from actual demographics surveys conducted over LMEDS.<br /><br />
+
+Note that you may skip as many items as you want.
+
+====================
+remote_experiment_notice
+====================
+
+Before you begin the following experiment, please take note of the following points.
+<br /><br />
+
+<b>1)</b> Please <b>read all instructions</b> that appear throughout this experiment carefully.  Do not skip or skim instructions.<br /><br />
+
+<b>2)</b> Please <b>wear headphones or earbuds</b> when listening to audio files.
+<br /><br />
+
+<b>3)</b> <b>You should be in a quiet room</b>, free from distraction for the duration of the experiment.  If there is significant background noise, such as in a cafe or other public area, you may have trouble listening to audio files and concentrating on the experiment.
+<br /><br />
+
+<b>4)</b> Please <b>silence or turn off your cell-phone</b> and other noise-making electronics.
+<br /><br />
+
+<b>5)</b> Please <b>close all other browser windows or tabs</b>--particularly those that issue auditory or visual alerts or status updates such as email providers or social networking websites.
+<br /><br />
+
+<b>6)</b> Unless instructed otherwise, please <b>do not perform other tasks</b> or otherwise stray from the current task while you are doing the experiment.
+<br /><br />
+
+<br />
+
+By clicking 'submit' you acknowledge that you will follow these to the best of your ability.
+
+====================
+same_different_instructions
+====================
+
+On the next page, you will hear two audio files.  Please press the appropriate button
+to indicate whether they are the same or different.
+
+====================
+speed_warning
+====================
+
+Your browser must be up-to-date and your internet speed must be fast to complete
+this task, which involves listening to large audio files.<br /><br />
+
+If you are on an old computer or have a slow internet connection, please release this
+HIT.
+
+------------------------------
+consent
+------------------------------
+
+====================
+consent
+====================
+
+I consent
+
+====================
+consent_demo_consent
+====================
+
+<b>Investigators:</b>  Joe; Mary (University of Somewhere) <br /><br />
+
+<b>Purpose of this research:</b> Just to show you how LMEDS works.<br /><br />
+
+<b>What you will be expected to do:</b>  If you agree to participate, you'll perform a variety of tasks with simple instructions that involve listening to audio files responding to questions.
+
+<b>Your compensation:</b> There is no compensation of any kind for participating in this demonstration. <br /><br />
+
+<b>Your right to confidentiality:</b>  Assume your responses are not confidential for the purposes of this demonstration.  Please don't enter any real data. <br /><br />
+
+<b>Your right to withdraw at any time:</b> Your participation in this demonstration is strictly voluntary.. <br /><br />
+
+<b>Benefits:</b> You will become more familiar with LMEDS' functionality. <br /><br />
+
+<b>Possible risks:</b>  To our knowledge there are no risks or discomforts involved in this research beyond those encountered in other everyday activities. <br /><br />
+
+<b>Dissemination:</b> Responses to this demo will not be presented or published in academic venues. <br /><br />
+
+<b>Your right to ask questions at any time:</b>  Please contact the author timmahrt@gmail.com if you have any questions about LMEDS.  <br /><br />
+
+<b>Giving consent to participate:</b> By digitally signing this consent form, you certify that you are 18 years of age or older, that you have read the above and understand it, that you have been given satisfactory answers to any questions about the research, and that you have been advised that you are free to withdraw your consent and to discontinue participation in the research at any time, without prejudice. <br /><br />
+
+Please print a copy of this consent form for your records, if you so desire. <br /><br />
+
+I have read and understand the above consent form, I certify that I am 18 years old or older and, by clicking the submit button to enter the survey, I indicate my willingness to voluntarily take part in the study.<br /><br />
+
+<u><b>TLDR Version:</b></u>
+
+This consent form is derived from one used in an actual experiment run using LMEDS.<br /><br />
+This is not a real study, there is no compensation, and your data will be saved but not looked at or used in any study.<br /><br />
+
+====================
+consent_query
+====================
+
+Do you consent to participate in this study?
+
+====================
+consent_title
+====================
+
+Online Informed Consent
+
+====================
+dissent
+====================
+
+I do not consent
+
+====================
+error_consent_or_dissent
+====================
+
+To continue you must either choose either to consent or to not consent.
+
+------------------------------
+audio_list
+------------------------------
+
+====================
+memory_a
+====================
+
+A
+
+====================
+memory_b
+====================
+
+B
+
+====================
+memory_instruct
+====================
+
+Blaah
+
+------------------------------
+same_different_stream
+------------------------------
+
+====================
+error_select_same_or_different
+====================
+
+Error.  Select SAME or DIFFERENT in order to continue
+
+====================
+same_different_different
+====================
+
+Different
+
+====================
+same_different_question
+====================
+
+Are these utterances the same or different?
+
+====================
+same_different_same
+====================
+
+Same
+
+------------------------------
+fill_in_the_blank
+------------------------------
+
+====================
+fill_in_the_blank_instruct
+====================
+
+Please fill in the option that correctly completes this sentence.
+
+====================
+three_option_validation
+====================
+
+Error.  Please select one of the three options.
+
+------------------------------
+boundary_and_prominence
+------------------------------
+
+====================
+boundary_nonspecific_instructions_short
+====================
+
+Mark a boundary between words <font color="red">that belong to different chunks</font>.
+
+====================
+prominence_nonspecific_post_boundary_instructions_short
+====================
+
+Mark the words that the speaker <font color="blue">highlighted for the listener, to make them stand out</font>.
+
+------------------------------
+end
+------------------------------
+
+====================
+test_complete
+====================
+
+You have reached the end of this study. Thank you for your participation. 
+<br /><br />
+If you're coming from Mechanical Turk, please enter the blue text into Mechanical Turk to register your completion of this experiment.
+<br /><br />
+<font color="blue">polar bear</font>
+<br /><br />
+Have a nice day!
+
+------------------------------
+login_bad_user_name
+------------------------------
+
+====================
+error_user_name_exists
+====================
+
+<font color="red"> ERROR: Username '%s' already exists or is invalid.  You may have already done this experiment, in which case you may not participate in it again. If you were forced to restart, use a similar name to your worker id (e.g. add a 1 to the end).</font>
+
+------------------------------
+consent_end
+------------------------------
+
+====================
+consent_opt_out
+====================
+
+You have chosen not to participate in this study. Thank you for your time. 
+<br /><br />
+
+------------------------------
+lmeds_interface,login,login_bad_user_name
+------------------------------
+
+====================
+back_button_warning
+====================
+
+<font color="red">Please note that pressing 'back' or 'refresh' will invalidate this experiment session.</font>
+
+------------------------------
+audio_list,same_different_stream,boundary_and_prominence
+------------------------------
+
+====================
+error_must_play_audio
+====================
+
+You must listen to each of the audio files at least %d time(s).
+
+====================
+error_must_play_audio_at_least
+====================
+
+You must listen to each of the audio files at least %d time(s).
+
+====================
+play_button
+====================
+
+Play
+
+------------------------------
+login,text_page,consent,login_bad_user_name
+------------------------------
+
+====================
+title
+====================
+
+A Demonstration of LMEDS
+
+------------------------------
+login,login_bad_user_name
+------------------------------
+
+====================
+error_blank_name
+====================
+
+Please enter a unique user id.  No spaces please.  (e.g. k123l or john_doe_22)
+
+====================
+experiment_header
+====================
+
+The following experiment was made using LMEDS.
+
+====================
+unsupported_warning
+====================
+
+
+
+====================
+user_name_text
+====================
+
+Please enter a unique user id.  No spaces please.  (e.g. k123l or john_doe_22)
+
+------------------------------
+lmeds_interface,boundary_and_prominence
+------------------------------
+
+====================
+continue_button
+====================
+
+Continue
+

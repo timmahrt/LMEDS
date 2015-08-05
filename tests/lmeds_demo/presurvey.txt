@@ -1,0 +1,94 @@
+Sex:
+Choice Male, Female
+
+Age:
+Textbox
+
+Do you have any problems with your hearing or vision?
+Textbox
+
+Do you have any speech problems?
+Textbox
+
+What is your ethnic background?
+Textbox
+
+Country of birth:
+Choice United States, Other 
+Textbox
+
+<sublist>
+If United States, list city/state:
+Textbox
+
+If other, how old were you when you moved to the USA?
+Textbox
+</sublist>
+
+Current city and state of residence:
+Textbox
+
+Level of education completed:
+Choicebox High School, Some College, Bachelor's Degree, Master's Degree, PhD
+
+Occupation
+Textbox
+
+What language(s) do you speak natively?
+Textbox
+
+Do you live with people who speak other languages?
+Choice Yes, No
+
+<sublist>
+If yes, who and which languages?
+Textbox
+</sublist>
+
+Have you ever studied any foreign languages?
+Choice Yes, No
+
+<sublist>
+If yes, which languages and for how long?
+Textbox
+</sublist>
+
+Have you ever lived in a country (> 4 weeks) where a different language than your native language is spoken?
+Choice Yes, No
+
+<sublist>
+If yes, which country and language?
+Textbox
+
+How old were you when you lived there?
+Textbox
+
+How long did you live there?
+Textbox
+
+Did you speak the language of the country while living there?
+Choice Yes, No
+</sublist>
+
+Have you had any musical training?
+Choice Yes, No
+
+<sublist>
+Which instrument and for how long?
+Textbox
+</sublist>
+
+Have you ever taken a linguistics course?
+Choice Yes, No
+
+<sublist>
+A phonetics course?
+Choice Yes, No
+
+A phonology course?
+Choice Yes, No
+</sublist>
+
+Have you visited any of the following countries in the last year?
+Item_List Spain, Mexico, Argentina
+

@@ -1,0 +1,35 @@
+*LMEDS_Demo
+login
+
+text_page first_page
+
+text_page speed_warning
+text_page remote_experiment_notice
+
+consent demo_consent
+
+text_page presurvey_instructions
+survey presurvey
+
+text_page multingual_support
+
+text_page audio_list_instructions
+audio_list 1 1 1 [water apples water]
+
+text_page same_different_instructions
+same_different_stream 0.5 1 -1 [water apples]
+
+text_page fill_in_the_blank_instructions
+fill_in_the_blank water_blank 10.0 polluted cold not_drinkable
+
+text_page boundary_and_prominence_mechanics_instructions
+text_page boundary_and_prominence_nonspecific_instructions
+boundary_and_prominence water water 0 -1 nonspecific true
+text_page boundary_and_prominence_constrained_instructions
+boundary_and_prominence apples apples 2 2 nonspecific true
+
+text_page post_survey_instructions
+survey postsurvey
+
+end
+

@@ -1,0 +1,24 @@
+
+We're collecting some information about how subjects perform this experiment and their opinion on it.  Please answer the following questions below.
+None
+
+What web browser did you use to access this experiment?
+Choicebox Chrome, Firefox, IE, Safari, Opera, Other, Don't Know
+
+How did you listen to the audio?
+Choice Headphones, Speakers
+
+Were there loud noises or other distractions while you performed the experiment?
+Choice Yes, No
+
+How did you connect to the internet?
+Choice Wireless, Wired
+
+On a scale of 1-5, how fast did pages load?
+Choicebox 1 Very slowly, 2, 3 Tolerably So, 4, 5 No loading time
+
+What did you think of this test?  Did you encounter any technical issues with the website?  Any feedback?  Comments?  Complaints?
+Multiline_Textbox 50, 7
+
+Do you have an idea about what we might have been investigating?  If so, what?
+Multiline_Textbox 50, 7
