@@ -161,14 +161,3 @@ class TestSequence(object):
         sequenceTitle = sequenceTitle[1:]
 
         return sequenceTitle, testItemList
-
-
-if __name__ == "__main__":
-    from lmeds import rptMain
-    survey = rptMain.WebSurvey("demo", "sequence2.txt", "english.txt", False)
-    ts = TestSequence(survey, "/Users/tmahrt/Sites/tests/demo/sequence2.txt")
-    for tmpPageNum in xrange(ts.getNumPages()):
-        print(ts.getPageStr(tmpPageNum))
-    
-#     page = ts.getPage(3)
-#     print(page.getHTML())

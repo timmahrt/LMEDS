@@ -6,7 +6,13 @@ Created on Nov 17, 2013
 
 import codecs
 
-alpha = lambda num: unichr(num + 96)  # ASCII section for lowercase alpha
+
+def alpha(num):
+    '''
+    ASCII section for lowercase alpha
+    '''
+    return unichr(num + 96)
+
 numTypeList = [int, alpha]
 
 
@@ -88,12 +94,3 @@ def parseSurveyFile(fn):
     itemList = recParseSurveyFile(dataList, 0)[1]
     
     return itemList
-
-
-if __name__ == "__main__":
-    
-    a = parseSurveyFile("/Users/tmahrt/Sites/tests/percept_is/postsurvey.txt")
-    
-    for x in a:
-        print("%s, %s" % (x.enumStrId, x.text))
-    print('hi')
