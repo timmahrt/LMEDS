@@ -430,11 +430,6 @@ error_blank_name
 
 Please enter a unique user id.  No spaces please.  (e.g. k123l or john_doe_22)
 
-====================
-experiment_header
-====================
-
-The following experiment was made using LMEDS.
 
 ====================
 unsupported_warning

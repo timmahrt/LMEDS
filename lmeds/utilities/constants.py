@@ -10,6 +10,7 @@ DON'T CHANGE UNLESS YOU KNOW WHAT YOU'RE DOING
 from os.path import join
 
 # EDITING THESE ONLY MODIFIES METADATA AND WILL NOT IMPAIR LMEDS
+softwareLogo = '<img src="../imgs/lmeds_logo.png"><br />'
 softwareName = "LMEDS: Language Markup and Experimental Design Software"
 rootURL = "http://tmahrt.nfshost.com/rptTest"
 

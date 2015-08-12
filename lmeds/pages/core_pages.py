@@ -37,7 +37,7 @@ class LoginPage(abstract_pages.NonRecordingPage):
         super(LoginPage, self).__init__(*args, **kargs)
 
         # Strings used in this page
-        txtKeyList = ['experiment_header', 'title', 'back_button_warning',
+        txtKeyList = ['title', 'back_button_warning',
                       'user_name_text', 'unsupported_warning',
                       'error_blank_name']
         self.textDict.update(loader.batchGetText(txtKeyList))
@@ -49,7 +49,7 @@ class LoginPage(abstract_pages.NonRecordingPage):
     def _getHTMLTxt(self):
         txtBox = """<input type="text" name="%s" value=""/>"""
         productNote = "%s <br /><b><i>%s</i></b><br /><br />\n\n"
-        productNote %= (self.textDict['experiment_header'],
+        productNote %= (constants.softwareLogo,
                         constants.softwareName)
         
         title = '<div><p id="title">%s</p></div>\n\n' % self.textDict['title']
