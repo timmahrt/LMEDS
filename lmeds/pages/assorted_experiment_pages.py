@@ -122,16 +122,16 @@ class SurveyPage(abstract_pages.NonValidatingPage):
                         # 1 comma between every element
                         value = "," * (len(argList) - 1)
                 else:
-                    value = value.decode("utf-8")
-                    
+                    if itemType not in ["Item_List"]:
+                        value = value.decode("utf-8")
+                        value = replaceCommas(value)
+                        
                     # Remove newlines
                     # (because each newline is a new data entry)
                     if itemType == "Multiline_Textbox":
-                        value = replaceCommas(value)
                         newlineChar = utils.detectLineEnding(value)
                         if newlineChar is not None:
                             value = value.replace(newlineChar, " - ")
-                    
                     elif itemType in ["Choice", "Choicebox"]:
                         if itemType == "Choice":
                             index = argList.index(value)
@@ -143,6 +143,12 @@ class SurveyPage(abstract_pages.NonValidatingPage):
                         value = ",".join(replaceCommas(valueList))
                         
                     elif itemType in ["Item_List"]:
+                        if isinstance(value, list):
+                            value = [subval.decode("utf-8")
+                                     for subval in value]
+                        else:
+                            value = [value.decode("utf-8"), ]
+                        
                         indexList = [argList.index(subVal) for subVal in value]
                         valueList = ["1" if i in indexList else "0"
                                      for i in xrange(len(argList))]
