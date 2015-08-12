@@ -175,7 +175,7 @@ consent
 I consent
 
 ====================
-consent_demo_consent
+demo_consent
 ====================
 
 <b>Investigators:</b>  Joe; Mary (University of Somewhere) <br /><br />

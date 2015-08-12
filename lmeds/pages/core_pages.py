@@ -143,7 +143,7 @@ class ConsentPage(abstract_pages.NonRecordingPage):
     
         # Strings used in this page
         txtKeyList = ["title", "consent_title",
-                      "consent_%s" % self.consentName,
+                      self.consentName,
                       "consent_query", "consent", "dissent",
                       'error_consent_or_dissent', ]
         self.textDict.update(loader.batchGetText(txtKeyList))
@@ -158,7 +158,7 @@ class ConsentPage(abstract_pages.NonRecordingPage):
                            "r").read()
         consentText %= (self.textDict["title"],
                         self.textDict["consent_title"],
-                        self.textDict["consent_%s" % self.consentName])
+                        self.textDict[self.consentName])
         
         consentText += "\n\n<hr /><br /><br />"
         consentText += self.textDict["consent_query"]
