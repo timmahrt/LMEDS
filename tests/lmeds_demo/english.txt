@@ -36,7 +36,7 @@ On the next page you'll listen to a list of audio files separated by a brief pau
 boundary_and_prominence_constrained_instructions
 ====================
 
-On the next page you'll perform the same text as before, but this time you have to listen to the audio exactly 2 times for each task.
+On the next page you'll perform a similar annotation task as before.  This time however, you will listen to the audio exactly twice before moving on.  Also, you will not be able to see the boundary markings you make during the first half of the task.
 
 ====================
 boundary_and_prominence_mechanics_instructions
@@ -100,7 +100,7 @@ multingual_support
 
 Before continuing, note that LMEDS is multilingual. (translations provided by google translate).<br /><br />
 続行する前に、LMEDS推定は、多言語であることに注意<br /><br />
-Antes de continuar, tenga en cuenta que LMEDS es multilingüe.<br /><br />
+Avant de continuer, notez que LMEDS est multilingue<br /><br />
 जारी रखने से पहले, LMEDS बहुभाषी है कि ध्यान दें<br /><br />
 
 ====================
@@ -175,7 +175,7 @@ consent
 I consent
 
 ====================
-demo_consent
+consent_demo_consent
 ====================
 
 <b>Investigators:</b>  Joe; Mary (University of Somewhere) <br /><br />
@@ -300,17 +300,11 @@ three_option_validation
 Error.  Please select one of the three options.
 
 ------------------------------
-boundary_and_prominence
+prominence
 ------------------------------
 
 ====================
-boundary_nonspecific_instructions_short
-====================
-
-Mark a boundary between words <font color="red">that belong to different chunks</font>.
-
-====================
-prominence_nonspecific_post_boundary_instructions_short
+prominence_nonspecific_instructions_short
 ====================
 
 Mark the words that the speaker <font color="blue">highlighted for the listener, to make them stand out</font>.
@@ -353,6 +347,28 @@ You have chosen not to participate in this study. Thank you for your time.
 <br /><br />
 
 ------------------------------
+boundary_and_prominence
+------------------------------
+
+====================
+boundary_instructions_short
+====================
+
+Mark a boundary between words <font color="red">that belong to different chunks</font>.
+
+====================
+prominence_nonspecific_post_boundary_instructions_short
+====================
+
+Mark the words that the speaker <font color="blue">highlighted for the listener, to make them stand out</font>.
+
+====================
+prominence_post_boundary_instructions_short
+====================
+
+Mark the words that the speaker <font color="blue">highlighted for the listener, to make them stand out</font>.
+
+------------------------------
 lmeds_interface,login,login_bad_user_name
 ------------------------------
 
@@ -363,7 +379,7 @@ back_button_warning
 <font color="red">Please note that pressing 'back' or 'refresh' will invalidate this experiment session.</font>
 
 ------------------------------
-audio_list,same_different_stream,boundary_and_prominence
+audio_list,same_different_stream,boundary,prominence,boundary_and_prominence
 ------------------------------
 
 ====================
@@ -395,6 +411,16 @@ title
 A Demonstration of LMEDS
 
 ------------------------------
+lmeds_interface,boundary_and_prominence
+------------------------------
+
+====================
+continue_button
+====================
+
+Continue
+
+------------------------------
 login,login_bad_user_name
 ------------------------------
 
@@ -423,12 +449,12 @@ user_name_text
 Please enter a unique user id.  No spaces please.  (e.g. k123l or john_doe_22)
 
 ------------------------------
-lmeds_interface,boundary_and_prominence
+boundary,boundary_and_prominence
 ------------------------------
 
 ====================
-continue_button
+boundary_nonspecific_instructions_short
 ====================
 
-Continue
+Mark a boundary between words <font color="red">that belong to different chunks</font>.
 

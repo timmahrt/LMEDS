@@ -1,0 +1,45 @@
+,,Total,bob.csv,mary.csv,sarah.csv
+Sex:,Male,1,1,0,0
+,Female,2,0,1,1
+Age:,,108,52,36,20
+Do you have any problems with your hearing or vision?,,-,No,No,No
+Do you have any speech problems?,,-,No,No,No
+What is your ethnic background?,,-,Caucasian,African American,Asian
+Country of birth:,United States,3,1,1,1
+,Other,0,0,0,0
+Country of birth:,,0,,,
+If United States list city/state:,,-,Champaign IL,Portland OR,Miami FL
+If other how old were you when you moved to the USA?,,0,,,
+Current city and state of residence:,,-,Champaign IL,New York NY,Austin TX
+Level of education completed:,High School,1,0,0,1
+,Some College,0,0,0,0
+,Bachelor's Degree,2,1,1,0
+,Master's Degree,0,0,0,0
+,PhD,0,0,0,0
+Occupation,,-,Student,Chemical Engineer,Student
+What language(s) do you speak natively?,,-,English,English,English
+Do you live with people who speak other languages?,Yes,3,1,1,1
+,No,0,0,0,0
+If yes who and which languages?,,-,Friend Thai and Chinese,Roomate Chinese,Roommate German
+Have you ever studied any foreign languages?,Yes,3,1,1,1
+,No,0,0,0,0
+If yes which languages and for how long?,,-,Japanese 2 years French 3 years,French 3 years and Arabic 2 years,Russian 2 years
+Have you ever lived in a country (> 4 weeks) where a different language than your native language is spoken?,Yes,2,1,1,0
+,No,1,0,0,1
+If yes which country and language?,,-,Egypt Arabic,China Chinese,
+How old were you when you lived there?,,34,24,10,
+How long did you live there?,,-,3 months,3 years,
+Did you speak the language of the country while living there?,Yes,1,1,,
+,No,0,0,,
+Have you had any musical training?,Yes,2,0,1,1
+,No,1,1,0,0
+Which instrument and for how long?,,-,,Flute 5 years,Drums 10 years
+Have you ever taken a linguistics course?,Yes,2,1,0,1
+,No,1,0,1,0
+A phonetics course?,Yes,1,1,0,0
+,No,2,0,1,1
+A phonology course?,Yes,1,1,0,0
+,No,2,0,1,1
+Have you visited any of the following countries in the last year?,Spain,1,1,0,
+,Mexico,1,0,1,
+,Argentina,0,0,0,

@@ -24,9 +24,11 @@ fill_in_the_blank water_blank 10.0 polluted cold not_drinkable
 
 text_page boundary_and_prominence_mechanics_instructions
 text_page boundary_and_prominence_nonspecific_instructions
-boundary_and_prominence water water 0 -1 nonspecific true
-text_page boundary_and_prominence_constrained_instructions
 boundary_and_prominence apples apples 2 2 nonspecific true
+
+text_page boundary_and_prominence_constrained_instructions
+boundary apples apples 2 2 nonspecific true
+prominence apples apples 2 2 nonspecific true
 
 text_page post_survey_instructions
 survey postsurvey
