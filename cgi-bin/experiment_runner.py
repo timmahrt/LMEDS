@@ -11,7 +11,6 @@ This must stay in the same folder as the .cgi files
 
 import cgi
 import cgitb
-cgitb.enable()
 
 import sys
 import os
@@ -27,6 +26,7 @@ except OSError:
 
 # This should point to the directory that includes the python package /lmeds
 sys.path.append("..")
+cgitb.enable(display=0, logdir="../error_logs")
 
 from lmeds import rpt_main
 
