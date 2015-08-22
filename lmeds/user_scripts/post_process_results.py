@@ -9,8 +9,8 @@ import os
 from os.path import join
 import sys
 import argparse
-import shutil
 import codecs
+import shutil
 
 from os.path import dirname, abspath
 
@@ -111,7 +111,8 @@ def removeDuplicates(path, overwrite=False):
         
         open(join(outputPath, fn), "w").write("\n".join(outputList))
 
-    print("End of duplicates listing")
+    if anyDuplicatesFound is True:
+        print("End of duplicates listing")
     
 
 def agglutinateSpreadsheets(csvFNList, outputFN):
@@ -136,11 +137,18 @@ def postProcessResults(testName, sequenceFN, removeDuplicatesFlag,
     tmpSequence = sequence.TestSequence(None, join(rootPath, sequenceFN))
     fullPath = join(rootPath, "output", tmpSequence.sequenceTitle)
     pathToData = fullPath
-    outputPath = join(fullPath, "post_process_results")
     
     if removeDuplicatesFlag is True:
         removeDuplicates(pathToData, True)
         pathToData = join(pathToData, "duplicates_removed")
+    else:
+        newPathToData = join(pathToData, "duplicates_not_removed")
+        utils.makeDir(newPathToData)
+        for fn in utils.findFiles(pathToData, filterExt=".csv"):
+            shutil.copy(join(pathToData, fn), join(newPathToData, fn))
+        pathToData = newPathToData
+    
+    outputPath = pathToData + "_results"
     
     userResponseList = []
     fnList = utils.findFiles(pathToData, filterExt=".csv")
