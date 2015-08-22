@@ -26,6 +26,7 @@ from lmeds.utilities import user_script_helper
 from lmeds.utilities import constants
 from lmeds.post_process import transpose_rpt
 from lmeds.post_process import transpose_survey
+from lmeds.post_process import transpose_choice
 
 ASPECT_MEANING = "meaning"
 ASPECT_ACOUSTICS = "acoustics"
@@ -221,6 +222,16 @@ def postProcessResults(testName, sequenceFN, removeDuplicatesFlag,
         if pageName in uniquePageList:
             transpose_rpt.transposeRPT(join(pathToData, pageName),
                                        txtPath, pageName, outputPath)
+            
+    choicePageList = ["abn", "same_different_beep", "same_different",
+                      "same_different_stream", "abn_one_audio",
+                      "abn_two_audio", "abn_three_audio",
+                      "ab", "axb"]
+    for pageName in choicePageList:
+        if pageName in uniquePageList:
+            transpose_choice.transposeChoice(join(pathToData, pageName),
+                                             pageName,
+                                             outputPath)
     
 
 if __name__ == "__main__":
