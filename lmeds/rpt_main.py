@@ -148,28 +148,6 @@ class WebSurvey(object):
     
         return pageNum, cookieTracker, nextPage, userName
     
-    def getNumOutputs(self, testType, fnFullPath):
-        numOutputs = 0  # All non-trial pages do not have any outputs
-        if testType in ['prominence', 'boundary', 'oldProminence',
-                        'oldBoundary', 'boundary_and_prominence']:
-            wordList = loader.loadTxtFile(fnFullPath)
-            numOutputs = 0
-            for line in wordList:
-                numOutputs += len(line.split(" "))
-            
-            if testType == 'oldBoundary':
-                numOutputs -= 1
-                
-            if testType == 'boundary_and_prominence':
-                numOutputs *= 2
-        
-        elif testType in ['axb', "same_different", ]:
-            numOutputs = 2  # A, B
-            
-        elif testType in ['abn', ]:
-            numOutputs = 3  # A, B, N
-            
-        return numOutputs
     
     def buildPage(self, pageNum, cookieTracker, page, userName,
                   testSequence, sourceCGIFN):

@@ -12,15 +12,6 @@ from os.path import join
 
 from lmeds.code_generation import html
 
-abValidation = """
-var y=document.forms["languageSurvey"];
-if (checkBoxValidate(y["axb"])==true)
-  {
-  alert("%s");
-  return false;
-  }
-  return true;
-"""
 
 audioTextKeys = ["error_must_play_audio_at_least", "error_must_play_audio",
                  'play_button']
