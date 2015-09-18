@@ -98,6 +98,7 @@ def _parseTransposed(inputFN, isAnswerFlag):
             else:
                 i -= 1
                 break
+        i += 1
     
     if isAnswerFlag:
         returnList = [(row[:-1], row[-1]) for row in dataList]
@@ -113,7 +114,7 @@ def _generateConfusionMatrix(correctList, responseList, percentFlag):
     confusionDict = {}
     flattenedResponseList = [val for sublist in responseList
                              for val in sublist]
-    keyList = list(set(flattenedResponseList + flattenedResponseList))
+    keyList = list(set(flattenedResponseList + correctList))
     keyList.sort()
     sumDict = {}
     for key1 in keyList:
@@ -194,7 +195,7 @@ def transposeChoice(path, pageName, outputPath):
     # Add the column heading rows
     # First row in unanonymized user names
     # Second row is anonymized
-    numArgs = stimuliList[0].count(",") + 1
+    numArgs = stimuliList[0].count(",")
     rowOne, rowTwo = _buildHeader(fnList, numArgs, pageName)
     outputList = [rowOne, rowTwo, ] + outputList
     
