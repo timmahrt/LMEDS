@@ -12,7 +12,10 @@ from os.path import join
 # EDITING THESE ONLY MODIFIES METADATA AND WILL NOT IMPAIR LMEDS
 softwareLogo = '<img src="../imgs/lmeds_logo.png"><br />'
 softwareName = "LMEDS: Language Markup and Experimental Design Software"
-rootURL = "http://tmahrt.nfshost.com/rptTest"
+
+# Insert url here of LMEDS.  This is used by a few
+# files (just .ico?) so not filling this in is not hugely problematic
+rootURL = ""  
 
 
 # EDITING THE BELOW MIGHT PREVENT LMEDS FROM FUNCTIONING
