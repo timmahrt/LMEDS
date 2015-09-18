@@ -187,15 +187,17 @@ function audio_buttons_enable()
         
       // Enable the submit button if at least the minimum number of plays is
       // completed for all audio files
-     if (document.getElementById("submitButton") !== null)
+     
      {
       var allGreater = true;
       if (silenceFlag == true && %(minNumPlays)d > 0)
       {
         if (doingPandBPage == true) {
           if (%(minNumPlays)d <= countDict[0]) {
-            document.getElementById("halfwaySubmitButton").disabled=false;
-            doingPandBPage = false;
+            if (document.getElementById("submitButton") !== null) {
+                document.getElementById("halfwaySubmitButton").disabled=false;
+                doingPandBPage = false;
+            }
           }
         }
         else {
@@ -207,9 +209,16 @@ function audio_buttons_enable()
           }
         
           if (allGreater == true) {
-            document.getElementById("submitButton").disabled=false;
+              if (document.getElementById("submitButton") !== null) {
+                document.getElementById("submitButton").disabled=false;
+              }
+              %(audioMinThresholdEvent)s
           }
         }
+      }
+      else
+      {
+      %(audioMinThresholdEvent)s
       }
     }
     
@@ -246,7 +255,8 @@ function verifyFirstAudioPlayed() {
 
 
 def getPlaybackJS(doSilence, numItems, maxNumPlays, minNumPlays,
-                  autosubmit=False, runOnFinish=None, listenPartial=False):
+                  autosubmit=False, runOnFinish=None, listenPartial=False,
+                  runOnMinThreshold=None):
 
     maxNumPlays = int(maxNumPlays)
     minNumPlays = int(minNumPlays)
@@ -285,6 +295,8 @@ def getPlaybackJS(doSilence, numItems, maxNumPlays, minNumPlays,
         autoSubmitHTML = "setTimeout(function(){processSubmit()}, timeout);"
     if runOnFinish is not None:
         autoSubmitHTML += "\n" + runOnFinish
+    if runOnMinThreshold is None:
+        runOnMinThreshold = ""
     
     minNumPlaysErrorMsg = errorMsg % int(minNumPlays)
     
@@ -295,7 +307,8 @@ def getPlaybackJS(doSilence, numItems, maxNumPlays, minNumPlays,
                                 "maxNumPlays": maxNumPlays,
                                 "minNumPlaysErrorMsg": minNumPlaysErrorMsg,
                                 "autosubmit_code": autoSubmitHTML,
-                                "listenPartialFlag": listenPartial}
+                                "listenPartialFlag": listenPartial,
+                                'audioMinThresholdEvent': runOnMinThreshold}
     
     return jsCode
 
