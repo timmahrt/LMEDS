@@ -108,6 +108,18 @@ def _parseTransposed(inputFN, isAnswerFlag):
     return headerList, returnList
 
 
+def _recListToStr(someObj):
+    if isinstance(someObj, list):
+        tmpList = []
+        for subVal in someObj:
+            tmpList.append(_recListToStr(subVal))
+        retStr = "[%s]" % " ".join(tmpList)
+    else:
+        retStr = str(someObj)
+    
+    return retStr
+
+
 def _generateConfusionMatrix(correctList, responseList, percentFlag):
     
     # Initialize dictionary
@@ -168,9 +180,12 @@ def transposeChoice(path, pageName, outputPath):
         userResponse = [str(responseTuple[3].split(',').index('1'))
                         for responseTuple in userDataList]
         responseDataList.append(userResponse)
-    
-        userStimuli = [",".join(responseTuple[1])
-                       for responseTuple in userDataList]
+        
+        userStimuli = []
+        for responseTuple in userDataList:
+            rowData = [_recListToStr(row) for row in responseTuple[1]]
+            userStimuli.append(",".join(rowData))
+        
         if stimuliList == []:
             stimuliList = userStimuli
         stimuliListsOfLists.append(userStimuli)
@@ -227,9 +242,9 @@ def generateCorrectResponse(correctionFN, ruleFunc, outputFN):
     
     outputList = []
     for row in dataList:
-        cellList = row.split(",")
+        cellList = sequence.recChunkLine(row, ",")
         decision = ruleFunc(cellList)
-        outputList.append(",".join(cellList + [decision, ]))
+        outputList.append("%s,%s" % (row, decision))
     
     outputTxt = "\n".join(outputList)
     codecs.open(outputFN, "w", encoding="utf-8").write(outputTxt)
