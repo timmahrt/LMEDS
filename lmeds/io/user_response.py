@@ -6,6 +6,7 @@ Created on Dec 29, 2013
 
 import codecs
 
+from lmeds.io import sequence
 HEADER_DEMARCATOR = ";,"  # Splits the header from its data
 
 
@@ -31,8 +32,7 @@ def loadUserResponse(fn):
         
         # HACK: Why are quote marks around every item in the output?
         stimuliArgs = stimuliArgs.replace("'", "")
-        stimuliArgList = stimuliArgs.split(',')
-        stimuliArgList = [item.strip() for item in stimuliArgList]
+        stimuliArgList = sequence.recChunkLine(stimuliArgs, ',')
         
         returnList.append((command, stimuliArgList, metaData, dataTxt))
     

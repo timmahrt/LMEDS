@@ -68,12 +68,25 @@ class InvalidSequenceFileError(Exception):
                 ) % self.item
 
 
+class UnbalancedWrapperError(Exception):
+    
+    def __init__(self, text, startDelim, endDelim):
+        super(UnbalancedWrapperError, self).__init__()
+        self.text = text
+        self.startDelim = startDelim
+        self.endDelim = endDelim
+    
+    def __str__(self):
+        return ("Unbalanced use of %s and %s in string \n %s"
+                % (self.startDelim, self.endDelim, self.text))
+
+
 class TestSequence(object):
     
     def __init__(self, webSurvey, sequenceFN):
         self.sequenceFN = sequenceFN
     
-        self.webSurvey = webSurvey
+        self.webSurvey = webSurvey  # Needed to instantiate pages
         self.sequenceTitle, self.testItemList = self.quickParse()
     
     def getNumPages(self):
@@ -96,51 +109,11 @@ class TestSequence(object):
         page = factories.loadPage(self.webSurvey, pageName, argList, kargDict)
         
         return page
-    
+
     def getPageStr(self, pageNum):
         pageRow = self.testItemList[pageNum]
         
-        # Find lists
-        indicies = [0]
-        indexList = []
-        startIndex = 0
-        endIndex = 0
-        char1 = "["
-        char2 = "]"
-        text = pageRow
-        while True:
-            try:
-                bracketStartIndex = text.index(char1, startIndex)
-            except ValueError:
-                break
-            endIndex = text.index(char2, bracketStartIndex)
-            
-            indexList.append((startIndex, bracketStartIndex - 1))
-            indexList.append((bracketStartIndex + 1, endIndex))
-            
-            indicies.append(endIndex)
-            startIndex = endIndex + 1
-        
-        if endIndex == 0:
-            indexList.append((0, -1))
-        else:
-            indexList.append((endIndex + 1, -1))
-        
-        # Make chunks
-        chunkList = []
-        i = 0
-        while i < len(indexList) - 1:
-            tmpData = text[indexList[i][0]:indexList[i][1]].strip()
-            if tmpData != "":
-                chunkList.extend((tmpData.split()))
-            tmpData = text[indexList[i + 1][0]:indexList[i + 1][1]].strip()
-            if tmpData != "":
-                chunkList.append(tmpData.split())
-            i += 2
-        tmpData = text[indexList[-1][0]:].strip()
-        if tmpData != "":
-            chunkList.extend(tmpData.split())
-        
+        chunkList = recChunkLine(pageRow)
         pageName = chunkList.pop(0)
         
         return pageName, chunkList
@@ -161,3 +134,99 @@ class TestSequence(object):
         sequenceTitle = sequenceTitle[1:]
 
         return sequenceTitle, testItemList
+
+
+def _parse(txt, startDelim, endDelim, startI):
+    '''
+    For embedded structures, finds the appropriate start and end of one
+    
+    Given:
+    [[0 0] [0 1] ] [2 3 4]
+    This would return the indicies for:
+    [[0 0] [0 1] ]
+    > (0, 13)
+    '''
+    endI = None
+    depth = 0
+    startI = txt.index(startDelim, startI)
+    for i in xrange(startI, len(txt)):
+        if txt[i] == startDelim:
+            depth += 1
+        elif txt[i] == endDelim:
+            depth -= 1
+            if depth == 0:
+                endI = i + 1
+                break
+    
+    if endI is None:
+        raise UnbalancedWrapperError(txt, startDelim, endDelim)
+    
+    return startI, endI
+
+
+def _splitTxt(txt, splitItem):
+    '''
+    Split on whitespace or splitItem
+    '''
+    if splitItem is None:
+        tmpDataList = txt.split()
+    else:
+        tmpDataList = txt.split(splitItem)
+        tmpDataList = [row.strip() for row in tmpDataList if row.strip() != ""]
+        
+    return tmpDataList
+
+
+def recChunkLine(line, splitItem=None):
+    '''
+    Parses a line on space or splitItem.  Handles embedded lists.
+    
+    Given:
+    a b c [d e f] [[g] h]
+    Returns:
+    ['a', 'b', 'c', ['d', 'e', 'f'], [['g'], 'h']]
+    '''
+    
+    indicies = [0]
+    indexList = []
+    startIndex = 0
+    endIndex = 0
+    char1 = "["
+    char2 = "]"
+    while True:
+
+        try:
+            bracketStartIndex, endIndex = _parse(line, char1, char2,
+                                                 startIndex)
+        except ValueError:
+            break
+        
+        indexList.append((startIndex, bracketStartIndex))
+        indexList.append((bracketStartIndex, endIndex))
+        
+        indicies.append(endIndex)
+        startIndex = endIndex
+    
+    if endIndex == 0:
+        indexList.append((0, -1))
+    else:
+        indexList.append((endIndex, -1))
+    
+    # Make chunks
+    chunkList = []
+    i = 0
+    while i < len(indexList) - 1:
+        tmpData = line[indexList[i][0]:indexList[i][1]].strip()
+        if char1 in tmpData:
+            chunkList.append(recChunkLine(tmpData[1:-1], splitItem))
+        elif tmpData != "":
+            chunkList.extend((_splitTxt(tmpData, splitItem)))
+        i += 1
+    tmpData = line[indexList[-1][0]:].strip()
+    if tmpData != "":
+        splitData = _splitTxt(tmpData, splitItem)
+        if splitData[0] == tmpData:
+            splitData = _splitTxt(tmpData, None)
+        chunkList.extend(splitData)
+    
+    return chunkList

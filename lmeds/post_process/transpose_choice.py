@@ -52,6 +52,7 @@ import os
 from os.path import join
 import codecs
 
+from lmeds.io import sequence
 from lmeds.io import user_response
 from lmeds.utilities import utils
 
@@ -78,8 +79,7 @@ def _buildHeader(fnList, numArgs, pageName):
 def _parseTransposed(inputFN, isAnswerFlag):
     
     dataList = codecs.open(inputFN, "r", encoding="utf-8").readlines()
-    dataList = [row.strip() for row in dataList if len(row) > 0]
-    dataList = [row.split(",") for row in dataList]
+    dataList = [sequence.recChunkLine(row, ",") for row in dataList]
     
     header = None
     headerList = []
