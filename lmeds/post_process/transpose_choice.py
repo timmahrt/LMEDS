@@ -235,10 +235,13 @@ def generateCorrectResponse(correctionFN, ruleFunc, outputFN):
     codecs.open(outputFN, "w", encoding="utf-8").write(outputTxt)
     
 
-def markCorrect(inputFN, correctionFN, outputFN):
+def markCorrect(inputFN, correctionFN, outputFN, evalFunc=None):
     '''
     Converts user responses into a binary--right or wrong--answer
     '''
+    
+    if evalFunc is None:
+        evalFunc = lambda x, y: x == y
     
     # Load
     headerList, responseList = _parseTransposed(inputFN, False)
@@ -251,11 +254,13 @@ def markCorrect(inputFN, correctionFN, outputFN):
         
         userResponses = responseTuple[1]
         answer = answerTuple[1]
-        markedRow = ["1" if val == answer else "0" for val in userResponses]
+        markedRow = ["1" if evalFunc(val, answer) else "0"
+                     for val in userResponses]
         
         markedList.append(responseTuple[0] + markedRow)
     
-    markedList = [",".join(row) for row in markedList]
+    markedList = [",".join([_recListToStr(item) for item in row])
+                  for row in markedList]
     outputTxt = "\n".join(markedList)
     codecs.open(outputFN, "w", encoding="utf-8").write(outputTxt)
 
