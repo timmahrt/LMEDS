@@ -26,7 +26,8 @@ except OSError:
 
 # This should point to the directory that includes the python package /lmeds
 sys.path.append("..")
-cgitb.enable(display=0, logdir="../error_logs")
+# cgitb.enable(display=0, logdir="../error_logs")  # Creates files that I don't have permissions to access
+cgitb.enable()
 
 from lmeds import rpt_main
 
