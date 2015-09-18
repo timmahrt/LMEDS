@@ -162,8 +162,15 @@ def postProcessResults(testName, sequenceFN, removeDuplicatesFlag,
     if not all([len(response) == testLen for response in userResponseList]):
         print("ERROR: Not all responses in folder %s are the same length"
               % pathToData)
+        countDict = {}
         for fn, response in utils.safeZip([fnList, userResponseList], True):
-            print("%s - %d lines" % (fn, len(response)))
+            countDict.setdefault(len(response), [])
+            countDict[len(response)].append(fn)
+            
+        keyList = countDict.keys()
+        keyList.sort()
+        for numLines in keyList:
+            print("%d lines - %s" % (numLines, str(countDict[numLines])))
         exit(0)
     
     # Don't continue if pages are different
