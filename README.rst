@@ -13,6 +13,10 @@ experiments (memory tasks, AXB-type tasks, etc.).
 Major revisions
 ================
 
+Ver 2.1 (Sep 18, 2015)
+
+- Replaced the many AXB page classes with one flexible AudioPage class
+
 Ver 2.0 (Aug 12, 2015)
 
 - First public release.  
