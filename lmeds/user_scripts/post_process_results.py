@@ -222,7 +222,7 @@ def postProcessResults(testName, sequenceFN, removeDuplicatesFlag,
         
         transpose_survey.transposeSurvey(join(pathToData, "survey"),
                                          surveyNameList, outputPath)
-    
+     
     # Transpose the rpt pages
     prominencePageList = ["prominence", "boundary", "boundary_and_prominence"]
     for pageName in prominencePageList:
@@ -230,10 +230,7 @@ def postProcessResults(testName, sequenceFN, removeDuplicatesFlag,
             transpose_rpt.transposeRPT(join(pathToData, pageName),
                                        txtPath, pageName, outputPath)
             
-    choicePageList = ["abn", "same_different_beep", "same_different",
-                      "same_different_stream", "abn_one_audio",
-                      "abn_two_audio", "abn_three_audio",
-                      "ab", "axb"]
+    choicePageList = ["audio_choice", ]
     for pageName in choicePageList:
         if pageName in uniquePageList:
             transpose_choice.transposeChoice(join(pathToData, pageName),
