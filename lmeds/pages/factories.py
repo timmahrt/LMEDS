@@ -7,7 +7,6 @@ Created on Feb 28, 2014
 from lmeds.pages import assorted_experiment_pages
 from lmeds.pages import boundary_pages
 from lmeds.pages import core_pages
-from lmeds.pages import axb_pages
 
 
 class ReservedWordException(Exception):
@@ -31,21 +30,13 @@ def loadPage(webSurvey, pageName, args=None, kargs=None):
     
     kargs['webSurvey'] = webSurvey
     
-    pageClassList = [axb_pages.AXBPage,
-                     axb_pages.ABPage,
-                     axb_pages.ABNPage,
-                     axb_pages.ABNOneAudio,
-                     axb_pages.ABNTwoAudio,
-                     axb_pages.ABNThreeAudio,
-                     axb_pages.SameDifferentPage,
+    pageClassList = [assorted_experiment_pages.AudioChoicePage,
                      assorted_experiment_pages.SurveyPage,
                      assorted_experiment_pages.AudioListPage,
                      assorted_experiment_pages.AudioWithResponsePage,
                      assorted_experiment_pages.TextResponsePage,
                      assorted_experiment_pages.MemoryPage,
                      assorted_experiment_pages.FillInTheBlankPage,
-                     axb_pages.SameDifferentBeepPage,
-                     axb_pages.SameDifferentStream,
                      core_pages.LoginPage,
                      core_pages.LoginErrorPage,
                      core_pages.EndPage,

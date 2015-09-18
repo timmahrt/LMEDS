@@ -116,6 +116,15 @@ margin-left:auto;
 margin-right:auto;
 }
 
+td.buttons {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+td.responses {
+    padding-left: 10px;
+    padding-right: 10px;
+}
 
 td {
 text-align:center;

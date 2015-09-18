@@ -175,7 +175,19 @@ consent
 I consent
 
 ====================
-consent_demo_consent
+consent_query
+====================
+
+Do you consent to participate in this study?
+
+====================
+consent_title
+====================
+
+Online Informed Consent
+
+====================
+demo_consent
 ====================
 
 <b>Investigators:</b>  Joe; Mary (University of Somewhere) <br /><br />
@@ -209,17 +221,6 @@ I have read and understand the above consent form, I certify that I am 18 years 
 This consent form is derived from one used in an actual experiment run using LMEDS.<br /><br />
 This is not a real study, there is no compensation, and your data will be saved but not looked at or used in any study.<br /><br />
 
-====================
-consent_query
-====================
-
-Do you consent to participate in this study?
-
-====================
-consent_title
-====================
-
-Online Informed Consent
 
 ====================
 dissent
@@ -256,32 +257,62 @@ memory_instruct
 Blaah
 
 ------------------------------
-same_different_stream
+audio_choice
 ------------------------------
 
 ====================
-error_select_same_or_different
+different
 ====================
 
-Error.  Select SAME or DIFFERENT in order to continue
+different
 
 ====================
-same_different_different
+equal
 ====================
 
-Different
+L and R
 
 ====================
-same_different_question
+five_choice_discrim
 ====================
 
-Are these utterances the same or different?
+Which of the responses fits the question the best?
 
 ====================
-same_different_same
+lbest
 ====================
 
-Same
+L
+
+====================
+lprefered
+====================
+
+L ~R
+
+====================
+rbest
+====================
+
+R
+
+====================
+rprefered
+====================
+
+R ~L
+
+====================
+same
+====================
+
+same
+
+====================
+same_different_instr
+====================
+
+Are the two audio files the same or different?
 
 ------------------------------
 fill_in_the_blank
@@ -298,6 +329,16 @@ three_option_validation
 ====================
 
 Error.  Please select one of the three options.
+
+------------------------------
+boundary_and_prominence
+------------------------------
+
+====================
+prominence_nonspecific_post_boundary_instructions_short
+====================
+
+Mark the words that the speaker <font color="blue">highlighted for the listener, to make them stand out</font>.
 
 ------------------------------
 prominence
@@ -347,26 +388,24 @@ You have chosen not to participate in this study. Thank you for your time.
 <br /><br />
 
 ------------------------------
-boundary_and_prominence
+login,text_page,consent,login_bad_user_name
 ------------------------------
 
 ====================
-boundary_instructions_short
+title
+====================
+
+A Demonstration of LMEDS
+
+------------------------------
+boundary_and_prominence,boundary
+------------------------------
+
+====================
+boundary_nonspecific_instructions_short
 ====================
 
 Mark a boundary between words <font color="red">that belong to different chunks</font>.
-
-====================
-prominence_nonspecific_post_boundary_instructions_short
-====================
-
-Mark the words that the speaker <font color="blue">highlighted for the listener, to make them stand out</font>.
-
-====================
-prominence_post_boundary_instructions_short
-====================
-
-Mark the words that the speaker <font color="blue">highlighted for the listener, to make them stand out</font>.
 
 ------------------------------
 lmeds_interface,login,login_bad_user_name
@@ -379,7 +418,7 @@ back_button_warning
 <font color="red">Please note that pressing 'back' or 'refresh' will invalidate this experiment session.</font>
 
 ------------------------------
-audio_list,same_different_stream,boundary,prominence,boundary_and_prominence
+audio_list,audio_choice,boundary_and_prominence,boundary,prominence
 ------------------------------
 
 ====================
@@ -401,26 +440,6 @@ play_button
 Play
 
 ------------------------------
-login,text_page,consent,login_bad_user_name
-------------------------------
-
-====================
-title
-====================
-
-A Demonstration of LMEDS
-
-------------------------------
-lmeds_interface,boundary_and_prominence
-------------------------------
-
-====================
-continue_button
-====================
-
-Continue
-
-------------------------------
 login,login_bad_user_name
 ------------------------------
 
@@ -429,7 +448,6 @@ error_blank_name
 ====================
 
 Please enter a unique user id.  No spaces please.  (e.g. k123l or john_doe_22)
-
 
 ====================
 unsupported_warning
@@ -444,12 +462,12 @@ user_name_text
 Please enter a unique user id.  No spaces please.  (e.g. k123l or john_doe_22)
 
 ------------------------------
-boundary,boundary_and_prominence
+lmeds_interface,boundary_and_prominence
 ------------------------------
 
 ====================
-boundary_nonspecific_instructions_short
+continue_button
 ====================
 
-Mark a boundary between words <font color="red">that belong to different chunks</font>.
+Continue
 

@@ -175,6 +175,156 @@ class SurveyPage(abstract_pages.NonValidatingPage):
         return htmlText, pageTemplate, {'embed': embedTxt}
 
 
+class UnbalancedListPair(Exception):
+    
+    def __init__(self, listA, listB):
+        self.listA = listA
+        self.listB = listB
+        
+    def __str__(self):
+        errStr = "Lists '%s' and '%s' much have the same number of members"
+        return errStr % (str(self.listA), str(self.listB))
+    
+    
+class AudioChoicePage(abstract_pages.AbstractPage):
+    
+    pageName = "audio_choice"
+    
+    def __init__(self, instructionText, pauseDuration, minPlays, maxPlays,
+                 audioListOfLists, responseButtonList,
+                 buttonLabelList=None, *args, **kargs):
+        super(AudioChoicePage, self).__init__(*args, **kargs)
+        
+        self.instructionText = instructionText
+        self.pauseDuration = pauseDuration
+        self.audioList = audioListOfLists
+        self.minPlays = minPlays
+        self.maxPlays = maxPlays
+        self.responseButtonList = responseButtonList
+        
+        self.wavDir = self.webSurvey.wavDir
+        
+        self.submitProcessButtonFlag = False
+        self.nonstandardSubmitProcessList = [('widget',
+                                              'audio_choice')]
+        
+        # Strings used in this page
+        txtKeyList = [instructionText, ]
+        txtKeyList += responseButtonList
+        
+        self.buttonLabelList = buttonLabelList
+        if self.buttonLabelList is not None:
+            if len(self.buttonLabelList) != len(audioListOfLists):
+                raise UnbalancedListPair(self.audioList, self.buttonLabelList)
+            txtKeyList += buttonLabelList
+        
+        txtKeyList.extend(abstract_pages.audioTextKeys)
+        self.textDict.update(loader.batchGetText(txtKeyList))
+        
+        self.numAudioButtons = len(audioListOfLists)
+        self.processSubmitList = ["verifyAudioPlayed", ]
+        
+    def _getHTMLTxt(self):
+        radioButton = ('<p>\n'
+                       '<input type="radio" name="audio_choice"'
+                       'value="%(id)s" id="%(id)s" disabled />\n'
+                       '<label for="%(id)s">.</label>\n'
+                       '</p>\n'
+                       )
+        
+        htmlTxt = ('<br /><br />%%s<br /><br />\n'
+                   '<table class="center">\n'
+                   '<tr>%s</tr>\n'
+                   '<tr>%s</tr>\n'
+                   '</table>\n'
+                   )
+        
+        labelRow = ""
+        buttonRow = ""
+        for i in xrange(len(self.responseButtonList)):
+            text = self.textDict[self.responseButtonList[i]]
+            labelRow += "<td class='responses'>%s</td>" % text
+            buttonRow += "<td class='responses'>%s</td>" % (radioButton % {'id': i})
+        
+        return htmlTxt % (labelRow,
+                          buttonRow)
+    
+    def getValidation(self):
+        template = ""
+        
+        return template
+    
+    def getNumOutputs(self):
+        return len(self.responseButtonList)
+    
+    def getHTML(self):
+        '''
+        Listeners hear two files and decide if they are the same or different
+        '''
+        pageTemplate = join(constants.htmlDir, "axbTemplate.html")
+        
+        # Generate the javascript for disabling or enabling all of the
+        # audio buttons
+        enabledJS = 'document.getElementById("%d").disabled=false;\n'
+        disabledJS = 'document.getElementById("%d").disabled=true;\n'
+        
+        enabledSnippet = ''
+        disabledSnippet = ''
+        for i in xrange(len(self.responseButtonList)):
+            enabledSnippet += (enabledJS % i)
+            disabledSnippet += (disabledJS % i)
+        
+        availableFunctions = ('<script>\n'
+                              'function enable_checkboxes() {\n'
+                              '%s'
+                              '}\n'
+                              'function disable_checkboxes() {\n'
+                              '%s'
+                              '}\n'
+                              '</script>\n'
+                              ) % (enabledSnippet, disabledSnippet)
+        
+        # Generate the audio buttons
+        playBtnLabelRow = ''
+        playBtnSnippet = ''
+        template = "<td class='buttons'>%s</td>"
+        for i in xrange(len(self.audioList)):
+            
+            audioButtonHTML = audio.generateAudioButton(self.audioList[i], i,
+                                                        self.pauseDuration,
+                                                        False)
+            if self.buttonLabelList is not None:
+                label = self.textDict[self.buttonLabelList[i]]
+                playBtnLabelRow += template % label
+            playBtnSnippet += template % audioButtonHTML
+        
+        playBtnSnippet = '<tr>%s</tr>' % playBtnSnippet
+        if self.buttonLabelList is not None:
+            playBtnLabelRow = '<tr>%s</tr>' % playBtnLabelRow
+        
+        playBtnSnippet = playBtnLabelRow + playBtnSnippet
+        
+        playBtnSnippet = ('<table class="center">%s</table>') % playBtnSnippet
+        
+        runOnMinThresholdJS = "enable_checkboxes();"
+        embedTxt = audio.getPlaybackJS(True, self.numAudioButtons,
+                                       self.maxPlays, self.minPlays,
+                                       runOnMinThreshold=runOnMinThresholdJS)
+        
+        audioNames = [audioName for audioList in self.audioList
+                      for audioName in audioList]
+        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
+                                                 list(set(audioNames)))
+        embedTxt += "\n\n" + availableFunctions
+        
+        description = self.textDict[self.instructionText]
+
+        htmlText = description + self._getHTMLTxt()
+        htmlText %= (playBtnSnippet + "<br />")
+    
+        return htmlText, pageTemplate, {'embed': embedTxt}
+
+
 class AudioWithResponsePage(abstract_pages.AbstractPage):
     
     pageName = "audio_with_response_page"
