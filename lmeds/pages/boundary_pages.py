@@ -293,6 +293,16 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         return loader.getNumWords(join(self.txtDir,
                                        self.transcriptName + ".txt"))
         
+    def getOutput(self, form):
+        
+        try:
+            retList = super(BoundaryOrProminenceAbstractPage,
+                            self).getOutput(form)
+        except abstract_pages.KeyNotInFormError:
+            retList = ",".join(["0", ] * self.getNumOutputs())
+            
+        return retList
+        
     def getHTML(self):
         '''
         Returns html for a page where users mark either breaks or prominence
