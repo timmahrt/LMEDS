@@ -125,6 +125,34 @@ def _makeTogglableWord(testType, word, idNum, boundaryToken):
     return htmlTxt % {"testType": testType, "word": word, "idNum": idNum}
 
 
+def _skipPageEmbed(numWords, minNumPlays):
+    javascript = """
+<script>
+function SkipPage()
+{
+    // Since the user has chosen to abort this page, wipe out any of their
+    // responses
+    for (e=0;e<%(numWords)d;e++) {
+        var x = e+%(numWords)d;
+        if (document.getElementById(e).checked==true) {
+            document.getElementById(e).checked = false;
+            }
+        }
+
+    // Set the number of plays to the minimum number of plays
+    // so the page can advance
+    countDict[0] = %(minNumPlays)d;
+    countDict[1] = %(minNumPlays)d;
+    
+    // Submit
+    processSubmit();
+}
+</script>
+""" % {'numWords': int(numWords * 2), 'minNumPlays': int(minNumPlays)}
+
+    return javascript
+
+
 def _getTogglableWordEmbed(numWords, boundaryMarking):
     
     boundaryMarkingCode_showHide = """
@@ -363,13 +391,18 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
 
     def __init__(self, name, transcriptName, minPlays, maxPlays,
                  instructions=None, presentAudio="true",
-                 boundaryToken=None, *args, **kargs):
+                 doSkip="false", boundaryToken=None, *args, **kargs):
         
         super(BoundaryAndProminencePage, self).__init__(*args, **kargs)
         
         # Sanity force
         if presentAudio.lower() == "false":
             minPlays = "0"
+        
+        if doSkip.lower() == "true":
+            doSkip = True
+        else:
+            doSkip = False
         
         self.name = name
         self.transcriptName = transcriptName
@@ -378,6 +411,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         self.instructions = instructions
         self.presentAudio = presentAudio
         self.boundaryToken = boundaryToken
+        self.doSkip = doSkip
         
         self.txtDir = self.webSurvey.txtDir
         self.wavDir = self.webSurvey.wavDir
@@ -391,7 +425,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
                                                           self.instructions)
         
         # Strings used in this page
-        txtKeyList = ['continue_button']
+        txtKeyList = ['continue_button', 'skip_button']
         txtKeyList.extend(abstract_pages.audioTextKeys)
         txtKeyList.extend([self.stepOneInstructText,
                            self.stepTwoInstructText])
@@ -466,7 +500,17 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         # HTML from transitioning from the boundary portion of text
         # to the prominence portion
         continueButtonTxt = self.textDict['continue_button']
-        htmlTxt += '''<br /><br /><input type="button" value="%s"
+        htmlTxt += '''<br /><br />'''
+        
+        # Allow user to skip
+        skipButtonTxt = self.textDict['skip_button']
+        skipButton = ('<input type="button" value="%s" id="skipPageButton" '
+                      'onclick="SkipPage()" style="float: right;">'
+                      '</button><br />') % skipButtonTxt
+        if self.doSkip is True:
+            htmlTxt += skipButton
+
+        htmlTxt += '''<input type="button" value="%s"
                     id="halfwaySubmitButton"
                     onclick="ShowHide()"></button>''' % continueButtonTxt
         htmlTxt += '</div>\n\n<div id="HiddenDiv" style="DISPLAY: none">\n\n'
@@ -479,6 +523,9 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
                                          sentenceList,
                                          self.presentAudio,
                                          self.boundaryToken)[0]
+                                         
+        if self.doSkip is True:
+            htmlTxt += "<br /><br />" + skipButton
         htmlTxt += "</div>"
                     
         # Add the javascript and style sheets here
@@ -492,6 +539,8 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
 
         embedTxt += "\n\n" + _getTogglableWordEmbed(numWords,
                                                     self.boundaryToken)
+        if self.doSkip is True:
+            embedTxt += "\n\n" + _skipPageEmbed(numWords, self.minPlays)
         
         htmlTxt = html.makeNoWrap(htmlTxt)
         

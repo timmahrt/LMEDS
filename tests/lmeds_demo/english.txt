@@ -335,6 +335,12 @@ boundary_and_prominence
 ------------------------------
 
 ====================
+skip_button
+====================
+
+Skip
+
+====================
 prominence_nonspecific_post_boundary_instructions_short
 ====================
 
