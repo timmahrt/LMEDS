@@ -148,7 +148,7 @@ function SkipPage()
     processSubmit();
 }
 </script>
-""" % {'numWords': int(numWords * 2), 'minNumPlays': int(minNumPlays)}
+""" % {'numWords': int(numWords), 'minNumPlays': int(minNumPlays)}
 
     return javascript
 
@@ -260,10 +260,15 @@ def _buildInstructionsText(textNameList, instructions):
 class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
     
     def __init__(self, name, transcriptName, minPlays, maxPlays,
-                 instructions=None, presentAudio="true", boundaryToken=None,
-                 doProminence=True, *args, **kargs):
+                 instructions=None, presentAudio="true", doSkip="false",
+                 boundaryToken=None, doProminence=True, *args, **kargs):
         
         super(BoundaryOrProminenceAbstractPage, self).__init__(*args, **kargs)
+        
+        if doSkip.lower() == "true":
+            doSkip = True
+        else:
+            doSkip = False
         
         self.name = name
         self.transcriptName = transcriptName
@@ -273,16 +278,17 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         self.presentAudio = presentAudio
         self.boundaryToken = boundaryToken
         self.doProminence = doProminence
+        self.doSkip = doSkip
         
         self.txtDir = self.webSurvey.txtDir
         self.wavDir = self.webSurvey.wavDir
     
-        instructTextList = [self.pageName, "instructions_short"]
+        instructTextList = [self.pageName, "instructions_short", ]
         self.instructText = _buildInstructionsText(instructTextList,
                                                    instructions)
     
         # Strings used in this page
-        txtKeyList = []
+        txtKeyList = ["skip_button", ]
         txtKeyList.extend(abstract_pages.audioTextKeys)
         txtKeyList.append(self.instructText)
         self.textDict.update(loader.batchGetText(txtKeyList))
@@ -346,11 +352,12 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         testType = self.pageName
         
         # Construct the HTML here
-        htmlTxt = _doBreaksOrProminence(testType, 0, 0,
-                                        self.name,
-                                        self.textDict[self.instructText],
-                                        sentenceList, self.presentAudio,
-                                        self.boundaryToken)[0]
+        tmp = _doBreaksOrProminence(testType, 0, 0,
+                                    self.name,
+                                    self.textDict[self.instructText],
+                                    sentenceList, self.presentAudio,
+                                    self.boundaryToken)
+        htmlTxt, numWords = tmp
     
         if self.presentAudio:
             embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays,
@@ -363,6 +370,14 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         embedTxt += _getProminenceOrBoundaryWordEmbed(self.doProminence)
         
         htmlTxt = html.makeNoWrap(htmlTxt)
+        
+        skipButtonTxt = self.textDict['skip_button']
+        skipButton = ('<input type="button" value="%s" id="skipPageButton" '
+                      'onclick="SkipPage()" style="float: right;">'
+                      '</button><br />') % skipButtonTxt
+        if self.doSkip is True:
+            htmlTxt += skipButton
+            embedTxt += "\n\n" + _skipPageEmbed(numWords, self.minPlays)
         
         return htmlTxt, pageTemplate, {'embed': embedTxt}
 
@@ -540,7 +555,8 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         embedTxt += "\n\n" + _getTogglableWordEmbed(numWords,
                                                     self.boundaryToken)
         if self.doSkip is True:
-            embedTxt += "\n\n" + _skipPageEmbed(numWords, self.minPlays)
+            # numWords * 2: 1 for boundaries and 1 for prominences
+            embedTxt += "\n\n" + _skipPageEmbed(numWords * 2, self.minPlays)
         
         htmlTxt = html.makeNoWrap(htmlTxt)
         
