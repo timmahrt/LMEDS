@@ -134,8 +134,8 @@ function SkipPage()
     // responses
     for (e=0;e<%(numWords)d;e++) {
         var x = e+%(numWords)d;
-        if (document.getElementById(e).checked==true) {
-            document.getElementById(e).checked = false;
+        if (document.getElementById(e).checked==false) {
+            document.getElementById(e).checked = true;
             }
         }
 
