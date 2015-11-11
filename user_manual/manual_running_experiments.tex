@@ -1,0 +1,79 @@
+% !TEX root = LMEDS_manual.tex
+
+%%%%%%%%%%%%%%%%%%%%%
+\section{Running your LMEDS experiments}
+%%%%%%%%%%%%%%%%%%%%%
+
+\paragraph{}
+Before you run your experiment, it is recommended that you run the user script sequence\_check.py to ensure verify that your sequence file, dictionary file, and survey files are all well formed and that your resource files are all available.
+
+
+\paragraph{}
+Regardless of whether you will run your experiments remotely or locally, before you run your experiment, you must create the output directory.  Suppose your experiment folder is called \textbf{my\_experiment}.  Then you should have the directory \textbf{/tests/my\_experiment}.  The first line of your sequence file is the name of the specific experiment, such as \textbf{experiment\_b}.  You will then need to create the folder \textbf{/tests/my\_experiment/output/experiment\_b}.  This is where LMEDS will store the user responses.
+
+
+\subsection{Running experiments remotely}
+
+\paragraph{}
+To run LMEDS experiments online, you're going to need a server.  This server could be one that you own or maintain, one managed by the IT department at your place of work, or one that you rent online.
+
+\paragraph{}
+Whichever route you go, the server you use will need to have cgi enabled and also be use python (apache's mod\_python).  If your server has these two things, drop the unzipped contents of the LMEDS distribution on the server
+
+\paragraph{}
+Not all commercial servers have python or cgi enabled.  One web service that I have used for running LMEDS experiments is \url{https://www.nearlyfreespeech.net/}.  They are a pay-as-you-go website, unlike many web hosts online.  Their pricing model is a little confusing but to run just under 1000 subjects over the last 2 years has cost me less than \$50.  Other, similar, services can be found online if you search around.
+
+\paragraph{}
+If you are installing a server from scratch, you'll need to make sure it comes with hooks to python--which is fortunately fairly typical these days.  In your httpd.conf file you'll want to enable .cgi files.  That is all!  LMEDS only uses standard python libraries and is based on python 2.7 (although I don't believe any 2.7-specific features are being used).
+
+\paragraph{}
+\begin{tcolorbox}[breakable,colback=white,colframe=green,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm,enlarge right by=6mm]
+Before you run experiments you must change the public permissions of the cgi file to execute (665 for the permission octals).  The output directory then needs to have full write and execute permissions (777 for the permission octals).
+\end{tcolorbox}
+
+\subsection{Running experiments locally} 
+
+\paragraph{}
+LMEDS comes with it's own local server.  Unlike a regular server, experiments can only be run on the computer that is running the local server.  However, the local server is useful when:
+
+\begin{itemize}
+\item no remote server exists
+\item running experiments in lab-like setting
+\item the internet is very slow or there is no internet
+\item self-piloting an experiment or portion of an experiment
+\end{itemize}
+
+\paragraph{}
+The only requirement for the local server is python 2.7 (\url{https://www.python.org/downloads/}).  Any of the variants of 2.7 will work fine (e.g. 2.7.9 or 2.7.10).
+
+\subsubsection{Running the server}
+
+\paragraph{}
+There are two ways to run the server.  One is from the command line:
+
+\begin{lstlisting}
+python lmeds_local_server.py
+\end{lstlisting}
+
+\paragraph{}
+Alternatively, python comes with a tool for writing and running code called IDLE.  You can open the script lmeds\_local\_server.py in IDLE via \texttt{file >> open} and select \texttt{run >> run module}.
+
+\paragraph{}
+Once the local server is running, it will direct you to enter in a URL in your web browser.  At this point, the server is working and you'll be able to access your experiments from that machine only.
+
+\subsubsection{Running your experiments}
+
+\paragraph{}
+Once the local server is running, there are a few final things you have to do before you can run your experiments.
+
+\paragraph{}
+\begin{tcolorbox}[breakable,colback=white,colframe=blue,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm,enlarge right by=6mm]
+\textbf{On Windows} you must rename your .cgi files to .py.  If extensions are hidden, you might need to make them visible in order to change them easily.
+\end{tcolorbox}
+
+\paragraph{}
+\begin{tcolorbox}[breakable,colback=white,colframe=green,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm,enlarge right by=6mm]
+\textbf{On Linux and OS X} you must change the public permissions of the cgi file to execute (665 for the permission octals).  The output directory then needs to have full write and execute permissions (777 for the permission octals).
+\end{tcolorbox}
+
+

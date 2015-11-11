@@ -1,0 +1,72 @@
+% !TEX root = LMEDS_manual.tex
+
+%%%%%%%%%%%%%%%%%%%%%
+\section{User scripts}
+\label{users_scripts}
+%%%%%%%%%%%%%%%%%%%%%
+
+\paragraph{}
+Everything in LMEDS can be done by hand, but the provided scripts located in \texttt{/lmeds/user\_scripts} enable you to easily perform certain routine tasks.
+
+\paragraph{}
+All scripts can be run in one of two ways.  
+
+\paragraph{}
+\textbf{First}, they can be run from the command line (\textit{cmd} on Windows or \textit{terminal} on OS X or Linux).  \texttt{python <<script\_name>>.py -h} will print out the options for that script.  For example, 
+\begin{lstlisting}
+python sequence_check.py -h
+\end{lstlisting}
+
+\paragraph{}
+\textbf{Second}, they can be run from within a python development environment, such as IDLE, which is bundled with every version of python.  If you open IDLE, choose \texttt{File >> Open} and open the desired script.  The script will open in a new window.  Select \texttt{Run >> Run Module}.  The application will launch.  It will ask if you want to go into interactive mode.  Type "yes".  The script will then ask question-by-question for all of the information it needs to run.
+
+\subsection{Generating the language dictionary}
+
+\paragraph{}
+Given a sequence file, python can generate an empty dictionary that contains all of the keys needed by the pages used in the sequence file.  The script can also update existing dictionaries used in other experiments or in cases where pages have been added or removed from a sequence file.
+
+\begin{lstlisting}
+python generate_language_dictionary.py -m update lmeds_demo 
+				sequence.txt english.txt
+\end{lstlisting}
+
+\subsection{Verifying experiment integrity}
+
+\paragraph{}
+This user script ensures that an experiment is ready to be run.  It makes sure that all text keys are in the dictionary, and that LMEDS can access all the wav and text resources that are included in the sequence file.  \textbf{Even if you use this script, you'll still want to run through the experiment at least once before you start collecting data.}  However, this script will save you some headaches if you've misspelled resource names in the sequence file, for example.
+
+\begin{lstlisting}
+python sequence_check.py lmeds_demo sequence.txt english.txt true
+\end{lstlisting}
+
+\subsection{Getting test duration}
+
+\paragraph{}
+This simple script will output the length of time each user spent on your experiment, along with the average time and the standard deviation.
+
+\begin{lstlisting}
+python get_test_duration.py lmeds_demo sequence.txt
+\end{lstlisting}
+
+\subsection{Post-processing the results}
+
+\paragraph{}
+Each user will have their data stored in a separate file.  For doing many kinds of analysis, this is not convenient.  Furthermore, the questions are removed from the responses and the responses are mixed with different kinds of questions.
+
+\paragraph{}
+This script was made to remedy some of these issues.  First, items are separated by page type.  Then, for survey items and rpt experiments, items are transposed, paired with the inputs (survey questions and transcripts, respectively) and then all of the data is combined into one spreadsheet for each page type.  This makes it much more convenient to explore the data and to do statistical analysis.
+
+\paragraph{}
+Currently, LMEDS may experience duplicate data entries--in particular when the \textbf{rot\_main.py}'s \textit{disableRefreshFlag} is set to False and the user hits back or refresh.  The code will warn when it detects multiple items and prevent the user from continuing but there is also the option to remove duplicate entries when they appear (printing the found instances).  This happens before anything else in the script.
+
+\paragraph{}
+The script can also remove from consideration any test items used in the experiment.
+
+\paragraph{}
+Output data can be found in subfolders created in the output folder of the experiment.
+
+\begin{lstlisting}
+python post_process_results.py lmeds_demo sequence.txt false
+\end{lstlisting}
+
+
