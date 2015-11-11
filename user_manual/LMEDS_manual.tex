@@ -3,18 +3,21 @@
 \geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
 %\geometry{landscape}                		% Activate for for rotated page geometry
 %\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
-\usepackage{graphicx}				% Use pdf, png, jpg, or eps"ß with pdflatex; use eps in DVI mode
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps"¬ß with pdflatex; use eps in DVI mode
 								% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage{fontspec}
 \usepackage{amssymb}
 \usepackage{listings}
 \usepackage{hyperref}
 \hypersetup{colorlinks=true, linkcolor=red}
 \usepackage[most]{tcolorbox}
 
-\title{LMEDS 2.0 Instruction Manual}
+\setmainfont{Times New Roman}
+
+\title{LMEDS 2.1 Instruction Manual}
 \titlehead{\centering\includegraphics{lmedslogo}}
 \author{Tim Mahrt}
-\date{August 12, 2015}
+\date{November 11, 2015}
 
 
 \renewcommand\thesection{\arabic{section}}
@@ -36,7 +39,7 @@ It is my hope that you will find this document useful in working with LMEDS. Thi
 
 \begin{tcolorbox}[breakable,colback=white,colframe=green,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm]
 
-\textbf{Development of LMEDS was supported by NSF BCS 12-51343 to Jennifer Cole and JosÈ I. Hualde.}
+\textbf{Development of LMEDS was supported by NSF BCS 12-51343 to Jennifer Cole and Jos√© I. Hualde.}
 
 \end{tcolorbox}
 
@@ -183,7 +186,7 @@ The file that contains all text that will be seen by users in your experiment.  
 A survey file can be used to get various kinds of feedback, such as might be needed for a longform survey or a short-answer question.  Supports text boxes, checkboxes, and radio buttons.
 
 \paragraph{}
-Each surveyÄô requires its own survey file (e.g. presurvey.txt, postsurvey.txt).
+Each survey requires its own survey file (e.g. presurvey.txt, postsurvey.txt).
 
 \paragraph{}
 Most pages have a static layout (defined in the python code) that is filled in with the same type of content.  A survey is different because the amount of content and inputs vary with each survey page, whereas all AXB pages, for example, share the same number of inputs and outputs.  For this reason, each survey requires its own specification file while other types of pages do not.
@@ -216,7 +219,7 @@ A dictionary files has the following components (a very small, but complete dict
 \subsubsection{Sections}
 
 \paragraph{}
-A section is denoted with ``-''Äò characters on the line above and below the section name.  The lengths of these lines (the number of ``-'') doesn't matter but should be kept the same length to be visually more coherent.  
+A section is denoted with ``-'' characters on the line above and below the section name.  The lengths of these lines (the number of ``-'') doesn't matter but should be kept the same length to be visually more coherent.  
 
 \paragraph{}
 Sections are actually ignored in the code.  Their only purpose is to help structure dictionaries, perhaps most naturally by page type.  Keys shared by multiple pages are kept in their own sections.
@@ -224,12 +227,12 @@ Sections are actually ignored in the code.  Their only purpose is to help struct
 \subsubsection{Keys}
 
 \paragraph{}
-A key is denoted in the same way with ``Äò=''Äô characters.  Keys must be the same, regardless of the language. 
+A key is denoted in the same way with ``='' characters.  Keys must be the same, regardless of the language. 
 
 \subsubsection{Texts}
 
 \paragraph{}
-A Äò``text''Äô appears after a key and before another key or section.  Unlike sections and keys, text is undecorated text.  
+A ``text'' appears after a key and before another key or section.  Unlike sections and keys, text is undecorated text.  
 
 \paragraph{}
 Text is rendered in HTML.  This means HTML markup is allowed.  It also means that whitespace other than a single space is ignored, although you may use extra whitespace to make it easier to read the text in the dictionary.  If you want a line break, for example, you will need to insert one used \texttt{<br />}
@@ -267,15 +270,15 @@ Please feel free to rest for a minute before continuing.
 \end{tcolorbox}
 
 \paragraph{}
-The section denotes that these keys are used in the text pages, which tend to be used for giving instructions.  Whenever LMEDS needs to display the title, it will look at the text for the key ``Äòtitle'' Äîin this case ``Perception of Spoken Discourse''.
+The section denotes that these keys are used in the text pages, which tend to be used for giving instructions.  Whenever LMEDS needs to display the title, it will look at the text for the key ``title'' in this case ``Perception of Spoken Discourse''.
 
 %%%%%%%%%%%%%%%%%%%%%
-\subsection{SurveyÄô file specification}
+\subsection{Survey file specification}
 \label{sec:surveySpec}
 %%%%%%%%%%%%%%%%%%%%%
 
 \paragraph{}
-The surveyù format allows for the simple creation of short or long questionnaires.  The format is simple--the first line in a survey question contains the text prompt, subsequent lines specify one or more data entry fields that users can use to answer the question, and, finally, a blank line signals that the current item is complete. An small example survey file can be found is at the bottom of this section, two surveys are also bundled in lmeds \textbf{/tests/lmeds\_demo/presurvey.txt} and \textbf{/tests/lmeds\_demo/postsurvey.txt}.
+The survey format allows for the simple creation of short or long questionnaires.  The format is simple--the first line in a survey question contains the text prompt, subsequent lines specify one or more data entry fields that users can use to answer the question, and, finally, a blank line signals that the current item is complete. An small example survey file can be found is at the bottom of this section, two surveys are also bundled in lmeds \textbf{/tests/lmeds\_demo/presurvey.txt} and \textbf{/tests/lmeds\_demo/postsurvey.txt}.
 
 \paragraph{}
 A note on arguments: For data entry fields that have arguments, arguments should be separated from the data entry field name by a space and from each other by a comma 
@@ -412,7 +415,7 @@ Textbox
 \end{tcolorbox}
 
 \paragraph{}
-Thus we have a survey with (ignoring the first item, which doesn't take user input) 5 items in total (2 being subitems).  The third item shows how multiple data entry fields can be placed on a single question (if the user selects ``Äòother''Äô for the first question they are expected to specify what they meant in the Textbox).
+Thus we have a survey with (ignoring the first item, which doesn't take user input) 5 items in total (2 being subitems).  The third item shows how multiple data entry fields can be placed on a single question (if the user selects ``other'' for the first question they are expected to specify what they meant in the Textbox).
 
 %%%%%%%%%%%%%%%%%%%%%
 \subsection{Sequence file specification}
@@ -420,8 +423,8 @@ Thus we have a survey with (ignoring the first item, which doesn't take user inp
 %%%%%%%%%%%%%%%%%%%%%
 
 \paragraph{}
-The sequence file contains the items that will be presented in a test.  The first line in a test is the test name which should be prefixed with a ``Äò*''Äô (e.g. *My\_Test\_Sequence) (\textbf{data from the experiment will be output to a folder with the test name.  Giving multiple sequence files the same name, means that they will dump their output to the same folder}).  The second item must be ``login''Äô where users create a name to associate their data with.  If login is not the item on the second line, unexpected behavior can result.
-Subsequent items are presented in a linear fashion as users progress through the sequence.  The last item in the sequence must be ``end''Äô.
+The sequence file contains the items that will be presented in a test.  The first line in a test is the test name which should be prefixed with a ``*'' (e.g. *My\_Test\_Sequence) (\textbf{data from the experiment will be output to a folder with the test name.  Giving multiple sequence files the same name, means that they will dump their output to the same folder}).  The second item must be ``login'' where users create a name to associate their data with.  If login is not the item on the second line, unexpected behavior can result.
+Subsequent items are presented in a linear fashion as users progress through the sequence.  The last item in the sequence must be ``end''.
 
 \paragraph{}
 \textbf{Most pages take arguments.}  These arguments specify the behavior the page should take (which audio files to play, instructions to present, etc.)  Arguments are separated from one another and from the page type by a space.  Audio files and textfiles included in an argument should not include their file extension (.txt, .wav, etc.)--LMEDS will determine the appropriate extension to be used.
@@ -443,7 +446,7 @@ The above example is the entry for the prominence page.  It comes with 5 argumen
 Some page types, such as \textbf{prominence} have default values for some arguments.   An argument might have a default value if alternative values are uncommon or to support new functionality without requiring changes to pre-existing code.
 
 \paragraph{}
-Arguments that have default values do not have to be specified in a sequence file if you are ok with the defaults--Äîthis can make your sequence file cleaner and easier to read and maintain.
+Arguments that have default values do not have to be specified in a sequence file if you are ok with the defaults--this can make your sequence file cleaner and easier to read and maintain.
 
 \paragraph{}
 There are two ways that you can specify an optional value.  One is to list it as normal e.g.
@@ -460,14 +463,14 @@ prominence water 1 3 instructions=acoustics presentAudio=true
 \end{lstlisting}
 
 \paragraph{}
-This second way is useful, for example, if you wanted to specify the value for a later variable such as ``presentAudio'' but not ``instructions''Äô.  The only way to do this is by naming the variable 
+This second way is useful, for example, if you wanted to specify the value for a later variable such as ``presentAudio'' but not ``instructions''.  The only way to do this is by naming the variable 
 
 \begin{lstlisting}
 Prominence water 1 3 presentAudio=true
 \end{lstlisting}
 
 \paragraph{}
-If one attempted the same list of arguments but without referring to the variable name, this would set ``instructions=true'' which would cause an error unless instructions named ``Äòtrue'' existed in the dictionary file.
+If one attempted the same list of arguments but without referring to the variable name, this would set ``instructions=true'' which would cause an error unless instructions named ``true'' existed in the dictionary file.
 
 \begin{lstlisting}
 Prominence water 1 3 true
@@ -516,7 +519,7 @@ The following page types may be useful, regardless of the kind of experiment you
 This is the first page that users see.  They enter their name here.  Names must be unique.  If someone has already attempted to start a test under that user name the user will not be able to proceed from the login page.
 
 \paragraph{}
-``Äòlogin''Äô takes no arguments.
+``login'' takes no arguments.
 
 \subsubsection{audio\_test}
 
@@ -541,7 +544,7 @@ I recommend using a file that is similar to the stimuli they will hear in the ex
 Presents the consent form.  If users opt not to consent, the test ends immediately.  If they consent, they proceed to the next page.
 
 \paragraph{}
-``Äòconsent''Äô takes one argument which specifies the consent form to display to users (the consent form is contained within the language dictionary)
+``consent'' takes one argument which specifies the consent form to display to users (the consent form is contained within the language dictionary)
 
 e.g.
 
@@ -566,7 +569,7 @@ text_page first_block_instructions
 Specifies a survey page (see Section \ref{sec:surveySpec} for info on surveys).
 
 \paragraph{}
-``survey''Äô takes a single argument, the file name of the survey that it should load
+``survey'' takes a single argument, the file name of the survey that it should load
 
 e.g.
 
@@ -575,7 +578,7 @@ survey presurvey
 \end{lstlisting}
 
 \paragraph{}
-This would load the survey stored in the file called ``Äòpresurvey.txt''
+This would load the survey stored in the file called ``presurvey.txt''
 
 \subsubsection{end}
 
@@ -583,7 +586,7 @@ This would load the survey stored in the file called ``Äòpresurvey.txt''
 The final page of the test.  
 
 \paragraph{}
-``end''Äô takes no arguments.
+``end'' takes no arguments.
 
 %%%%%%%%%%%%%%%%%%%%%
 \subsection{Sequence file specification - experiment-specific pages}
@@ -595,18 +598,18 @@ Here is a list of page types involving stimuli presentation.
 \subsubsection{prominence}
 
 \paragraph{}
-Users are presented with an audio file and the associated transcript.  They can click on a word to indicate that it is prominent.  This changes the selected word to \textbf{red}.  They can click it again to change it back to blackÄô.
+Users are presented with an audio file and the associated transcript.  They can click on a word to indicate that it is prominent.  This changes the selected word to \textbf{red}.  They can click it again to change it back to black.
 
 \paragraph{}
-``Äòprominence''Äô takes the following arguments:
+``prominence'' takes the following arguments:
 
 \begin{itemize}
 \item name - the name of the audio file
 \item transcriptName - the name of the text file
 \item minPlays - the minimum number of times the audio file has to be played before the user can continue.
-\item maxPlays -Äì the maximum number of times the audio file can be played before the audio button is disabled. 
+\item maxPlays - the maximum number of times the audio file can be played before the audio button is disabled. 
 \item instructions - on the page users will encounter short (~one line) instructions reminding them of the task.  With this argument, you can present different stimuli with different short instructions (e.g. meaning, acoustics, vague).  \textbf{Default}: None (no specific instructions for this page--a generic instruction key .
-\item presentAudio -Äì either ``true'' or ``false'', specifies whether the audio is hidden or presented.  If ``false''Äô the values for ``ÄòminPlays''Äô and ``ÄòmaxPlays''Äô are ignored. \textbf{Default}: True
+\item presentAudio - either ``true'' or ``false'', specifies whether the audio is hidden or presented.  If ``false'' the values for ``minPlays'' and ``maxPlays'' are ignored. \textbf{Default}: True
 \end{itemize}
 
 e.g.
@@ -622,7 +625,7 @@ prominence apples apples 1 1
 Users are presented with an audio file and the associated transcript.  They can click on a word to mark the presence of a boundary after it.  This places a solid, vertical line after the word.  Clicking on the word again makes the vertical line disappear.
 
 \paragraph{}
-``Äòboundary'' takes the same arguments as \textbf{prominence} pages but with the addition of one final, optional argument:
+``boundary'' takes the same arguments as \textbf{prominence} pages but with the addition of one final, optional argument:
 
 \paragraph{}
 boundaryToken - specify the symbol to use for marking boundaries between words.  The default symbol used by LMDS is a vertical bar ``\texttt{|}'').
@@ -638,7 +641,7 @@ boundary apples apples 1 2
 \subsubsection{boundary\_and\_prominence}
 
 \paragraph{}
-A combination of prominences and boundaries.  Users first mark boundaries.  They then can mark prominences.  While marking prominences they can see but not change the boundaries that they marked--Äîthis is the only difference between this page and splitting the prominence and boundary task across two pages.
+A combination of prominences and boundaries.  Users first mark boundaries.  They then can mark prominences.  While marking prominences they can see but not change the boundaries that they marked--this is the only difference between this page and splitting the prominence and boundary task across two pages.
 
 \paragraph{}
 The arguments for boundary\_and\_prominence are the same as for boundary pages.
@@ -668,64 +671,58 @@ e.g.
 audio_list 1 1 1 [water apples water]
 \end{lstlisting}
 
-\subsubsection{same\_different\_stream}
+\subsubsection{audio\_choice}
 
 \paragraph{}
-The user is presented a series of audio files and has to decide whether they are the same or different.
+This is used for presenting forced-choice-like tasks to the user with the number of audio files (stimuli) and responses set by the experimenter.
 
 \paragraph{}
-The arguments for same\_different\_stream are the same as for audio\_list
-
-e.g.
-
-\begin{lstlisting}
-same_different_stream 0.5 1 -1 [water apples]
-\end{lstlisting}
-
-\subsubsection{axb}
+This page replaces the various functionality of the pages: same\_different\_stream, axb, ab, and their many variants.  These pages have been removed from LMEDS.
 
 \paragraph{}
-The user is presented with three audio files: A, X, and B.  They have to decide if X is more like A or more like B.
-
-\paragraph{}
-``axb'' takes the following arguments
+audio\_choice takes the following arguments:
 
 \begin{itemize}
-\item the audio file for X
-\item the audio file for A
-\item the audio file for B
-\item the minimum number of plays
-\item the maximum number of plays
+\item the short form instructions to present on the page
+\item duration of pause for audio files
+\item the minimum number of times the audio series can be played
+\item the maximum number of times the audio series can be played
+\item a list of lists of audio files (see discussion below)
+\item a list of the labels for the response options
+\item a list of names for labels for the audio files (should match the length of the audio files) \textbf{Default}: None (No labels are placed above the audio files--see discussion below)
 \end{itemize}
 
 e.g.
-
 \begin{lstlisting}
-axb water1 water2 water3 1 2
+audio_choice same_different_instr 0.5 1 -1 [[water apples]]
+		[same different] [left_choice right_choice]
 \end{lstlisting}
-
-\subsubsection{ab}
-
-The user hears one audio file and decides if it is an example of text prompt A or B.
 
 \paragraph{}
-``ab''Äô takes the following arguments
-
-\begin{itemize}
-\item name of the audio file
-\item the minimum number of plays
-\item the maximum number of plays
-\end{itemize}
-
-e.g.
+compare that example with the next one:
 
 \begin{lstlisting}
-ab water 0 2
+audio_choice same_different_instr 0.5 1 -1 [[water] [apples]]
+		[same different] [left_choice right_choice]
 \end{lstlisting}
 
-\subsubsection{axb, same\_different, ab variants}
+\paragraph{}
+In the first example, with [[water apples]], there is one button that plays two audio files with a half second delay between each.  In the second example, with [[water] [apples]], there are two audio buttons and each is played only once.  Note that [water apples] will produce an error.  \textbf{The argument must be a list of lists}: [[water apples]] or [[water] [apples]].  Similarly with three arguments: [[water apples candy]] or [[water] [apples] [candy]] for the cases with either 1 button or 3 buttons, respectively.  In a minimal case, with only one audio file, you would write: [[audio\_name]], as in 
 
-There are a number of variants of these three experimental paradigms available in LMEDS that are not documented here.  For more options, please see \textbf{/lmeds/pages/axb\_pages.py}.  In the future, these variants will be unified into a broader, more flexible single interface.
+\begin{lstlisting}
+audio_choice same_different_instr 0.5 1 -1 [audio_name]
+		[p b] [audio_file]
+\end{lstlisting}
+
+\paragraph{}
+Here the user would hear a single audio file and select option ``p'' or option ``b'' (such as in classical experiments investigating perception of VOT contrasts).
+
+\paragraph{}
+If you feel the response options are obvious--because there are two audio buttons and two corresponding response options--you could remove the last option like so:
+\begin{lstlisting}
+audio_choice same_different_instr 0.5 1 -1 [[water] [apples]]
+		[same different]
+\end{lstlisting}
 
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -742,7 +739,7 @@ The output to LMEDS is quite simple.  Each line has 4 components:
 \end{itemize}
 
 \paragraph{}
-For most needs, the page type and user response are the most important bits of information.  The page type is separated from the rest of the row by the occurrence of the first comma.  The user input is separated from the rest of the row by the sequence ``Äò;,''.  The argument list is enclosed in \texttt{[ ]} and separated from the peripheral information by a comma.  
+For most needs, the page type and user response are the most important bits of information.  The page type is separated from the rest of the row by the occurrence of the first comma.  The user input is separated from the rest of the row by the sequence ``;,''.  The argument list is enclosed in \texttt{[ ]} and separated from the peripheral information by a comma.  
 
 \paragraph{}
 The user response is a string of comma-separated values.  Every individual item in a data-entry field, except for textboxes, is represented by a 0 or 1, where 0 indicates the user did not choose that item and 1 indicates the user did choose that item.  So if the user has a choice between A or B and selects A, their output will look like 1, 0.  And if they select B: 0, 1.  For a boundary\_and\_prominence page, each word gets two digits in the output (one for boundary and one for prominence).
@@ -779,7 +776,7 @@ ab;,1,0
 \end{lstlisting}
 
 \paragraph{}
-LMEDS offers some useful post-processing that can help prep data for analysis.  Otherwise, with the above information, you should have everything you need to do your own analysis.
+LMEDS offers some useful post-processing that can help prep data for analysis (see \ref{users_scripts}.  Otherwise, with the above information, you should have everything you need to do your own analysis.
 
 %%%%%%%%%%%%%%%%%%%%%
 \subsection{CGI template}
@@ -885,6 +882,7 @@ Once the local server is running, there are a few final things you have to do be
 
 %%%%%%%%%%%%%%%%%%%%%
 \section{User scripts}
+\label{users_scripts}
 %%%%%%%%%%%%%%%%%%%%%
 
 \paragraph{}
@@ -955,6 +953,12 @@ python post_process_results.py lmeds_demo sequence.txt false
 \section{LMEDS change history}
 %%%%%%%%%%%%%%%%%%%%%
 
+September 2015 - LMEDS 2.1
+
+\begin{itemize}
+\item Substituted the many specific forced choice pages (same\_different, ab, axb, etc) with one new page: audio\_choice
+\end{itemize}
+
 August 2015 - LMEDS 2.0
 
 \begin{itemize}
@@ -987,6 +991,12 @@ May 2013 - LMEDS 0.0
 
 
 \section{LMEDS manual change history}
+
+November 11, 2015
+
+\begin{quote}
+Updated the manual to be in line with changes from LMEDS 2.1.
+\end{quote}
 
 August 5, 2015
 
