@@ -19,10 +19,17 @@ def runScriptLogic(parser):
         cmdArgs = parser.parse_args()
 
     else:
+
+        # Python 2-to-3 compatibility hack
+        try:
+            inputFunc = raw_input  # Python 2.x
+        except NameError:
+            inputFunc = input  # Python 3.x
+        
         # If the user doesn't want to run interactive mode, show the
         # command-line options
         # Interactive mode allows the script to be run from IDEs like IDLE
-        doInteractive = raw_input("No arguments given. "
+        doInteractive = inputFunc("No arguments given. "
                                   "Try interactive mode (y/n)?\n")
         if doInteractive.lower() == 'n':
             sys.argv.append("-h")

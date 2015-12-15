@@ -124,8 +124,9 @@ class TextDict(object):
         self.textDict, self.sectionsDict = self._parse()
     
     def _parse(self):
-            
-        data = codecs.open(self.sourceFN, "rU", encoding="utf-8").read()
+        
+        with open(self.sourceFN, 'rb') as fd:
+            data = fd.read().decode("utf-8")
         testItemList = data.splitlines()
         
         keyValueList = self._findSections(testItemList, "-")

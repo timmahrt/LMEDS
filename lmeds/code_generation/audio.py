@@ -9,6 +9,7 @@ import wave
 import contextlib
 
 from lmeds.io import loader
+from lmeds.utilities import constants
 
 embedTemplate = ('<audio id="%s" preload="none" '
                  'oncanplaythrough="increment_audio_loaded_count()">'
@@ -444,7 +445,11 @@ function load_audio() {
 def generateAudioButton(name, idNum, pauseDurationSec=0, example=False):
     
     # Accept 'name' to be a list, but if it is, convert it into a string
-    if isinstance(name, types.ListType):
+    
+    # Python 2-to-3 compatibility hack
+
+    
+    if isinstance(name, constants.list):
         name = ",".join(name)
         
     if example:

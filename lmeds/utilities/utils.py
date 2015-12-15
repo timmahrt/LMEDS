@@ -4,28 +4,37 @@ Created on Nov 17, 2013
 @author: timmahrt
 '''
 
+import sys
 import os
-import itertools
+
+# Python 2-to-3 compatibility hack
+try:
+    from itertools import izip_longest as zip_longest  # Python 2.x
+except ImportError:
+    from itertools import zip_longest  # Python 3.x
+
 import functools
 import math
 
 
 def decodeUnicode(inputStr):
     
+    # Python 2-to-3 compatibility hack
     try:
-        outputStr = inputStr.decode("utf-8") # Python 2 str, to unicode
+        outputStr = inputStr.decode("utf-8")  # Python 2.x str, to unicode
     except AttributeError:
-        outputStr = inputStr  # Python 3, already unicode
+        outputStr = inputStr  # Python 3.x, already unicode
         
     return outputStr
 
+
 def outputUnicode(outputStr):
-    
+    # Python 2-to-3 compatibility hack
     try:
-        print(outputStr)
-    except UnicodeEncodeError:
-        print(outputStr.encode('utf-8'))
-    
+        sys.stdout.buffer.write(outputStr.encode('utf-8'))  # Python 3.x
+    except AttributeError:
+        print(outputStr.encode('utf-8'))  # Python 2.x
+        
 
 def detectLineEnding(txt):
     returnText = None  # A file may have no newlines
@@ -119,7 +128,7 @@ def safeZip(listOfLists, enforceLength):
         length = len(listOfLists[0])
         assert(all([length == len(subList) for subList in listOfLists]))
     
-    return itertools.izip_longest(*listOfLists)
+    return zip_longest(*listOfLists)
 
 
 def orderOfMagnitude(val):

@@ -7,6 +7,7 @@ DON'T CHANGE UNLESS YOU KNOW WHAT YOU'RE DOING
 -- please use this page as a reference to know where to put things
 '''
 
+import types
 from os.path import join
 
 # EDITING THESE ONLY MODIFIES METADATA AND WILL NOT IMPAIR LMEDS
@@ -26,3 +27,9 @@ rootDir = "../"
 htmlDir = join(rootDir, "html")
 htmlSnippetsDir = join(htmlDir, "snippets")
 instructDir = join(htmlDir, "instructions")
+
+# Python 2 str, to unicode
+try:
+    list = types.ListType  # Python 2.x
+except AttributeError:
+    list = list  # Python 3.x

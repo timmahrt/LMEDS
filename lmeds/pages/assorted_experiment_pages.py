@@ -94,7 +94,7 @@ class SurveyPage(abstract_pages.NonValidatingPage):
     def getOutput(self, form):
         
         def replaceCommas(inputItem):
-            if isinstance(inputItem, types.ListType):
+            if isinstance(inputItem, constants.list):
                 outputItem = [inputStr.replace(",", "")
                               for inputStr in inputItem]
             else:
@@ -123,7 +123,7 @@ class SurveyPage(abstract_pages.NonValidatingPage):
                         value = "," * (len(argList) - 1)
                 else:
                     if itemType not in ["Item_List"]:
-                        utils.decodeUnicode(value)
+                        value = utils.decodeUnicode(value)
                         value = replaceCommas(value)
                         
                     # Remove newlines

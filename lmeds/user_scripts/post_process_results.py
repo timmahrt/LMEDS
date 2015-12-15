@@ -167,7 +167,7 @@ def postProcessResults(testName, sequenceFN, removeDuplicatesFlag,
             countDict.setdefault(len(response), [])
             countDict[len(response)].append(fn)
             
-        keyList = countDict.keys()
+        keyList = list(countDict.keys())
         keyList.sort()
         for numLines in keyList:
             print("%d lines - %s" % (numLines, str(countDict[numLines])))

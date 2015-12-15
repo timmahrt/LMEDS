@@ -13,6 +13,10 @@ experiments (memory tasks, AXB-type tasks, etc.).
 Major revisions
 ================
 
+Ver 2.2 (Dec 15, 2015)
+
+- Added support for python 3.x (tested on 3.5)
+
 Ver 2.1 (Sep 18, 2015)
 
 - Replaced the many AXB page classes with one flexible audio_choice class
@@ -60,7 +64,8 @@ on installation and use.
 Installation
 ================
 
-TODO
+Please see the manual for instructions on installing LMEDS on a server, running
+LMEDS on a local computer (no server required), or for using the included user scripts.
 
 
 Acknowledgements

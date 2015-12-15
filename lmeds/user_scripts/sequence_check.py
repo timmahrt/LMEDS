@@ -44,7 +44,7 @@ def checkSequenceFile(survey):
             print("Page %d: Problem with the number of arguments" % pageNum)
             continue
         except (abstract_pages.FileDoesNotExist,
-                loader.TextNotInDictionaryException), e:
+                loader.TextNotInDictionaryException) as e:
             print("Page %d: %s" % (pageNum, e))
             numErrors += 1
             continue
@@ -59,7 +59,7 @@ def checkSequenceFile(survey):
             continue
     
     if numErrors == 0:
-        print "No errors found in sequence file."
+        print("No errors found in sequence file.")
 
 if __name__ == "__main__":
     

@@ -253,7 +253,7 @@ class WebSurvey(object):
         Sequences can contain many subsequences--this fetches the leaf sequence
         '''
         
-        if isinstance(page[-1], types.ListType):
+        if isinstance(page[-1], constants.list):
             retValue = self._getLeafSequenceName(page[-1])
         else:
             retValue = page[0]

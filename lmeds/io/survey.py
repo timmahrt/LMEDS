@@ -11,7 +11,13 @@ def alpha(num):
     '''
     ASCII section for lowercase alpha
     '''
-    return unichr(num + 96)
+    
+    # Python 2-to-3 compatibility hack
+    try:
+        retVal = unichr(num + 96)  # Python 2.x
+    except NameError:
+        retVal = chr(num + 96)  # Python 3.x
+    return retVal 
 
 numTypeList = [int, alpha]
 
