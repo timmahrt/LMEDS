@@ -35,6 +35,7 @@ class WebSurvey(object):
         self.surveyRoot = join(constants.rootDir, "tests", surveyName)
         self.wavDir = join(self.surveyRoot, "audio")
         self.txtDir = join(self.surveyRoot, "txt")
+        self.imgDir = join(self.surveyRoot, "imgs")
         self.outputDir = join(self.surveyRoot, "output")
         
         self.surveyName = surveyName
