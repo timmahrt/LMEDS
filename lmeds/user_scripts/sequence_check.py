@@ -37,7 +37,7 @@ def checkSequenceFile(survey):
     
     seq = sequence.TestSequence(survey, survey.sequenceFN)
     numErrors = 0
-    for pageNum in xrange(seq.getNumPages()):
+    for pageNum in range(seq.getNumPages()):
         try:
             page = seq.getPage(pageNum)
         except TypeError:

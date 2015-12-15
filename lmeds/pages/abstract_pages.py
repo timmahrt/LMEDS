@@ -56,7 +56,7 @@ def getoutput(key, form, appendDefault=False):
     outputList = form.getlist(key)
 
     # Assume all items unmarked
-    retList = ["0" for i in xrange(numItems)]
+    retList = ["0" for i in range(numItems)]
     
     # Mark positively marked items
     for i in outputList:

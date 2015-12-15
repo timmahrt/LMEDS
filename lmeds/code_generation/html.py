@@ -8,7 +8,11 @@ Common HTML snippets
 '''
 
 import os
-import Cookie
+
+try:
+    import Cookie as cookies
+except ImportError:
+    from http import cookies
 
 from functools import partial
 
@@ -258,9 +262,9 @@ def validateAndUpdateCookie(pageNum):
     '''
     oldPageNum = -1
     try:
-        cookie = Cookie.SimpleCookie(os.environ["HTTP_COOKIE"])
+        cookie = cookies.SimpleCookie(os.environ["HTTP_COOKIE"])
         oldPageNum = int(cookie["lastPage"].value)
-    except(Cookie.CookieError, KeyError):
+    except(cookies.CookieError, KeyError):
         if pageNum != 0:
             print(("\n\nERROR: Page number is %d according to index.cgi "
                    "but no cookies found") % pageNum)
@@ -273,7 +277,7 @@ def validateAndUpdateCookie(pageNum):
     
 #    # Set expiration five minutes from now
 #    expiration = datetime.datetime.now() + datetime.timedelta(minutes=5)
-    cookie = Cookie.SimpleCookie()
+    cookie = cookies.SimpleCookie()
     cookie["lastPage"] = pageNum
     
     return cookie, oldPageNum, pageNum

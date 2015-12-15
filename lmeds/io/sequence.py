@@ -142,7 +142,7 @@ def _parse(txt, startDelim, endDelim, startI):
     endI = None
     depth = 0
     startI = txt.index(startDelim, startI)
-    for i in xrange(startI, len(txt)):
+    for i in range(startI, len(txt)):
         if txt[i] == startDelim:
             depth += 1
         elif txt[i] == endDelim:

@@ -136,11 +136,11 @@ def _buildHeader(fnList, aspectKeyList, pageName):
     
     bNameList = [os.path.splitext(name)[0] + ".b%s" for name in fnList]
     anonBNameList = [userNameTemplate % (i + 1, 'b')
-                     for i in xrange(len(fnList))]
+                     for i in range(len(fnList))]
     
     pNameList = [os.path.splitext(name)[0] + ".p%s" for name in fnList]
     anonPNameList = [userNameTemplate % (i + 1, 'p')
-                     for i in xrange(len(fnList))]
+                     for i in range(len(fnList))]
     headerDict = {"boundary": (bNameList, anonBNameList),
                   "prominence": (pNameList, anonPNameList),
                   "boundary_and_prominence": (bNameList + pNameList,

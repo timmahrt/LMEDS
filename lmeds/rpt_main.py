@@ -17,6 +17,7 @@ from lmeds.code_generation import audio
 from lmeds.io import sequence
 from lmeds.io import loader
 from lmeds.utilities import constants
+from lmeds.utilities import utils
 
 # Strings used by all web surveys
 TXT_KEY_LIST = ["continue_button", "metadata_description",
@@ -112,7 +113,7 @@ class WebSurvey(object):
         # extract the user name from it
         if "user_name_init" in form:
             
-            userName = form["user_name_init"].value.decode('utf-8')
+            userName = utils.decodeUnicode(form["user_name_init"].value)
             userName = userName.strip()
             
             # Return to the login page without setting the userName if there is
@@ -130,7 +131,7 @@ class WebSurvey(object):
          
         # Otherwise, the user name, should be stored in the form
         elif "user_name" in form:
-            userName = form["user_name"].value.decode('utf-8')
+            userName = utils.decodeUnicode(form["user_name"].value)
         
         # Serialize all variables
         self.serializeResults(form, lastPage, lastPageNum,
@@ -216,7 +217,7 @@ class WebSurvey(object):
         metaDescription = self.textDict["metadata_description"]
                 
         audioPlayTrackingHTML = ""
-        for i in xrange(page.getNumAudioButtons()):
+        for i in range(page.getNumAudioButtons()):
             audioPlayTrackingHTML += html.audioPlayTrackingTemplate % {"id": i}
                 
         htmlDict = {'html': htmlTxt,
@@ -244,7 +245,7 @@ class WebSurvey(object):
     
         htmlOutput = pageTemplate % htmlDict
         
-        print(htmlOutput.encode('utf-8'))
+        utils.outputUnicode(htmlOutput)
     
     def _getLeafSequenceName(self, page):
         '''
@@ -279,7 +280,7 @@ class WebSurvey(object):
         outputList = form.getlist(key)
     
         # Assume all items unmarked
-        retList = ["0" for i in xrange(numItems)]
+        retList = ["0" for i in range(numItems)]
         
         # Mark positively marked items
         for i in outputList:
@@ -307,7 +308,10 @@ class WebSurvey(object):
             os.mkdir(experimentOutputDir)
             
         outputFN = join(experimentOutputDir, "%s.csv" % (userName))
-        fd = codecs.open(outputFN, "aU", encoding="utf-8")
+        try:
+            fd = codecs.open(outputFN, "aU", encoding="utf-8")
+        except ValueError:
+            fd = open(outputFN, "a", encoding="utf-8", newline=None)
         fd.write("%s,%s,%s,%s,%s;,%s\n" % (key, taskArgumentStr, numPlays1,
                                            numPlays2, taskDuration, value))
         fd.close()

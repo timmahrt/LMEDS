@@ -9,6 +9,24 @@ import itertools
 import functools
 import math
 
+
+def decodeUnicode(inputStr):
+    
+    try:
+        outputStr = inputStr.decode("utf-8") # Python 2 str, to unicode
+    except AttributeError:
+        outputStr = inputStr  # Python 3, already unicode
+        
+    return outputStr
+
+def outputUnicode(outputStr):
+    
+    try:
+        print(outputStr)
+    except UnicodeEncodeError:
+        print(outputStr.encode('utf-8'))
+    
+
 def detectLineEnding(txt):
     returnText = None  # A file may have no newlines
     endingsList = ["\r\n", "\n", "\r"]

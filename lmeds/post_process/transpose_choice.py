@@ -65,10 +65,10 @@ def _buildHeader(fnList, numArgs, pageName):
     
     nameList = [os.path.splitext(name)[0] + "." + pageName for name in fnList]
     anonNameList = [userNameTemplate % (i + 1)
-                    for i in xrange(len(fnList))]
+                    for i in range(len(fnList))]
     
     headerPrefixList = ["stimulusID", ]
-    headerPrefixList += ["arg%d" % (i + 1) for i in xrange(numArgs)]
+    headerPrefixList += ["arg%d" % (i + 1) for i in range(numArgs)]
     
     nameList = headerPrefixList + nameList
     anonNameList = headerPrefixList + anonNameList

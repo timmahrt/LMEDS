@@ -97,7 +97,7 @@ def removeDuplicates(path, overwrite=False):
         
         outputList = [dataList[0], ]
         prevString = dataList[0].split(";,")[0].rsplit("]", 1)[0]
-        for i in xrange(1, len(dataList)):
+        for i in range(1, len(dataList)):
             curString = dataList[i].split(";,")[0].rsplit("]", 1)[0]
             
             if curString == prevString:

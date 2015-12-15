@@ -272,7 +272,7 @@ def getPlaybackJS(doSilence, numItems, maxNumPlays, minNumPlays,
         listenPartial = "false"
     
     dictionaryTextList = []
-    for i in xrange(numItems):
+    for i in range(numItems):
         dictionaryTextList.append('"%s":0,' % (i))
     countDictionaryText = "\n".join(dictionaryTextList)
     

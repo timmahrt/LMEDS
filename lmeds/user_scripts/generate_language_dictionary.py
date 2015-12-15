@@ -72,7 +72,7 @@ def generateLanguageDictionary(mode, testName, sequenceFN, outputFN):
         txtKeyDict[txtKey].append("lmeds_interface")
     
     # Load the regular cases
-    for i in xrange(ts.getNumPages()):
+    for i in range(ts.getNumPages()):
         page = ts.getPage(i)
 
         txtKeyList = page.textDict.keys()

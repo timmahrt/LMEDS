@@ -123,7 +123,7 @@ class SurveyPage(abstract_pages.NonValidatingPage):
                         value = "," * (len(argList) - 1)
                 else:
                     if itemType not in ["Item_List"]:
-                        value = value.decode("utf-8")
+                        utils.decodeUnicode(value)
                         value = replaceCommas(value)
                         
                     # Remove newlines
@@ -144,14 +144,14 @@ class SurveyPage(abstract_pages.NonValidatingPage):
                         
                     elif itemType in ["Item_List"]:
                         if isinstance(value, list):
-                            value = [subval.decode("utf-8")
+                            value = [utils.decodeUnicode(subval)
                                      for subval in value]
                         else:
-                            value = [value.decode("utf-8"), ]
+                            value = [utils.decodeUnicode(value), ]
                         
                         indexList = [argList.index(subVal) for subVal in value]
                         valueList = ["1" if i in indexList else "0"
-                                     for i in xrange(len(argList))]
+                                     for i in range(len(argList))]
                         value = ",".join(replaceCommas(valueList))
                     
                     elif itemType == "None":
@@ -241,7 +241,7 @@ class AudioChoicePage(abstract_pages.AbstractPage):
         
         labelRow = ""
         buttonRow = ""
-        for i in xrange(len(self.responseButtonList)):
+        for i in range(len(self.responseButtonList)):
             text = self.textDict[self.responseButtonList[i]]
             labelRow += "<td class='responses'>%s</td>" % text
             buttonRow += "<td class='responses'>%s</td>" % (radioButton % {'id': i})
@@ -270,7 +270,7 @@ class AudioChoicePage(abstract_pages.AbstractPage):
         
         enabledSnippet = ''
         disabledSnippet = ''
-        for i in xrange(len(self.responseButtonList)):
+        for i in range(len(self.responseButtonList)):
             enabledSnippet += (enabledJS % i)
             disabledSnippet += (disabledJS % i)
         
@@ -288,7 +288,7 @@ class AudioChoicePage(abstract_pages.AbstractPage):
         playBtnLabelRow = ''
         playBtnSnippet = ''
         template = "<td class='buttons'>%s</td>"
-        for i in xrange(len(self.audioList)):
+        for i in range(len(self.audioList)):
             
             audioButtonHTML = audio.generateAudioButton(self.audioList[i], i,
                                                         self.pauseDuration,
@@ -415,7 +415,7 @@ class AudioWithResponsePage(abstract_pages.AbstractPage):
         try:
             # Only one item
             value = form.getlist("audio_with_response_page")[0]
-            value = value.decode("utf-8")
+            value = utils.decodeUnicode(value)
         except IndexError:
             value = ""  # They didn't enter anything
         value = value.replace(",", ";")
@@ -471,7 +471,7 @@ class TextResponsePage(abstract_pages.AbstractPage):
         try:
             # Only one item
             value = form.getlist("audio_with_response_page")[0]
-            value = value.decode("utf-8")
+            value = utils.decodeUnicode(value)
         except IndexError:
             value = ""  # They didn't enter anything
         value = value.replace(",", ";")

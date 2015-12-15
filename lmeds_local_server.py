@@ -12,8 +12,12 @@ and visit:
 http://localhost:8123/cgi-bin/<<name of your experiment>>.py
 '''
 
-from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
-from CGIHTTPServer import CGIHTTPRequestHandler
+try:
+    from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
+except ImportError:
+    from http.server import BaseHTTPRequestHandler,HTTPServer,CGIHTTPRequestHandler
+else:
+    from CGIHTTPServer import CGIHTTPRequestHandler
 
 handler = CGIHTTPRequestHandler
 handler.cgi_directories = ['/cgi-bin']
