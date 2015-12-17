@@ -66,7 +66,7 @@ def _transposeRPT(dataListOfLists):
     idKeyList = list(set(idKeyList))
     idKeyList.sort()
     
-    aspectKeyList = returnDict[returnDict.keys()[0]].keys()
+    aspectKeyList = returnDict[list(returnDict.keys())[0]].keys()
             
     # Transpose the data
     for sid in idKeyList:
@@ -249,4 +249,4 @@ def transposeRPT(path, txtPath, pageName, outputPath):
     outputTxt = "\n".join(aggrOutputList)
     
     outputFN = join(outputPath, pageName + ".csv")
-    codecs.open(outputFN, "wU", encoding="utf-8").write(outputTxt)
+    codecs.open(outputFN, "w", encoding="utf-8").write(outputTxt)
