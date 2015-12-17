@@ -149,7 +149,7 @@ def _buildHeader(fnList, aspectKeyList, pageName):
     aspectInitialsDict = _getSmallestPrefix(aspectKeyList)
     
     bTxt = "sum.b%(aspect)s"
-    pTxt = "sum.b%(aspect)s"
+    pTxt = "sum.p%(aspect)s"
     
     txtPrefixDict = {"boundary": (bTxt),
                      "prominence": (pTxt),
