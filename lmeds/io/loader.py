@@ -103,6 +103,8 @@ def getNumWords(fnFullPath):
     wordList = loadTxtFile(fnFullPath)
     numOutputs = 0
     for line in wordList:
+        if '<' in line:  # HTML check
+            continue
         numOutputs += len(line.split(" "))
 
     return numOutputs

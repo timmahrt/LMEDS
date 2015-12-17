@@ -14,6 +14,7 @@ def loadUserResponse(fn):
     
     with codecs.open(fn, "rU", encoding="utf-8") as fd:
         featureList = fd.read().split("\n")
+        featureList = [row.strip() for row in featureList]
         
     returnList = []
     for line in featureList:

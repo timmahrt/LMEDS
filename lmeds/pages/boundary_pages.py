@@ -38,7 +38,7 @@ def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textNameStr,
     
     sentenceListTxtList = []
     for sentence in sentenceList:
-        if '<' in sentence:
+        if '<' in sentence:  # HTML check
             sentenceListTxtList.append(sentence)
         else:
             wordList = sentence.split(" ")
