@@ -21,7 +21,7 @@ rootURL = ""
 
 # EDITING THE BELOW MIGHT PREVENT LMEDS FROM FUNCTIONING
 
-rootDir = "../"
+rootDir = ".."
 
 #
 htmlDir = join(rootDir, "html")
