@@ -53,6 +53,8 @@ Requirements
 
 ``Python 2.7.*`` or above
 
+``Python 3.5.*`` or above
+
 
 Usage
 =========
@@ -82,5 +84,5 @@ https://github.com/timmahrt/LMEDS, 2016.
 Acknowledgements
 ================
 
-Development of LMEDS was supported by NSF grant BCS 12-51343
+Development of LMEDS was supported by NSF grant **BCS 12-51343**
 to Jennifer Cole, José Hualde, and Caroline Smith.
