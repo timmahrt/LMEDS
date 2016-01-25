@@ -5,10 +5,12 @@ LMEDS
 
 A web platform for collecting text annotation and experiment data online.
 
-Was originally developed for conducting Rapid Prosody Transcription annotations
-over the internet.  Since then it has been extended for doing a number of perceptual
-experiments (memory tasks, AXB-type tasks, etc.).
+LMEDS was originally developed for conducting Rapid Prosody Transcription annotations
+over the internet.  Since then it has been extended for doing a number of
+different types of perceptual experiments (memory tasks, AXB-type tasks, etc.).
 
+.. sectnum::
+.. contents::
 
 Major revisions
 ================
@@ -68,9 +70,17 @@ Please see the manual for instructions on installing LMEDS on a server, running
 LMEDS on a local computer (no server required), or for using the included user scripts.
 
 
+Citing LMEDS
+===============
+
+If you use LMEDS in your research, please cite it like so:
+
+Tim Mahrt. LMEDS: Language markup and experimental design software.
+https://github.com/timmahrt/LMEDS, 2016.
+
+
 Acknowledgements
 ================
 
-Development of this software was supported by US NSF grant #IIS 07-03624 to Jennifer Cole and JosÃ© Hualde.
-
-
+Development of LMEDS was supported by NSF grant BCS 12-51343
+to Jennifer Cole, José Hualde, and Caroline Smith.
