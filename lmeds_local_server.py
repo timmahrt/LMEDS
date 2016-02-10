@@ -12,12 +12,18 @@ and visit:
 http://localhost:8123/cgi-bin/<<name of your experiment>>.py
 '''
 
+import os
+from os.path import join
+
 try:
     from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 except ImportError:
     from http.server import BaseHTTPRequestHandler,HTTPServer,CGIHTTPRequestHandler
 else:
     from CGIHTTPServer import CGIHTTPRequestHandler
+
+lmedsPath = os.path.dirname(os.path.realpath(__file__))
+os.chdir(lmedsPath)
 
 handler = CGIHTTPRequestHandler
 handler.cgi_directories = ['/cgi-bin']
