@@ -1,0 +1,29 @@
+#!/usr/bin/env python
+# encoding: utf-8
+'''
+Created on Apr 29, 2016
+
+@author: tmahrt
+'''
+from distutils.core import setup
+import codecs
+setup(name='lmeds',
+      version='2.1.0',
+      author='Tim Mahrt',
+      author_email='timmahrt@gmail.com',
+      package_dir={'lmeds':'lmeds'},
+      packages=['lmeds',
+                'lmeds.code_generation',
+                'lmeds.io',
+                'lmeds.pages',
+                'lmeds.post_process',
+                'lmeds.user_scripts',
+                'lmeds.utilities',],
+      package_data={'lmeds': ['html/*.html', 'html/*.css', 'html/*.js'
+                              'imgs/*.png']},
+      license='LICENSE',
+      test_suite='nose.collector',
+      tests_require=['nose'],
+      long_description=codecs.open('README.rst', 'r', encoding="utf-8").read(),
+#       install_requires=[], # No requirements! # requires 'from setuptools import setup'
+      )

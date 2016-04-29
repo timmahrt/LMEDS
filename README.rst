@@ -3,6 +3,15 @@
 LMEDS
 ---------
 
+.. image:: https://travis-ci.org/timmahrt/praatIO.svg?branch=master
+    :target: https://travis-ci.org/timmahrt/praatIO
+
+.. image:: https://coveralls.io/repos/github/timmahrt/praatIO/badge.svg?branch=master
+    :target: https://coveralls.io/github/timmahrt/praatIO?branch=master
+
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg?
+   :target: http://opensource.org/licenses/MIT
+
 A web platform for collecting text annotation and experiment data online.
 
 LMEDS was originally developed for conducting Rapid Prosody Transcription annotations
@@ -85,4 +94,4 @@ Acknowledgements
 ================
 
 Development of LMEDS was supported by NSF grant **BCS 12-51343**
-to Jennifer Cole, José Hualde, and Caroline Smith.
+to Jennifer Cole, JosÃ© Hualde, and Caroline Smith.
