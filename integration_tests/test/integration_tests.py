@@ -1,5 +1,5 @@
 '''
-Created on Jan 27, 2016
+Created on Apr 29, 2016
 
 @author: tmahrt
 
@@ -26,8 +26,8 @@ os.chdir(_root)
 class IntegrationTests(unittest.TestCase):
     """Integration tests"""
 
-    def test_add_tiers(self):
-        """Running 'add_tiers.py'"""
+    def test_run_lmeds_demo(self):
+        """Running 'lmeds_virtual_demo'"""
         print(os.getcwd())
         import lmeds_virtual_demo
         print(os.getcwd())
