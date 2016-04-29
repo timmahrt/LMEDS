@@ -3,7 +3,6 @@
 
 import os
 from os.path import join
-import types
 
 import cgi
 
@@ -25,6 +24,16 @@ TXT_KEY_LIST = ["continue_button", "metadata_description",
 # Common strings not used directly by WebSurvey
 TXT_EXTERNAL_KEY_LIST = ["progress", "loading_progress"]
 TXT_KEY_LIST.extend(TXT_EXTERNAL_KEY_LIST)
+
+jqueryCode = ('''<script type="text/javascript" src='''
+              '''"//code.jquery.com/jquery-1.11.0.min.js"></script>\n'''
+              '''<script type="text/javascript">\n'''
+              '''if (typeof jQuery == 'undefined') {\n'''
+              '''document.write(unescape("%3Cscript src='''
+              ''''../html/jquery-1.11.0.min.js' '''
+              '''type='text/javascript'%3E%3C/script%3E"));'''
+              '''\n}\n'''
+              '''</script>''')
 
 
 class WebSurvey(object):
@@ -199,11 +208,7 @@ class WebSurvey(object):
             runOnLoad += audio.loadAudioSnippet
         processSubmitHTML += html.taskDurationCode % runOnLoad
             
-        jqueryCode = ('<script type="text/javascript" src="//code.jquery.com/'
-                      'jquery-1.11.0.min.js"></script>'
-                      '<script>if (!window.jQuery) { document.write'
-                      '''('<script src="../html/jquery-1.11.0.min.js">'''
-                      '''<\/script>'); }</script>''')
+
         processSubmitHTML = jqueryCode + processSubmitHTML
             
         if 'embed' in updateDict.keys():
