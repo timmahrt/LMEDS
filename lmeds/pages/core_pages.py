@@ -291,7 +291,8 @@ class TextAndAudioPage(abstract_pages.NonValidatingPage):
         htmlText %= (self.textDict['title'], tmpTxt)
         
         embedTxt = audio.getPlaybackJS(True, len(audioNameList), -1, 1)
-        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, audioNameList)
+        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, audioNameList,
+                                                 self.webSurvey.audioExtList)
         
         pageTemplate = join(constants.htmlDir, "basicTemplate.html")
         
@@ -354,7 +355,8 @@ class AudioTestPage(abstract_pages.NonRecordingPage):
         htmlText += "<br />"
         
         embedTxt = audio.getPlaybackJS(True, 1, -1, 1, listenPartial=True)
-        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, [self.wavName, ])
+        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, [self.wavName, ],
+                                                 self.webSurvey.audioExtList)
         
         return htmlText, pageTemplate, {'embed': embedTxt}
 

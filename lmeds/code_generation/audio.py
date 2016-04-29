@@ -10,6 +10,7 @@ import contextlib
 
 from lmeds.io import loader
 from lmeds.utilities import constants
+from lmeds.utilities import utils
 
 embedTemplate = ('<audio id="%s" preload="none" '
                  'oncanplaythrough="increment_audio_loaded_count()">'
@@ -354,20 +355,24 @@ if (typeof(load_audio) == "function") {
 """
 
     
-def generateEmbed(wavDir, fnList):
+def generateEmbed(wavDir, nameList, extList):
     
     if not os.path.exists(wavDir):
         raise PathDoesNotExist(wavDir)
-        
-    for fn in fnList:
-        fnFullPath = join(wavDir, fn + ".ogg")
-        if not os.path.exists(fnFullPath):
-            raise FileNotFound(fnFullPath)
     
-    fnSet = set(fnList)
-    nameList = ["'%s'" % os.path.splitext(os.path.split(fn)[1])[0]
-                for fn in fnSet]
+    for name in nameList:
+        fnList = [name + ext for ext in extList]
+        if any([not os.path.exists(join(wavDir, fn))
+                for fn in fnList]):
+            raise utils.FilesDoNotExist(wavDir, fnList, True)
+    
+    nameSet = set(nameList)
+    nameList = ["'%s'" % os.path.splitext(os.path.split(name)[1])[0]
+                for name in nameSet]
     nameTxtList = "[%s]" % (','.join(nameList))
+    
+    extList = ["'%s'" % ext for ext in extList]
+    extTxtList = "[%s]" % (','.join(extList))
     
     embedTxt = '''
 <script>
@@ -402,29 +407,27 @@ var catchFailedAudioLoad = function(e) {
 }
 var audio_list = [];
 function load_audio() {
+    var extensionList = %(extensionList)s;
     var audioList = %(nameList)s;
     numUniqueSoundFiles = audioList.length;
+    var mime_type_dict = {".wav":"wav",
+                          ".mp3":"mpeg",
+                          ".ogg":"ogg"};
     for (var j=0; j<audioList.length;j++) {
         var audioName = audioList[j];
         var audio = document.createElement('audio');
         audio.id = audioName;
         
+        var source = document.createElement('source');
         
-        if (audio.canPlayType('audio/ogg')) {
-            audio.type= 'audio/ogg';
-            audio.src= '%(path)s/' + audioName + '.ogg';
-        } else {
-            audio.type= 'audio/mpeg';
-            audio.src= '%(path)s/' + audioName + '.mp3';
+        for (var k=0; k<extensionList.length;k++) {
+            // Audio acts in a FILO manner, so iterate the list backwards
+            // to get the user's order preference.
+            var tmpExt = extensionList[extensionList.length - (k + 1)];
+            source.type = 'audio/' + mime_type_dict[tmpExt];
+            source.src = '%(path)s/' + audioName + tmpExt;
+            audio.appendChild(source)
         }
-        /*
-        if (audio.canPlayType('audio/mpeg')) {
-            audio.type= 'audio/mpeg';
-            audio.src= '%(path)s/' + audioName + '.mp3';
-        } else {
-            audio.type= 'audio/ogg';
-            audio.src= '%(path)s/' + audioName + '.ogg';
-        }*/
         
         audio.preload = 'auto';
         document.getElementById('audio_hook').appendChild(audio);
@@ -435,7 +438,8 @@ function load_audio() {
     }
 }
 </script>
-''' % {'nameList': nameTxtList,
+''' % {'extensionList': extTxtList,
+       'nameList': nameTxtList,
        'path': wavDir.replace("\\", "/")  # We use '/' regardless of OS
        }
     
@@ -447,7 +451,6 @@ def generateAudioButton(name, idNum, pauseDurationSec=0, example=False):
     # Accept 'name' to be a list, but if it is, convert it into a string
     
     # Python 2-to-3 compatibility hack
-
     
     if isinstance(name, constants.list):
         name = ",".join(name)

@@ -6,7 +6,6 @@ Created on Mar 1, 2014
 
 '''
 
-import types
 from os.path import join
 
 from lmeds.pages import abstract_pages
@@ -178,6 +177,7 @@ class SurveyPage(abstract_pages.NonValidatingPage):
 class UnbalancedListPair(Exception):
     
     def __init__(self, listA, listB):
+        super(UnbalancedListPair, self).__init__()
         self.listA = listA
         self.listB = listB
         
@@ -244,7 +244,8 @@ class AudioChoicePage(abstract_pages.AbstractPage):
         for i in range(len(self.responseButtonList)):
             text = self.textDict[self.responseButtonList[i]]
             labelRow += "<td class='responses'>%s</td>" % text
-            buttonRow += "<td class='responses'>%s</td>" % (radioButton % {'id': i})
+            buttonRow += "<td class='responses'>%s</td>" % (radioButton %
+                                                            {'id': i})
         
         return htmlTxt % (labelRow,
                           buttonRow)
@@ -314,7 +315,8 @@ class AudioChoicePage(abstract_pages.AbstractPage):
         audioNames = [audioName for audioList in self.audioList
                       for audioName in audioList]
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
-                                                 list(set(audioNames)))
+                                                 list(set(audioNames)),
+                                                 self.webSurvey.audioExtList)
         embedTxt += "\n\n" + availableFunctions
         
         description = self.textDict[self.instructionText]
@@ -405,7 +407,8 @@ class AudioWithResponsePage(abstract_pages.AbstractPage):
         embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays, self.minPlays,
                                        runOnFinish=runOnFinishJS)
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
-                                                 list(set(self.audioList)))
+                                                 list(set(self.audioList)),
+                                                 self.webSurvey.audioExtList)
         embedTxt += jsFuncs
         
         return htmlText, pageTemplate, {'embed': embedTxt}
@@ -531,7 +534,8 @@ class AudioListPage(abstract_pages.AbstractPage):
         embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays, self.minPlays,
                                        autosubmit=True)
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
-                                                 list(set(self.audioList)))
+                                                 list(set(self.audioList)),
+                                                 self.webSurvey.audioExtList)
         
         return htmlText, pageTemplate, {'embed': embedTxt}
 
@@ -639,7 +643,10 @@ class MemoryPage(abstract_pages.AbstractPage):
         if self.showAudio:
             embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays,
                                            self.minPlays)
-            embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, [self.name])
+            embed = audio.generateEmbed(self.wavDir,
+                                        [self.name],
+                                        self.webSurvey.audioExtList)
+            embedTxt += "\n\n" + embed
         else:
             embedTxt = ""
     

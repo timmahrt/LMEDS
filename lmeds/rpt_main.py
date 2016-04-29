@@ -39,7 +39,8 @@ jqueryCode = ('''<script type="text/javascript" src='''
 class WebSurvey(object):
     
     def __init__(self, surveyName, sequenceFN, languageFileFN,
-                 disableRefreshFlag, sourceCGIFN=None):
+                 disableRefreshFlag, sourceCGIFN=None, audioExtList=None,
+                 ):
         
         self.surveyRoot = join(constants.rootDir, "tests", surveyName)
         self.wavDir = join(self.surveyRoot, "audio")
@@ -50,9 +51,14 @@ class WebSurvey(object):
         self.surveyName = surveyName
         self.sequenceFN = join(self.surveyRoot, sequenceFN)
         self.testSequence = sequence.TestSequence(self, self.sequenceFN)
+        
         if languageFileFN is not None:
             languageFileFN = join(self.surveyRoot, languageFileFN)
         self.languageFileFN = languageFileFN
+        
+        if audioExtList is None:
+            audioExtList = [".ogg", ".mp3"]
+        self.audioExtList = audioExtList
         
         loader.initTextDict(self.languageFileFN)
         
@@ -159,7 +165,6 @@ class WebSurvey(object):
     
         return pageNum, cookieTracker, nextPage, userName
     
-    
     def buildPage(self, pageNum, cookieTracker, page, userName,
                   testSequence, sourceCGIFN):
         html.printCGIHeader(cookieTracker, self.disableRefreshFlag)
@@ -167,7 +172,7 @@ class WebSurvey(object):
         validateText = page.getValidation()
         
         # Defaults
-        embedTxt = audio.generateEmbed(self.wavDir, [])
+        embedTxt = audio.generateEmbed(self.wavDir, [], self.audioExtList)
         
         # Estimate our current progress (this doesn't work well if the user
         #    can jump around)
@@ -207,8 +212,6 @@ class WebSurvey(object):
         if page.getNumAudioButtons() > 0:
             runOnLoad += audio.loadAudioSnippet
         processSubmitHTML += html.taskDurationCode % runOnLoad
-            
-
         processSubmitHTML = jqueryCode + processSubmitHTML
             
         if 'embed' in updateDict.keys():

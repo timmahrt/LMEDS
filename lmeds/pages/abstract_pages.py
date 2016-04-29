@@ -8,13 +8,12 @@ to all types of pages.  Abstract pages specific to certain tests should
 go in a more specific file.
 '''
 
-from os.path import join
-
 from lmeds.code_generation import html
 
 
 audioTextKeys = ["error_must_play_audio_at_least", "error_must_play_audio",
                  'play_button']
+
 
 class KeyNotInFormError(Exception):
     
@@ -184,12 +183,3 @@ class NonValidatingPage(NonRecordingPage):
         
         return template
 
-
-class FileDoesNotExist(BaseException):
-    
-    def __init__(self, path, name):
-        self.path = path
-        self.name = name
-        
-    def __str__(self):
-        return "File '%s' does not exist" % join(self.path, self.name)

@@ -12,6 +12,7 @@ from os.path import join
 from lmeds.code_generation import html
 from lmeds.code_generation import audio
 from lmeds.utilities import constants
+from lmeds.utilities import utils
 from lmeds.io import loader
 from lmeds.pages import abstract_pages
 
@@ -274,14 +275,16 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
     def checkArgs(self):
         
         # Make sure all audio files exist
-        if not os.path.exists(join(self.wavDir, self.name + ".ogg")):
-            raise abstract_pages.FileDoesNotExist(self.wavDir,
-                                                  self.name + ".ogg")
+        audioFNList = [self.name + ext for ext in self.webSurvey.audioExtList]
+        if any([not os.path.exists(join(self.wavDir, fn))
+                for fn in audioFNList]):
+            raise utils.FilesDoNotExist(self.wavDir, audioFNList, True)
         
         # Make sure all text files exist
         if not os.path.exists(join(self.txtDir, self.transcriptName + ".txt")):
-            raise abstract_pages.FileDoesNotExist(self.txtDir,
-                                                  self.transcriptName + ".txt")
+            raise utils.FilesDoNotExist(self.txtDir,
+                                        [self.transcriptName + ".txt",],
+                                        True)
         
     def getValidation(self):
         template = ""
@@ -327,8 +330,10 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         if self.presentAudio:
             embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays,
                                            self.minPlays)
-            embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
-                                                     [self.name, ])
+            embed = audio.generateEmbed(self.wavDir,
+                                        [self.name, ],
+                                        self.webSurvey.audioExtList)
+            embedTxt += "\n\n" + embed
         else:
             embedTxt = ""
         embedTxt += "\n\n"
@@ -485,8 +490,10 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         if self.presentAudio:
             embedTxt = audio.getPlaybackJS(True, 2, self.maxPlays,
                                            self.minPlays)
-            embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
-                                                     [self.name, ])
+            embed = audio.generateEmbed(self.wavDir,
+                                        [self.name, ],
+                                        self.webSurvey.audioExtList)
+            embedTxt += "\n\n" + embed
         else:
             embedTxt = ""
 

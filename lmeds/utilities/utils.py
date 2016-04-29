@@ -133,4 +133,27 @@ def safeZip(listOfLists, enforceLength):
 
 def orderOfMagnitude(val):
     return int(math.floor(math.log10(val)))
+    
+
+class FilesDoNotExist(BaseException):
+    
+    def __init__(self, path, nameList, allFlag):
+        super(FilesDoNotExist, self).__init__()
+        self.path = path
+        self.nameList = nameList
+        self.allFlag = allFlag
+        
+    def __str__(self):
+        fnTxt = ", ".join(name for name in self.nameList[:-1])
+        fnTxt += ", or %s" % self.nameList[-1]
+        
+        retString = ("At least one of the following files %s does not "
+                     "exist in folder %s. ")
+        
+        if self.allFlag is True:
+            retString += "All of them must exist."
+        else:
+            retString += "At least one of them must exist."
+        
+        return retString % (fnTxt, self.path)
 

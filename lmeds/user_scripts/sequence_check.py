@@ -43,9 +43,9 @@ def checkSequenceFile(survey):
         except TypeError:
             print("Page %d: Problem with the number of arguments" % pageNum)
             continue
-        except (abstract_pages.FileDoesNotExist,
+        except (utils.FilesDoNotExist,
                 loader.TextNotInDictionaryException) as e:
-            print("Page %d: %s" % (pageNum, e))
+            print("Page %d: %s\n" % (pageNum, e))
             numErrors += 1
             continue
         
@@ -75,6 +75,10 @@ if __name__ == "__main__":
                         help=("The language dictionary .txt file"))
     parser.add_argument('disable_refresh_flag', action='store',
                         help=("Disable the refresh button?  true or false?"))
+    audioMsg = ('The audio file types used.  Separate with ","and no spaces.'
+                'eg:.mp3,.ogg,.wav.  Default=.mp3,.ogg')
+    parser.add_argument('audio_ext_list', action='store',
+                        help=audioMsg)
     
     try:
         cmdArgs = user_script_helper.runScriptLogic(parser)
@@ -86,17 +90,26 @@ if __name__ == "__main__":
                                   "dictionary:\n"))
         _disable_refresh_flag = raw_input(("Disable the refresh button?  "
                                            "true or false?\n"))
+        audioPrompt = ("Audio files to use (use commas, no spaces "
+                       "eg:.mp3,.wav)\n")
+        _audio_ext_list = raw_input(audioPrompt).split(",")
     else:
         _test_name = cmdArgs.test_name
         _sequence_fn = cmdArgs.sequence_fn
         _language_fn = cmdArgs.language_fn
         _disable_refresh_flag = cmdArgs.disable_refresh_flag
-    
+        
+        if cmdArgs.audio_ext_list:
+            _audio_ext_list = cmdArgs.audio_ext_list.split(",")
+        else:
+            _audio_ext_list = None
+        
     if _disable_refresh_flag.lower() == 'true':
         _disable_refresh_flag = True
     elif _disable_refresh_flag.lower() == 'false':
         _disable_refresh_flag = False
     
     survey = rpt_main.WebSurvey(_test_name, _sequence_fn, _language_fn,
-                                _disable_refresh_flag)
+                                _disable_refresh_flag,
+                                audioExtList=_audio_ext_list)
     checkSequenceFile(survey)
