@@ -361,6 +361,133 @@ def getToggleButtonsJS(numItems, idFormat=None):
               ) % (enabledSnippet, disabledSnippet)
     
     return jsCode
+
+
+class AudioSliderPage(abstract_pages.AbstractPage):
+    
+    pageName = "audio_slider"
+    
+    def __init__(self, instructionText, minPlays, maxPlays,
+                 audioName, transcriptName, sliderMin, sliderMax,
+                 sliderLabel=None, leftRangeLabel=None, rightRangeLabel=None,
+                 *args, **kargs):
+        super(AudioSliderPage, self).__init__(*args, **kargs)
+        
+        self.instructionText = instructionText
+        self.audioName = audioName
+        self.transcriptName = transcriptName
+        self.minPlays = minPlays
+        self.maxPlays = maxPlays
+        self.sliderMin = sliderMin
+        self.sliderMax = sliderMax
+        self.leftRangeLabel = leftRangeLabel
+        self.rightRangeLabel = rightRangeLabel
+        
+        if sliderLabel is None:
+            sliderLabel = ""
+        self.sliderLabel = sliderLabel
+        
+        self.txtDir = self.webSurvey.txtDir
+        self.wavDir = self.webSurvey.wavDir
+        
+        self.submitProcessButtonFlag = True
+        
+        # Strings used in this page
+        txtKeyList = [instructionText, ]
+        
+        if leftRangeLabel is not None:
+            txtKeyList.append(leftRangeLabel)
+        
+        if rightRangeLabel is not None:
+            txtKeyList.append(rightRangeLabel)
+        
+        txtKeyList.extend(abstract_pages.audioTextKeys)
+        self.textDict.update(loader.batchGetText(txtKeyList))
+        
+        self.numAudioButtons = 1
+        self.processSubmitList = ["verifyAudioPlayed", ]
+        
+    def _getHTMLTxt(self):
+        
+        htmlTxt = ('<br /><br />%%s<br /><br />\n'
+                   '%s'
+                   )
+        
+        if self.leftRangeLabel is not None:
+            leftLabel = self.textDict[self.leftRangeLabel]
+        else:
+            leftLabel = ""
+            
+        if self.rightRangeLabel is not None:
+            rightLabel = self.textDict[self.rightRangeLabel]
+        else:
+            rightLabel = ""
+        
+        sliderHTML = ('%(leftTxt)s<input type="range" name="audio_slider" '
+                      'min="%(min)s" max="%(max)s" id="%(id)s" disabled />'
+                      '%(rightTxt)s<br />%(label)s <br />'
+                      )
+        sliderHTML %= {"min": str(self.sliderMin),
+                       "max": str(self.sliderMax),
+                       "leftTxt": leftLabel,
+                       "rightTxt": rightLabel,
+                       "id": "range0",
+                       "label": str(self.sliderLabel)}
+        
+        return htmlTxt % sliderHTML
+    
+    def getValidation(self):
+        template = ""
+        
+        return template
+    
+    def getOutput(self, form):
+        
+        value = form.getlist("audio_slider")[0]
+        value = utils.decodeUnicode(value)
+            
+        return value
+    
+    def getNumOutputs(self):
+        return 1
+    
+    def getHTML(self):
+        '''
+        Listeners hear two files and decide if they are the same or different
+        '''
+        pageTemplate = join(constants.htmlDir, "axbTemplate.html")
+        availableFunctions = getToggleButtonsJS(1, "range%d")
+        
+        txtFN = join(self.txtDir, self.transcriptName + ".txt")
+        sentenceList = loader.loadTxtFile(txtFN)
+        transcriptTxt = "<br /><br />\n\n".join(sentenceList)
+        
+        # Generate the audio button
+        template = "<td class='buttons'>%s</td>"
+
+        playBtnSnippet = audio.generateAudioButton(self.audioName, 0,
+                                                   0,
+                                                   False)
+        
+        runOnMinThresholdJS = "enable_checkboxes();"
+        embedTxt = audio.getPlaybackJS(True, self.numAudioButtons,
+                                       self.maxPlays, self.minPlays,
+                                       runOnMinThreshold=runOnMinThresholdJS)
+        
+        audioNames = [self.audioName, ]
+        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
+                                                 list(set(audioNames)),
+                                                 self.webSurvey.audioExtList)
+        embedTxt += "\n\n" + availableFunctions
+        
+        description = self.textDict[self.instructionText]
+
+        htmlText = description + self._getHTMLTxt()
+        htmlText %= (playBtnSnippet + "<br />" + transcriptTxt)
+    
+        return htmlText, pageTemplate, {'embed': embedTxt}
+
+
 class AudioWithResponsePage(abstract_pages.AbstractPage):
     
     pageName = "audio_with_response_page"
