@@ -51,11 +51,11 @@ def checkSequenceFile(survey):
         
         try:
             page = page.getHTML()
-        except:
-            errStr = "Page %d: Problem with at least one of the arguments: %s"
-            print(errStr % (pageNum, seq.testItemList[pageNum]))
+        except BaseException, e:
+            errStr = ("Page %d: Problem with at least one of the arguments: "
+                      "%s\n%s:%s\n")
+            print(errStr % (pageNum, seq.testItemList[pageNum], type(e), e))
             numErrors += 1
-            raise
             continue
     
     if numErrors == 0:
