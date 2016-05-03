@@ -33,6 +33,12 @@ audio_list_instructions
 On the next page you'll listen to a list of audio files separated by a brief pause.
 
 ====================
+boundary_and_prominence_alternatives
+====================
+
+Although LMEDS was originally developed for collecting RPT annotations such as in the previous pages, there are other ways that one can use LMEDS to collect prosody annotations, as shown with the next two pages.
+
+====================
 boundary_and_prominence_constrained_instructions
 ====================
 
@@ -221,7 +227,6 @@ I have read and understand the above consent form, I certify that I am 18 years 
 This consent form is derived from one used in an actual experiment run using LMEDS.<br /><br />
 This is not a real study, there is no compensation, and your data will be saved but not looked at or used in any study.<br /><br />
 
-
 ====================
 dissent
 ====================
@@ -233,6 +238,34 @@ error_consent_or_dissent
 ====================
 
 To continue you must either choose either to consent or to not consent.
+
+------------------------------
+audio_slider
+------------------------------
+
+====================
+prominence_scale_instr
+====================
+
+Slide the scale to indicate the degree of prominence you hear for the word in bold text.
+
+====================
+prominence_slider_instruct
+====================
+
+How prominent is the highlighted word?
+
+====================
+slider_max_label
+====================
+
+Completely prominent
+
+====================
+slider_min_label
+====================
+
+Not prominent
 
 ------------------------------
 audio_list
@@ -267,40 +300,16 @@ different
 different
 
 ====================
-equal
+neutral
 ====================
 
-L and R
+Neither
 
 ====================
-five_choice_discrim
+prominence_point_instr
 ====================
 
-Which of the responses fits the question the best?
-
-====================
-lbest
-====================
-
-L
-
-====================
-lprefered
-====================
-
-L ~R
-
-====================
-rbest
-====================
-
-R
-
-====================
-rprefered
-====================
-
-R ~L
+Please mark on a five point scale, the degree of prominence carried by the word marked in bold.
 
 ====================
 same
@@ -313,6 +322,18 @@ same_different_instr
 ====================
 
 Are the two audio files the same or different?
+
+====================
+vnonprom
+====================
+
+Very nonprominent
+
+====================
+vprom
+====================
+
+Very prominent
 
 ------------------------------
 fill_in_the_blank
@@ -408,17 +429,23 @@ boundary_nonspecific_instructions_short
 Mark a boundary between words <font color="red">that belong to different chunks</font>.
 
 ------------------------------
-lmeds_interface,login,login_bad_user_name
+audio_choice,audio_slider
 ------------------------------
 
 ====================
-back_button_warning
+nonprominent
 ====================
 
-<font color="red">Please note that pressing 'back' or 'refresh' will invalidate this experiment session.</font>
+Nonprominent
+
+====================
+prominent
+====================
+
+Prominent
 
 ------------------------------
-audio_list,audio_choice,boundary_and_prominence,boundary,prominence
+audio_slider,audio_list,audio_choice,boundary_and_prominence,boundary,prominence
 ------------------------------
 
 ====================
@@ -438,6 +465,16 @@ play_button
 ====================
 
 Play
+
+------------------------------
+lmeds_interface,login,login_bad_user_name
+------------------------------
+
+====================
+back_button_warning
+====================
+
+<font color="red">Please note that pressing 'back' or 'refresh' will invalidate this experiment session.</font>
 
 ------------------------------
 login,login_bad_user_name

@@ -17,6 +17,9 @@ Choice Wireless, Wired
 On a scale of 1-5, how fast did pages load?
 Choicebox 1 Very slowly, 2, 3 Tolerably So, 4, 5 No loading time
 
+How satisfied were you with this experiment?
+Sliding_Scale 0, 100, Very Unsatisfied, Very Satisfied
+
 What did you think of this test?  Did you encounter any technical issues with the website?  Any feedback?  Comments?  Complaints?
 Multiline_Textbox 50, 7
 
