@@ -184,7 +184,7 @@ class UnbalancedListPair(Exception):
     def __str__(self):
         errStr = "Lists '%s' and '%s' much have the same number of members"
         return errStr % (str(self.listA), str(self.listB))
-    
+
     
 class AudioChoicePage(abstract_pages.AbstractPage):
     
@@ -192,7 +192,8 @@ class AudioChoicePage(abstract_pages.AbstractPage):
     
     def __init__(self, instructionText, pauseDuration, minPlays, maxPlays,
                  audioListOfLists, responseButtonList,
-                 buttonLabelList=None, *args, **kargs):
+                 buttonLabelList=None, transcriptList=None,
+                 *args, **kargs):
         super(AudioChoicePage, self).__init__(*args, **kargs)
         
         self.instructionText = instructionText
@@ -201,8 +202,13 @@ class AudioChoicePage(abstract_pages.AbstractPage):
         self.minPlays = minPlays
         self.maxPlays = maxPlays
         self.responseButtonList = responseButtonList
+        self.buttonLabelList = buttonLabelList
+        self.transcriptList = transcriptList
+        if transcriptList != None:
+            assert(len(audioListOfLists) == len(transcriptList))
         
         self.wavDir = self.webSurvey.wavDir
+        self.txtDir = self.webSurvey.txtDir
         
         self.submitProcessButtonFlag = False
         self.nonstandardSubmitProcessList = [('widget',
@@ -274,11 +280,23 @@ class AudioChoicePage(abstract_pages.AbstractPage):
                 playBtnLabelRow += template % label
             playBtnSnippet += template % audioButtonHTML
         
+        # Add optional button labels
         playBtnSnippet = '<tr>%s</tr>' % playBtnSnippet
         if self.buttonLabelList is not None:
             playBtnLabelRow = '<tr>%s</tr>' % playBtnLabelRow
         
         playBtnSnippet = playBtnLabelRow + playBtnSnippet
+        
+        # Add optional speech transcripts
+        if self.transcriptList is not None:
+            transcriptList = [loader.loadTxtFile(join(self.txtDir,
+                                                      transcript + ".txt"))
+                              for transcript in self.transcriptList]
+            transcriptList = ["<td>%s</td>" % "<br />".join(transcript)
+                              for transcript in transcriptList]
+                              
+            transcriptTxt = "<tr>%s</tr>" % "".join(transcriptList)
+            playBtnSnippet = playBtnSnippet + transcriptTxt
         
         playBtnSnippet = ('<table class="center">%s</table>') % playBtnSnippet
         
