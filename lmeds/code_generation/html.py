@@ -172,6 +172,15 @@ def createChoicebox(textList, i):
     return returnTxt, i + 1
 
 
+def createSlidingScale(textList, i):
+    leftVal, rightVal, leftText, rightText = textList
+    widgetTemplate = ('<input type="range" name="%s" id="%s" value=""'
+                      'min="%s" max="%s">')
+    widgetTemplate %= (str(i), str(i), leftVal, rightVal)
+    
+    return leftText + widgetTemplate + rightText, i + 1
+    
+
 def createTextbox(i):
     tmpTxtBox = """<input type="text" name="%s" id="%s" value=""/>"""
     return tmpTxtBox % (str(i), str(i)), i + 1
@@ -192,6 +201,7 @@ def createWidget(widgetType, argList, i):
     elementDictionary = {"Choice": createChoice,
                          "Item_List": partial(createChoice, checkboxFlag=True),
                          "Choicebox": createChoicebox,
+                         "Sliding_Scale":createSlidingScale,
                          }
     
     if widgetType == "Textbox":
