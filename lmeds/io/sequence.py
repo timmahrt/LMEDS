@@ -91,12 +91,21 @@ class TestSequence(object):
         pageName, pageArgStr = self.getPageStr(pageNum)
         
         # Get non-keyword arguments
-        argList = [arg for arg in pageArgStr if "=" not in arg]  # Args
+        argList = []
+        while len(pageArgStr) > 0:
+            if '=' not in pageArgStr[0]:
+                argList.append(pageArgStr.pop(0))
+            else:
+                break
         
         # Get keyword arguments
         kargDict = {}
-        nonArgList = [arg.split("=", 1) for arg in pageArgStr if '=' in arg]
-        for key, value in nonArgList:
+        while len(pageArgStr) > 0:
+            if len(pageArgStr) > 1 and isinstance(pageArgStr[1], type([])):
+                key = pageArgStr.pop(0).split("=", 1)[0]
+                value = pageArgStr.pop(0)
+            else:
+                key, value = pageArgStr.pop(0).split("=", 1)
             kargDict[key] = value
         
         page = factories.loadPage(self.webSurvey, pageName, argList, kargDict)
