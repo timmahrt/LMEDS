@@ -211,12 +211,7 @@ class AudioChoicePage(abstract_pages.AbstractPage):
         # Strings used in this page
         txtKeyList = [instructionText, ]
         txtKeyList += responseButtonList
-        
-        self.buttonLabelList = buttonLabelList
-        if self.buttonLabelList is not None:
-            if len(self.buttonLabelList) != len(audioListOfLists):
-                raise UnbalancedListPair(self.audioList, self.buttonLabelList)
-            txtKeyList += buttonLabelList
+        txtKeyList += _buttonLabelCheck(audioListOfLists, buttonLabelList)
         
         txtKeyList.extend(abstract_pages.audioTextKeys)
         self.textDict.update(loader.batchGetText(txtKeyList))
@@ -263,27 +258,7 @@ class AudioChoicePage(abstract_pages.AbstractPage):
         Listeners hear two files and decide if they are the same or different
         '''
         pageTemplate = join(constants.htmlDir, "axbTemplate.html")
-        
-        # Generate the javascript for disabling or enabling all of the
-        # audio buttons
-        enabledJS = 'document.getElementById("%d").disabled=false;\n'
-        disabledJS = 'document.getElementById("%d").disabled=true;\n'
-        
-        enabledSnippet = ''
-        disabledSnippet = ''
-        for i in range(len(self.responseButtonList)):
-            enabledSnippet += (enabledJS % i)
-            disabledSnippet += (disabledJS % i)
-        
-        availableFunctions = ('<script>\n'
-                              'function enable_checkboxes() {\n'
-                              '%s'
-                              '}\n'
-                              'function disable_checkboxes() {\n'
-                              '%s'
-                              '}\n'
-                              '</script>\n'
-                              ) % (enabledSnippet, disabledSnippet)
+        availableFunctions = getToggleButtonsJS(len(self.responseButtonList))
         
         # Generate the audio buttons
         playBtnLabelRow = ''
@@ -327,6 +302,47 @@ class AudioChoicePage(abstract_pages.AbstractPage):
         return htmlText, pageTemplate, {'embed': embedTxt}
 
 
+def _buttonLabelCheck(audioListOfLists, buttonLabelList):
+
+    txtKeyList = []
+
+    if buttonLabelList is not None:
+        if len(buttonLabelList) != len(audioListOfLists):
+            raise UnbalancedListPair(audioListOfLists, buttonLabelList)
+        txtKeyList += buttonLabelList
+        
+    return txtKeyList
+
+
+def getToggleButtonsJS(numItems, idFormat=None):
+    # Generate the javascript for disabling or enabling all of the
+    # audio buttons
+    enabledJS = 'document.getElementById("%s").disabled=false;\n'
+    disabledJS = 'document.getElementById("%s").disabled=true;\n'
+    
+    enabledSnippet = ''
+    disabledSnippet = ''
+    for i in range(numItems):
+        
+        if idFormat != None:
+            idStr = idFormat % i
+        else:
+            idStr = str(i)
+            
+        enabledSnippet += (enabledJS % idStr)
+        disabledSnippet += (disabledJS % idStr)
+    
+    jsCode = ('<script>\n'
+              'function enable_checkboxes() {\n'
+              '%s'
+              '}\n'
+              'function disable_checkboxes() {\n'
+              '%s'
+              '}\n'
+              '</script>\n'
+              ) % (enabledSnippet, disabledSnippet)
+    
+    return jsCode
 class AudioWithResponsePage(abstract_pages.AbstractPage):
     
     pageName = "audio_with_response_page"
