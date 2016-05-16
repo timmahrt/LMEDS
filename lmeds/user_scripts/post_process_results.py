@@ -224,7 +224,8 @@ def postProcessResults(testName, sequenceFN, removeDuplicatesFlag,
                                          surveyNameList, outputPath)
      
     # Transpose the rpt pages
-    prominencePageList = ["prominence", "boundary", "boundary_and_prominence"]
+    prominencePageList = ["prominence", "boundary", "boundary_and_prominence",
+                          "syllable_marking"]
     for pageName in prominencePageList:
         if pageName in uniquePageList:
             transpose_rpt.transposeRPT(join(pathToData, pageName),

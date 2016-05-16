@@ -240,34 +240,6 @@ error_consent_or_dissent
 To continue you must either choose either to consent or to not consent.
 
 ------------------------------
-audio_slider
-------------------------------
-
-====================
-prominence_scale_instr
-====================
-
-Slide the scale to indicate the degree of prominence you hear for the word in bold text.
-
-====================
-prominence_slider_instruct
-====================
-
-How prominent is the highlighted word?
-
-====================
-slider_max_label
-====================
-
-Completely prominent
-
-====================
-slider_min_label
-====================
-
-Not prominent
-
-------------------------------
 audio_list
 ------------------------------
 
@@ -372,6 +344,26 @@ prominence_nonspecific_instructions_short
 Mark the words that the speaker <font color="blue">highlighted for the listener, to make them stand out</font>.
 
 ------------------------------
+syllable_marking
+------------------------------
+
+====================
+syllable_marking_nonspecific_syllables_instructions_short
+====================
+
+Please mark the most prominent syllable in each word.
+
+------------------------------
+audio_slider
+------------------------------
+
+====================
+prominence_scale_instr
+====================
+
+Slide the scale to indicate the degree of prominence you hear for the word in bold text.
+
+------------------------------
 end
 ------------------------------
 
@@ -419,6 +411,16 @@ title
 A Demonstration of LMEDS
 
 ------------------------------
+lmeds_interface,login,login_bad_user_name
+------------------------------
+
+====================
+back_button_warning
+====================
+
+<font color="red">Please note that pressing 'back' or 'refresh' will invalidate this experiment session.</font>
+
+------------------------------
 boundary_and_prominence,boundary
 ------------------------------
 
@@ -445,7 +447,7 @@ prominent
 Prominent
 
 ------------------------------
-audio_slider,audio_list,audio_choice,boundary_and_prominence,boundary,prominence
+audio_list,audio_choice,boundary_and_prominence,boundary,prominence,syllable_marking,audio_slider
 ------------------------------
 
 ====================
@@ -465,16 +467,6 @@ play_button
 ====================
 
 Play
-
-------------------------------
-lmeds_interface,login,login_bad_user_name
-------------------------------
-
-====================
-back_button_warning
-====================
-
-<font color="red">Please note that pressing 'back' or 'refresh' will invalidate this experiment session.</font>
 
 ------------------------------
 login,login_bad_user_name

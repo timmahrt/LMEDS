@@ -17,7 +17,7 @@ def alpha(num):
         retVal = unichr(num + 96)  # Python 2.x
     except NameError:
         retVal = chr(num + 96)  # Python 3.x
-    return retVal 
+    return retVal
 
 numTypeList = [int, alpha]
 

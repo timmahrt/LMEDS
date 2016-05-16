@@ -3,7 +3,7 @@ Created on Mar 1, 2014
 
 @author: tmahrt
 
-These pages define pages used for rapid prosody transcription. 
+These pages define pages used for rapid prosody transcription.
 '''
 
 import os
@@ -18,7 +18,8 @@ from lmeds.pages import abstract_pages
 
 
 def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textNameStr,
-                          sentenceList, presentAudioFlag, token):
+                          sentenceList, presentAudioFlag, token,
+                          syllableDemarcator):
     '''
     This is a helper function.  It does not construct a full page.
     
@@ -43,13 +44,34 @@ def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textNameStr,
             sentenceListTxtList.append(sentence)
         else:
             wordList = sentence.split(" ")
+            
             tmpHTMLTxt = ""
-            for word in wordList:
-                # If a word is an HTML tag, it isn't togglable.
-                # Otherwise, it is
-                tmpHTMLTxt += _makeTogglableWord(testType, word,
-                                                 wordIDNum, token)
-                wordIDNum += 1
+            if syllableDemarcator is not None:
+                wordList = [word.split(syllableDemarcator)
+                            for word in wordList]
+                for syllableList in wordList:
+                    wordHTMLTxt = ""
+                    for syllable in syllableList:
+                        wordHTMLTxt += _makeTogglableWord(testType, syllable,
+                                                          wordIDNum, token,
+                                                          "syllable")
+                        wordIDNum += 1
+                        wordHTMLTxt += syllableDemarcator
+                    
+                    # Syllables are separated by a demarcator.  Words by
+                    # spaces.  Here, remove the final demarcator and add a
+                    # newline (interpreted as a space in HTML).
+                    wordTemplate = '<span class="rptWordPadding">%s</span>\n'
+                    tmpHTMLTxt += wordTemplate % wordHTMLTxt[:-1]
+            else:
+                for word in wordList:
+                    # If a word is an HTML tag, it isn't togglable.
+                    # Otherwise, it is
+                    tmpHTMLTxt += _makeTogglableWord(testType, word,
+                                                     wordIDNum, token,
+                                                     "word")
+                    wordIDNum += 1
+                    tmpHTMLTxt += "\n"
 
             sentenceListTxtList.append(tmpHTMLTxt)
     
@@ -74,13 +96,26 @@ def _getProminenceOrBoundaryWordEmbed(isProminence):
     """
     
     javascript = """
-<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script>if (!window.jQuery) { document.write('<script src="../html/jquery-1.11.0.min.js"><\/script>'); }
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js">
+</script>
+<script>if (!window.jQuery) { document.write(
+'<script src="../html/jquery-1.11.0.min.js"><\/script>'); }
 </script>
     
 <style type="text/css">
            /* Style the label so it looks like a button */
-           label {
+           .rptWordPadding {
+                padding-right: 3px;
+                padding-left: 3px;
+           }
+           label.syllable {
+                border-right: 0px solid #FFFFFF;
+                position: relative;
+                z-index: 3;
+                padding-right: 0px;
+                padding-left: 0px;
+           }
+           label.word {
                 border-right: 0px solid #FFFFFF;
                 position: relative;
                 z-index: 3;
@@ -112,18 +147,19 @@ $(document).ready(function(){
     return javascript
 
 
-def _makeTogglableWord(testType, word, idNum, boundaryToken):
+def _makeTogglableWord(testType, word, idNum, boundaryToken, labelClass):
     
     tokenTxt = ""
     if boundaryToken is not None:
         tokenTxt = """<span class="hidden">%s</span>""" % boundaryToken
     
-    htmlTxt = """
-<label for="%(idNum)d">
-<input type="checkbox" name="%(testType)s" id="%(idNum)d" value="%(idNum)d"/>
-%(word)s""" + tokenTxt + """\n</label>\n\n"""
+    htmlTxt = ('<label for="%(idNum)d" class="%(class)s">'
+               '<input type="checkbox" name="%(testType)s" id="%(idNum)d"'
+               'value="%(idNum)d"/>'
+               '%(word)s' + tokenTxt + '</label>')
 
-    return htmlTxt % {"testType": testType, "word": word, "idNum": idNum}
+    return htmlTxt % {"testType": testType, "word": word, "idNum": idNum,
+                      "class": labelClass}
 
 
 def _getTogglableWordEmbed(numWords, boundaryMarking):
@@ -153,8 +189,10 @@ def _getTogglableWordEmbed(numWords, boundaryMarking):
             """
     
     javascript = """
-<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script>if (!window.jQuery) { document.write('<script src="../html/jquery-1.11.0.min.js"><\/script>'); }
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js">
+</script>
+<script>if (!window.jQuery) { document.write(
+'<script src="../html/jquery-1.11.0.min.js"><\/script>'); }
 </script>
 
 <script>
@@ -181,7 +219,18 @@ if(didPlay == true) {
     
 <style type="text/css">
            /* Style the label so it looks like a button */
-           label {
+           rptWordPadding {
+                padding-right: 3px;
+                padding-left: 3px;
+           }
+           label.syllable {
+                border-right: 0px solid #FFFFFF;
+                position: relative;
+                z-index: 3;
+                padding-right: 0px;
+                padding-left: 0px;
+           }
+           label.word {
                 border-right: 0px solid #FFFFFF;
                 position: relative;
                 z-index: 3;
@@ -234,7 +283,8 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
     
     def __init__(self, name, transcriptName, minPlays, maxPlays,
                  instructions=None, presentAudio="true", boundaryToken=None,
-                 doProminence=True, *args, **kargs):
+                 doProminence=True, syllableDemarcator=None,
+                 *args, **kargs):
         
         super(BoundaryOrProminenceAbstractPage, self).__init__(*args, **kargs)
         
@@ -246,6 +296,7 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         self.presentAudio = presentAudio
         self.boundaryToken = boundaryToken
         self.doProminence = doProminence
+        self.syllableDemarcator = syllableDemarcator
         
         self.txtDir = self.webSurvey.txtDir
         self.wavDir = self.webSurvey.wavDir
@@ -283,7 +334,7 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         # Make sure all text files exist
         if not os.path.exists(join(self.txtDir, self.transcriptName + ".txt")):
             raise utils.FilesDoNotExist(self.txtDir,
-                                        [self.transcriptName + ".txt",],
+                                        [self.transcriptName + ".txt", ],
                                         True)
         
     def getValidation(self):
@@ -293,8 +344,18 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         
     def getNumOutputs(self):
         # One binary label for every word
-        return loader.getNumWords(join(self.txtDir,
-                                       self.transcriptName + ".txt"))
+        
+        transcriptFN = join(self.txtDir, self.transcriptName + ".txt")
+        if self.syllableDemarcator is None:
+            numOutputs = loader.getNumWords(transcriptFN)
+        else:
+            textList = loader.splitTranscript(transcriptFN)
+            countList = [len(word.split(self.syllableDemarcator))
+                         for row in textList
+                         for word in row]
+            numOutputs = sum(countList)
+            
+        return numOutputs
         
     def getOutput(self, form):
         
@@ -325,7 +386,8 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
                                         self.name,
                                         self.textDict[self.instructText],
                                         sentenceList, self.presentAudio,
-                                        self.boundaryToken)[0]
+                                        self.boundaryToken,
+                                        self.syllableDemarcator)[0]
     
         if self.presentAudio:
             embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays,
@@ -360,7 +422,16 @@ class ProminencePage(BoundaryOrProminenceAbstractPage):
     def __init__(self, *args, **kargs):
         kargs["doProminence"] = True
         super(ProminencePage, self).__init__(*args, **kargs)
-        
+
+
+class SyllableMarking(BoundaryOrProminenceAbstractPage):
+    
+    pageName = "syllable_marking"
+    
+    def __init__(self, *args, **kargs):
+        kargs["doProminence"] = True
+        super(SyllableMarking, self).__init__(*args, **kargs)
+   
 
 class BoundaryAndProminencePage(abstract_pages.AbstractPage):
 
@@ -465,7 +536,8 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
                                                      stepOneInstructText,
                                                      sentenceList,
                                                      self.presentAudio,
-                                                     self.boundaryToken)
+                                                     self.boundaryToken,
+                                                     None)
         htmlTxt += "<div>%s</div>" % tmpHTMLTxt
     
         # HTML from transitioning from the boundary portion of text
@@ -483,7 +555,8 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
                                          stepTwoInstructText,
                                          sentenceList,
                                          self.presentAudio,
-                                         self.boundaryToken)[0]
+                                         self.boundaryToken,
+                                         None)[0]
         htmlTxt += "</div>"
                     
         # Add the javascript and style sheets here

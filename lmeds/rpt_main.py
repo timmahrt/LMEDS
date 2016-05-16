@@ -145,7 +145,7 @@ class WebSurvey(object):
                                               [userName, ], {})
                 # We wrongly guessed that we would be progressing in the test
                 pageNum -= 1
-         
+        
         # Otherwise, the user name, should be stored in the form
         elif "user_name" in form:
             userName = utils.decodeUnicode(form["user_name"].value)
@@ -158,7 +158,7 @@ class WebSurvey(object):
         if lastPage.pageName == 'consent':
             if form['radio'].value == 'dissent':
                 nextPage = factories.loadPage(self, "consent_end")
-    
+        
         # Go to a special end state if the user cannot play audio files
         if lastPage.pageName == 'audio_test':
             if form['radio'].value == 'dissent':

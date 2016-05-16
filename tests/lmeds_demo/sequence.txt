@@ -30,6 +30,7 @@ boundary_and_prominence apples apples 2 2 nonspecific true
 text_page boundary_and_prominence_constrained_instructions
 boundary apples apples 2 2 nonspecific true
 prominence apples apples 2 2 nonspecific true
+syllable_marking syllables syllables 1 -1 nonspecific_syllables true syllableDemarcator=.
 
 text_page boundary_and_prominence_alternatives
 audio_choice prominence_point_instr 0.5 1 -1 [[water]]  [vnonprom nonprominent neutral prominent vprom] transcriptList=[water_word]

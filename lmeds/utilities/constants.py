@@ -16,7 +16,7 @@ softwareName = "LMEDS: Language Markup and Experimental Design Software"
 
 # Insert url here of LMEDS.  This is used by a few
 # files (just .ico?) so not filling this in is not hugely problematic
-rootURL = ""  
+rootURL = ""
 
 
 # EDITING THE BELOW MIGHT PREVENT LMEDS FROM FUNCTIONING

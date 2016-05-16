@@ -11,6 +11,7 @@ import codecs
 from lmeds.io import loader
 from lmeds.io import user_response
 from lmeds.utilities import utils
+from lmeds.io import sequence
 
 P = "p"
 B = "b"
@@ -45,7 +46,7 @@ def _transposeRPT(dataListOfLists):
             elif taskName == "boundary":
                 bScores = dataList
                 pScores = []
-            elif taskName == "prominence":
+            elif taskName in ["prominence", "syllable_marking"]:
                 bScores = []
                 pScores = dataList
             
@@ -143,6 +144,7 @@ def _buildHeader(fnList, aspectKeyList, pageName):
                      for i in range(len(fnList))]
     headerDict = {"boundary": (bNameList, anonBNameList),
                   "prominence": (pNameList, anonPNameList),
+                  "syllable_marking": (pNameList, anonPNameList),
                   "boundary_and_prominence": (bNameList + pNameList,
                                               anonBNameList + anonPNameList)}
     
@@ -153,6 +155,7 @@ def _buildHeader(fnList, aspectKeyList, pageName):
     
     txtPrefixDict = {"boundary": (bTxt),
                      "prominence": (pTxt),
+                     "syllable_marking": (pTxt),
                      "boundary_and_prominence": ("%s,%s" % (bTxt, pTxt))}
     
     nameList, anonNameList = headerDict[pageName]
@@ -184,7 +187,14 @@ def _unifyRow(row):
     return [",".join(cells) if isinstance(cells, list) else cells
             for cells in row]
 
-
+def _getDemarcator(argList):
+    syllableDemarcator = None
+    for arg in argList:
+        if "syllableDemarcator" in arg:
+            syllableDemarcator = arg.split("=")[1]
+            
+    return syllableDemarcator
+    
 def transposeRPT(path, txtPath, pageName, outputPath):
     '''
     Transposes RPT data
@@ -193,6 +203,29 @@ def transposeRPT(path, txtPath, pageName, outputPath):
     Output files: one file per stimuli
     '''
     utils.makeDir(outputPath)
+        
+    # Load p/b-score data
+    rptDataList = []
+    fnList = utils.findFiles(path, filterExt=".csv")
+    for fn in fnList:
+        scoreFN = join(path, fn)
+        userResponse = codecs.open(scoreFN, encoding="utf-8").readlines()
+        userResponse = [line.strip() for line in userResponse]
+        
+        a = user_response.loadUserResponse(join(path, fn))
+        
+        # Load the demarcator, if there is one
+        for pageName, pageArgs, _, _ in a:
+            demarcator = None
+            if pageName == "syllable_marking":
+                
+                # The demarcator can either be an arg or a keyword arg.
+                # Either way, it should be the last item in the list
+                demarcator = pageArgs[-1]
+                if "syllableDemarcator" in demarcator:
+                    demarcator = demarcator.split("=")[1]
+        
+        rptDataList.append(a)
     
     # Load Words
     txtDict = {}
@@ -207,14 +240,11 @@ def transposeRPT(path, txtPath, pageName, outputPath):
         
         txt = ",".join(txtList)
         
-        txtDict[name] = [word for word in txt.split(",") if word != ""]
-        
-    # Load p/b-score data
-    rptDataList = []
-    fnList = utils.findFiles(path, filterExt=".csv")
-    for fn in fnList:
-        a = user_response.loadUserResponse(join(path, fn))
-        rptDataList.append(a)
+        if demarcator is None:
+            txtDict[name] = [word for word in txt.split(",") if word != ""]
+        else:
+            txtDict[name] = [syllable for word in txt.split(",") if word != ""
+                             for syllable in word.split(demarcator)]
     
     returnDict, idKeyList, aspectKeyList = _transposeRPT(rptDataList)
     
@@ -234,7 +264,7 @@ def transposeRPT(path, txtPath, pageName, outputPath):
             if pageName == "boundary":
                 aspectSumList.extend([bSumList, ])
                 aspectList.extend([bScoreList, ])
-            elif pageName == "prominence":
+            elif pageName in ["prominence", "syllable_marking"]:
                 aspectSumList.extend([pSumList, ])
                 aspectList.extend([pScoreList, ])
             elif pageName == "boundary_and_prominence":

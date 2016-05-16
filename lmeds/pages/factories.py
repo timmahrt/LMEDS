@@ -50,6 +50,7 @@ def loadPage(webSurvey, pageName, args=None, kargs=None):
                      boundary_pages.BoundaryAndProminencePage,
                      boundary_pages.BoundaryPage,
                      boundary_pages.ProminencePage,
+                     boundary_pages.SyllableMarking,
                      ]
 
     pageDict = dict((pageClass.pageName, pageClass)
