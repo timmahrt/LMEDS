@@ -23,13 +23,11 @@ _root = os.path.split(cwd)[0]
 sys.path.append(_root)
 os.chdir(_root)
 
-class IntegrationTests(unittest.TestCase):
-    """Integration tests"""
-  
-    def test_run_lmeds_demo(self):
-        """Running 'lmeds_virtual_demo'"""
-        import lmeds_virtual_demo
- 
+class UserScriptIntegrationTests2(unittest.TestCase):
+    """Integration tests"""       
+    def test_get_duration(self):
+        """Running 'get_duration_demo'"""
+        import user_script_get_duration
 
 
 if __name__ == '__main__':
