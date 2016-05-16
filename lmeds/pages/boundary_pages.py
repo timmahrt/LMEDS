@@ -271,18 +271,10 @@ $(document).ready(function(){
                          boundaryMarkingCode_showHide}
 
 
-def _buildInstructionsText(textNameList, instructions):
-    
-    if instructions is not None:
-        textNameList.insert(1, instructions)
-    
-    return "_".join(textNameList)
-
-
 class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
     
     def __init__(self, name, transcriptName, minPlays, maxPlays,
-                 instructions=None, presentAudio="true", boundaryToken=None,
+                 instructions, presentAudio="true", boundaryToken=None,
                  doProminence=True, syllableDemarcator=None,
                  *args, **kargs):
         
@@ -292,7 +284,6 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         self.transcriptName = transcriptName
         self.minPlays = minPlays
         self.maxPlays = maxPlays
-        self.instructions = instructions
         self.presentAudio = presentAudio
         self.boundaryToken = boundaryToken
         self.doProminence = doProminence
@@ -300,10 +291,8 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         
         self.txtDir = self.webSurvey.txtDir
         self.wavDir = self.webSurvey.wavDir
-    
-        instructTextList = [self.pageName, "instructions_short"]
-        self.instructText = _buildInstructionsText(instructTextList,
-                                                   instructions)
+        
+        self.instructText = instructions
     
         # Strings used in this page
         txtKeyList = []
@@ -439,8 +428,8 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
     pageName = 'boundary_and_prominence'
 
     def __init__(self, name, transcriptName, minPlays, maxPlays,
-                 instructions=None, presentAudio="true",
-                 boundaryToken=None, *args, **kargs):
+                 boundaryInstructions, prominenceInstructions,
+                 presentAudio="true", boundaryToken=None, *args, **kargs):
         
         super(BoundaryAndProminencePage, self).__init__(*args, **kargs)
         
@@ -452,20 +441,14 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         self.transcriptName = transcriptName
         self.minPlays = minPlays
         self.maxPlays = maxPlays
-        self.instructions = instructions
         self.presentAudio = presentAudio
         self.boundaryToken = boundaryToken
         
         self.txtDir = self.webSurvey.txtDir
         self.wavDir = self.webSurvey.wavDir
         
-        instructTextList = ["boundary", "instructions_short"]
-        self.stepOneInstructText = _buildInstructionsText(instructTextList,
-                                                          self.instructions)
-        
-        instructTextList = ["prominence", "post_boundary_instructions_short"]
-        self.stepTwoInstructText = _buildInstructionsText(instructTextList,
-                                                          self.instructions)
+        self.stepOneInstructText = boundaryInstructions
+        self.stepTwoInstructText = prominenceInstructions
         
         # Strings used in this page
         txtKeyList = ['continue_button']
