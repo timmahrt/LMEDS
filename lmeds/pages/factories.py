@@ -30,14 +30,11 @@ def loadPage(webSurvey, pageName, args=None, kargs=None):
     
     kargs['webSurvey'] = webSurvey
     
-    pageClassList = [assorted_experiment_pages.AudioChoicePage,
-                     assorted_experiment_pages.AudioSliderPage,
-                     assorted_experiment_pages.SurveyPage,
-                     assorted_experiment_pages.AudioListPage,
-                     assorted_experiment_pages.AudioWithResponsePage,
-                     assorted_experiment_pages.TextResponsePage,
-                     assorted_experiment_pages.MemoryPage,
+    pageClassList = [assorted_experiment_pages.MediaChoicePage,
+                     assorted_experiment_pages.MediaSliderPage,
+                     assorted_experiment_pages.MediaListPage,
                      assorted_experiment_pages.FillInTheBlankPage,
+                     assorted_experiment_pages.SurveyPage,
                      core_pages.LoginPage,
                      core_pages.LoginErrorPage,
                      core_pages.EndPage,

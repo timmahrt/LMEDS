@@ -394,7 +394,8 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
                                            self.minPlays)
             embed = audio.generateEmbed(self.wavDir,
                                         [self.name, ],
-                                        self.webSurvey.audioExtList)
+                                        self.webSurvey.audioExtList,
+                                        "audio")
             embedTxt += "\n\n" + embed
         else:
             embedTxt = ""
@@ -565,7 +566,8 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
                                            self.minPlays)
             embed = audio.generateEmbed(self.wavDir,
                                         [self.name, ],
-                                        self.webSurvey.audioExtList)
+                                        self.webSurvey.audioExtList,
+                                        "audio")
             embedTxt += "\n\n" + embed
         else:
             embedTxt = ""

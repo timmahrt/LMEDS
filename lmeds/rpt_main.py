@@ -40,7 +40,7 @@ class WebSurvey(object):
     
     def __init__(self, surveyName, sequenceFN, languageFileFN,
                  disableRefreshFlag, sourceCGIFN=None, audioExtList=None,
-                 allowUsersToRelogin=False
+                 videoExtList=None, allowUsersToRelogin=False
                  ):
         
         self.surveyRoot = join(constants.rootDir, "tests", surveyName)
@@ -61,6 +61,10 @@ class WebSurvey(object):
         if audioExtList is None:
             audioExtList = [".ogg", ".mp3"]
         self.audioExtList = audioExtList
+        
+        if videoExtList is None:
+            videoExtList = [".ogg", ".mp4"]
+        self.videoExtList = videoExtList
         
         loader.initTextDict(self.languageFileFN)
         
@@ -193,7 +197,8 @@ class WebSurvey(object):
         validateText = page.getValidation()
         
         # Defaults
-        embedTxt = audio.generateEmbed(self.wavDir, [], self.audioExtList)
+        embedTxt = audio.generateEmbed(self.wavDir, [], self.audioExtList,
+                                       "audio")
         
         # Estimate our current progress (this doesn't work well if the user
         #    can jump around)

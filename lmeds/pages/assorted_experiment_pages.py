@@ -186,48 +186,51 @@ class UnbalancedListPair(Exception):
         return errStr % (str(self.listA), str(self.listB))
 
     
-class AudioChoicePage(abstract_pages.AbstractPage):
+class MediaChoicePage(abstract_pages.AbstractPage):
     
-    pageName = "audio_choice"
+    pageName = "media_choice"
     
-    def __init__(self, instructionText, pauseDuration, minPlays, maxPlays,
-                 audioListOfLists, responseButtonList,
+    def __init__(self, instructionText, audioOrVideo, pauseDuration,
+                 minPlays, maxPlays, mediaListOfLists, responseButtonList,
                  buttonLabelList=None, transcriptList=None,
                  *args, **kargs):
-        super(AudioChoicePage, self).__init__(*args, **kargs)
+        super(MediaChoicePage, self).__init__(*args, **kargs)
         
         self.instructionText = instructionText
         self.pauseDuration = pauseDuration
-        self.audioList = audioListOfLists
+        self.mediaList = mediaListOfLists
         self.minPlays = minPlays
         self.maxPlays = maxPlays
         self.responseButtonList = responseButtonList
+        
+        assert(audioOrVideo in ["audio", "video"])
+        self.audioOrVideo = audioOrVideo
         self.buttonLabelList = buttonLabelList
         self.transcriptList = transcriptList
-        if transcriptList != None:
-            assert(len(audioListOfLists) == len(transcriptList))
+        if transcriptList is not None:
+            assert(len(mediaListOfLists) == len(transcriptList))
         
         self.wavDir = self.webSurvey.wavDir
         self.txtDir = self.webSurvey.txtDir
         
         self.submitProcessButtonFlag = False
         self.nonstandardSubmitProcessList = [('widget',
-                                              'audio_choice')]
+                                              'media_choice')]
         
         # Strings used in this page
         txtKeyList = [instructionText, ]
         txtKeyList += responseButtonList
-        txtKeyList += _buttonLabelCheck(audioListOfLists, buttonLabelList)
+        txtKeyList += _buttonLabelCheck(mediaListOfLists, buttonLabelList)
         
         txtKeyList.extend(abstract_pages.audioTextKeys)
         self.textDict.update(loader.batchGetText(txtKeyList))
         
-        self.numAudioButtons = len(audioListOfLists)
+        self.numAudioButtons = len(mediaListOfLists)
         self.processSubmitList = ["verifyAudioPlayed", ]
         
     def _getHTMLTxt(self):
         radioButton = ('<p>\n'
-                       '<input type="radio" name="audio_choice"'
+                       '<input type="radio" name="media_choice"'
                        'value="%(id)s" id="%(id)s" disabled />\n'
                        '<label for="%(id)s">.</label>\n'
                        '</p>\n'
@@ -266,19 +269,19 @@ class AudioChoicePage(abstract_pages.AbstractPage):
         pageTemplate = join(constants.htmlDir, "axbTemplate.html")
         availableFunctions = getToggleButtonsJS(len(self.responseButtonList))
         
-        # Generate the audio buttons
+        # Generate the media buttons
         playBtnLabelRow = ''
         playBtnSnippet = ''
         template = "<td class='buttons'>%s</td>"
-        for i in range(len(self.audioList)):
+        for i in range(len(self.mediaList)):
             
-            audioButtonHTML = audio.generateAudioButton(self.audioList[i], i,
+            mediaButtonHTML = audio.generateAudioButton(self.mediaList[i], i,
                                                         self.pauseDuration,
                                                         False)
             if self.buttonLabelList is not None:
                 label = self.textDict[self.buttonLabelList[i]]
                 playBtnLabelRow += template % label
-            playBtnSnippet += template % audioButtonHTML
+            playBtnSnippet += template % mediaButtonHTML
         
         # Add optional button labels
         playBtnSnippet = '<tr>%s</tr>' % playBtnSnippet
@@ -305,11 +308,16 @@ class AudioChoicePage(abstract_pages.AbstractPage):
                                        self.maxPlays, self.minPlays,
                                        runOnMinThreshold=runOnMinThresholdJS)
         
-        audioNames = [audioName for audioList in self.audioList
-                      for audioName in audioList]
+        mediaNames = [mediaName for mediaSubList in self.mediaList
+                      for mediaName in mediaSubList]
+        if self.audioOrVideo == "video":
+            extList = self.webSurvey.videoExtList
+        else:
+            extList = self.webSurvey.audioExtList
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
-                                                 list(set(audioNames)),
-                                                 self.webSurvey.audioExtList)
+                                                 list(set(mediaNames)),
+                                                 extList,
+                                                 self.audioOrVideo)
         embedTxt += "\n\n" + availableFunctions
         
         description = self.textDict[self.instructionText]
@@ -342,7 +350,7 @@ def getToggleButtonsJS(numItems, idFormat=None):
     disabledSnippet = ''
     for i in range(numItems):
         
-        if idFormat != None:
+        if idFormat is not None:
             idStr = idFormat % i
         else:
             idStr = str(i)
@@ -363,18 +371,19 @@ def getToggleButtonsJS(numItems, idFormat=None):
     return jsCode
 
 
-class AudioSliderPage(abstract_pages.AbstractPage):
+class MediaSliderPage(abstract_pages.AbstractPage):
     
-    pageName = "audio_slider"
+    pageName = "media_slider"
     
-    def __init__(self, instructionText, minPlays, maxPlays,
-                 audioName, transcriptName, sliderMin, sliderMax,
+    def __init__(self, instructionText, audioOrVideo, minPlays, maxPlays,
+                 mediaName, transcriptName, sliderMin, sliderMax,
                  sliderLabel=None, leftRangeLabel=None, rightRangeLabel=None,
                  *args, **kargs):
-        super(AudioSliderPage, self).__init__(*args, **kargs)
+        super(MediaSliderPage, self).__init__(*args, **kargs)
         
         self.instructionText = instructionText
-        self.audioName = audioName
+        self.audioOrVideo = audioOrVideo
+        self.mediaName = mediaName
         self.transcriptName = transcriptName
         self.minPlays = minPlays
         self.maxPlays = maxPlays
@@ -423,7 +432,7 @@ class AudioSliderPage(abstract_pages.AbstractPage):
         else:
             rightLabel = ""
         
-        sliderHTML = ('%(leftTxt)s<input type="range" name="audio_slider" '
+        sliderHTML = ('%(leftTxt)s<input type="range" name="media_slider" '
                       'min="%(min)s" max="%(max)s" id="%(id)s" disabled />'
                       '%(rightTxt)s<br />%(label)s <br />'
                       )
@@ -443,7 +452,7 @@ class AudioSliderPage(abstract_pages.AbstractPage):
     
     def getOutput(self, form):
         
-        value = form.getlist("audio_slider")[0]
+        value = form.getlist("media_slider")[0]
         value = utils.decodeUnicode(value)
             
         return value
@@ -461,11 +470,8 @@ class AudioSliderPage(abstract_pages.AbstractPage):
         txtFN = join(self.txtDir, self.transcriptName + ".txt")
         sentenceList = loader.loadTxtFile(txtFN)
         transcriptTxt = "<br /><br />\n\n".join(sentenceList)
-        
-        # Generate the audio button
-        template = "<td class='buttons'>%s</td>"
 
-        playBtnSnippet = audio.generateAudioButton(self.audioName, 0,
+        playBtnSnippet = audio.generateAudioButton(self.mediaName, 0,
                                                    0,
                                                    False)
         
@@ -474,10 +480,16 @@ class AudioSliderPage(abstract_pages.AbstractPage):
                                        self.maxPlays, self.minPlays,
                                        runOnMinThreshold=runOnMinThresholdJS)
         
-        audioNames = [self.audioName, ]
+        mediaNames = [self.mediaName, ]
+        
+        if self.audioOrVideo == "audio":
+            extList = self.webSurvey.audioExtList
+        else:
+            extList = self.webSurvey.videoExtList
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
-                                                 list(set(audioNames)),
-                                                 self.webSurvey.audioExtList)
+                                                 list(set(mediaNames)),
+                                                 extList,
+                                                 self.audioOrVideo)
         embedTxt += "\n\n" + availableFunctions
         
         description = self.textDict[self.instructionText]
@@ -488,173 +500,16 @@ class AudioSliderPage(abstract_pages.AbstractPage):
         return htmlText, pageTemplate, {'embed': embedTxt}
 
 
-class AudioWithResponsePage(abstract_pages.AbstractPage):
-    
-    pageName = "audio_with_response_page"
-    
-    VALIDATION_STRING = "audio_with_response_validation_string"
-    
-    def __init__(self, timeout, audioList, *args, **kargs):
-        super(AudioWithResponsePage, self).__init__(*args, **kargs)
-        self.audioList = audioList
-        self.minPlays = 1
-        self.maxPlays = 1
-        self.txtboxCols = 100
-        self.txtboxRows = 10
-        self.pauseDuration = 0
-        self.timeout = float(timeout)
-        
-        # Strings used in this page
-        txtKeyList = ["memory_instruct", "memory_a", "memory_b"]
-        txtKeyList.extend(abstract_pages.audioTextKeys)
-        self.textDict.update(loader.batchGetText(txtKeyList))
-        
-        self.wavDir = self.webSurvey.wavDir
-        self.submitProcessButtonFlag = True
-        
-        self.numAudioButtons = 1
-        self.processSubmitList = []
-    
-    def _getHTMLTxt(self):
-        txtbox = ('<textarea name="audio_with_response_page" '
-                  'id="audio_with_response_page" rows="%s" cols="%s" '
-                  'disabled></textarea>')
-        txtbox %= (self.txtboxRows, self.txtboxCols)
-        
-        return """%s<br /><br />""" + txtbox
-    
-    def getValidation(self):
-        pass
-#         abnValidation = """
-#         var y=document.forms["languageSurvey"];
-#         if (checkBoxValidate(y["audio_with_response_page"])==true)
-#           {
-#           alert("%s");
-#           return false;
-#           }
-#           return true;
-#         """
-#
-#         #'Error.  Select one of the three options'
-#         retPage = abnValidation % self.textDict[self.VALIDATION_STRING]
-        
-        return
-    
-    def getNumOutputs(self):
-        return 1
-    
-    def getHTML(self):
-    
-        htmlText = self._getHTMLTxt()
-        pageTemplate = join(constants.htmlDir, "axbTemplate.html")
-        
-        htmlText %= audio.generateAudioButton(self.audioList, 0,
-                                              self.pauseDuration,
-                                              False) + "<br />"
-        
-        jsFuncs = ('<script>\n'
-                   'function enable_textbox() {\n'
-                   'document.getElementById("audio_with_response_page"'
-                   ').disabled=false;\n'
-                   'document.getElementById("audio_with_response_page"'
-                   ').focus();\n'
-                   '}\n'
-                   '</script>\n'
-                   )
-        
-        timeoutJS = "setTimeout(function(){processSubmit()}, %d);"
-        timeoutJS %= int(self.timeout * 1000)
-        runOnFinishJS = "enable_textbox();" + timeoutJS
-        embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays, self.minPlays,
-                                       runOnFinish=runOnFinishJS)
-        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
-                                                 list(set(self.audioList)),
-                                                 self.webSurvey.audioExtList)
-        embedTxt += jsFuncs
-        
-        return htmlText, pageTemplate, {'embed': embedTxt}
-    
-    def getOutput(self, form):
-        
-        try:
-            # Only one item
-            value = form.getlist("audio_with_response_page")[0]
-            value = utils.decodeUnicode(value)
-        except IndexError:
-            value = ""  # They didn't enter anything
-        value = value.replace(",", ";")
-        newlineChar = utils.detectLineEnding(value)
-        if newlineChar is not None:
-            value = value.replace(newlineChar, " - ")
-        
-        return value
+class MediaListPage(abstract_pages.AbstractPage):
 
+    pageName = "media_list"
 
-class TextResponsePage(abstract_pages.AbstractPage):
-    
-    pageName = "text_response_page"
-    
-    def __init__(self, timeout, *args, **kargs):
-        super(TextResponsePage, self).__init__(*args, **kargs)
-        self.txtboxCols = 100
-        self.txtboxRows = 10
-        self.timeout = float(timeout)
-        
-        self.submitProcessButtonFlag = True
-        
-        self.nonstandardSubmitProcessList = []
-        if timeout > 0:
-            self.nonstandardSubmitProcessList.append(('timeout',
-                                                      int(self.timeout)))
-        
-        self.numAudioButtons = 0
-        self.processSubmitList = []
-
-    def _getHTMLTxt(self):
-        txtbox = ('<textarea name="audio_with_response_page" '
-                  'id="audio_with_response_page" rows="%s" cols="%s">'
-                  '</textarea>'
-                  )
-        txtbox %= (self.txtboxRows, self.txtboxCols)
-        
-        return txtbox
-    
-    def getValidation(self):
-        return
-    
-    def getNumOutputs(self):
-        return 1
-    
-    def getHTML(self):
-        htmlText = self._getHTMLTxt()
-        pageTemplate = join(constants.htmlDir, "axbTemplate.html")
-        
-        return htmlText, pageTemplate, {}
-    
-    def getOutput(self, form):
-        try:
-            # Only one item
-            value = form.getlist("audio_with_response_page")[0]
-            value = utils.decodeUnicode(value)
-        except IndexError:
-            value = ""  # They didn't enter anything
-        value = value.replace(",", ";")
-        newlineChar = utils.detectLineEnding(value)
-        if newlineChar is not None:
-            value = value.replace(newlineChar, " - ")
-        
-        return value
-
-    
-class AudioListPage(abstract_pages.AbstractPage):
-
-    pageName = "audio_list"
-
-    def __init__(self, pauseDuration, minPlays, maxPlays, audioList,
-                 *args, **kargs):
-        super(AudioListPage, self).__init__(*args, **kargs)
+    def __init__(self, audioOrVideo, pauseDuration, minPlays, maxPlays,
+                 mediaList, *args, **kargs):
+        super(MediaListPage, self).__init__(*args, **kargs)
+        self.audioOrVideo = audioOrVideo
         self.pauseDuration = pauseDuration
-        self.audioList = audioList
+        self.mediaList = mediaList
         self.minPlays = minPlays
         self.maxPlays = maxPlays
         
@@ -687,130 +542,23 @@ class AudioListPage(abstract_pages.AbstractPage):
         htmlText = self._getHTMLTxt()
         pageTemplate = join(constants.htmlDir, "axbTemplate.html")
         
-        htmlText %= audio.generateAudioButton(self.audioList,
+        htmlText %= audio.generateAudioButton(self.mediaList,
                                               0,
                                               self.pauseDuration,
                                               False) + "<br />"
         
         embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays, self.minPlays,
                                        autosubmit=True)
+        
+        if self.audioOrVideo == "audio":
+            extList = self.webSurvey.audioExtList
+        else:
+            extList = self.webSurvey.videoExtList
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
-                                                 list(set(self.audioList)),
-                                                 self.webSurvey.audioExtList)
+                                                 list(set(self.mediaList)),
+                                                 extList,
+                                                 self.audioOrVideo)
         
-        return htmlText, pageTemplate, {'embed': embedTxt}
-
-
-class MemoryPage(abstract_pages.AbstractPage):
-    
-    pageName = "memory_test"
-    
-    VALIDATION_STRING = "validation_string"
-    
-    textStringList = []
-    
-    def __init__(self, name, minPlays, maxPlays, showAudio, *args, **kargs):
-        super(MemoryPage, self).__init__(*args, **kargs)
-        
-        self.name = name
-        
-        if showAudio == "False":
-            minPlays = 0
-            maxPlays = 0
-            showAudio = False
-        else:
-            showAudio = True
-            
-        self.minPlays = minPlays
-        self.maxPlays = maxPlays
-        self.showAudio = showAudio
-        
-        self.wavDir = self.webSurvey.wavDir
-        self.txtDir = self.webSurvey.txtDir
-        
-        # Strings used in this page
-        txtKeyList = ["memory_instruct", "memory_a", "memory_b"]
-        txtKeyList.extend(abstract_pages.audioTextKeys)
-        self.textDict.update(loader.batchGetText(txtKeyList))
-        
-        # Variables that all pages need to define
-        self.numAudioButtons = 1
-        self.processSubmitList = ["verifyAudioPlayed", "validateForm", ]
-
-    def _getHTMLTxt(self):
-        
-        radioButton = ('<p>'
-                       '<input type="radio" name="memory_test" '
-                       'value="%(id)s" id="%(id)s" /> '
-                       '<label for="%(id)s">.</label>'
-                       '</p>'
-                       )
-        
-        htmlTxt = ('%%s'
-                   '<table class="center">'
-                   '<tr><td>%%s</td><td>%%s</td></tr>'
-                   '<tr><td>%s</td><td>%s</td></tr>'
-                   '</table>'
-                   )
-        
-        return htmlTxt % (radioButton % {'id': '0'},
-                          radioButton % {'id': '1'},)
-        
-    def getValidation(self):
-        abnValidation = ('var y=document.forms["languageSurvey"];\n'
-                         'if (checkBoxValidate(y["memory_test"])==true)\n'
-                         '{\n'
-                         'alert("%s");\n'
-                         'return false;\n'
-                         '}\n'
-                         'return true;\n'
-                         )
-        
-#         #  'Error.  Select one of the three options'
-#         retPage = abnValidation % self.textDict[self.VALIDATION_STRING]
-        
-        return ""
-    
-    def getNumOutputs(self):
-        return 2
-    
-    def getHTML(self):
-        '''
-        Listeners hear one file and decide if its one of three choices
-        
-        The choices are "textA", "textB" or "None"
-        '''
-        pageTemplate = join(constants.htmlDir, "axbTemplate.html")
-        
-        if self.showAudio:
-            aHTML = audio.generateAudioButton(self.name, 0, 0, False)
-        else:
-            aHTML = ""
-        
-        description = self.textDict["memory_instruct"]
-        
-        a = self.textDict["memory_a"]
-        b = self.textDict["memory_b"]
-        
-        txtFN = join(self.txtDir, self.name + ".txt")
-        
-        sentenceList = loader.loadTxtFile(txtFN)
-        sentenceTxt = "\n".join(sentenceList)
-        
-        htmlText = "<i>" + description + "</i><br /><br />" + sentenceTxt
-        htmlText += "<br /><br />" + self._getHTMLTxt()
-        htmlText %= (aHTML, a, b)
-        
-        if self.showAudio:
-            embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays,
-                                           self.minPlays)
-            embed = audio.generateEmbed(self.wavDir,
-                                        [self.name],
-                                        self.webSurvey.audioExtList)
-            embedTxt += "\n\n" + embed
-        else:
-            embedTxt = ""
-    
         return htmlText, pageTemplate, {'embed': embedTxt}
     
 

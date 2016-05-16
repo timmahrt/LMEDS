@@ -354,7 +354,7 @@ if (typeof(load_audio) == "function") {
 """
 
     
-def generateEmbed(wavDir, nameList, extList):
+def generateEmbed(wavDir, nameList, extList, audioOrVideo):
     
     if not os.path.exists(wavDir):
         raise PathDoesNotExist(wavDir)
@@ -411,10 +411,12 @@ function load_audio() {
     numUniqueSoundFiles = audioList.length;
     var mime_type_dict = {".wav":"wav",
                           ".mp3":"mpeg",
+                          ".mp4":"mpeg",
+                          ".webm":"webm",
                           ".ogg":"ogg"};
     for (var j=0; j<audioList.length;j++) {
         var audioName = audioList[j];
-        var audio = document.createElement('audio');
+        var audio = document.createElement('%(mediaType)s');
         audio.id = audioName;
         
         var source = document.createElement('source');
@@ -423,7 +425,7 @@ function load_audio() {
             // Audio acts in a FILO manner, so iterate the list backwards
             // to get the user's order preference.
             var tmpExt = extensionList[extensionList.length - (k + 1)];
-            source.type = 'audio/' + mime_type_dict[tmpExt];
+            source.type = '%(mediaType)s/' + mime_type_dict[tmpExt];
             source.src = '%(path)s/' + audioName + tmpExt;
             audio.appendChild(source)
         }
@@ -439,7 +441,8 @@ function load_audio() {
 </script>
 ''' % {'extensionList': extTxtList,
        'nameList': nameTxtList,
-       'path': wavDir.replace("\\", "/")  # We use '/' regardless of OS
+       'path': wavDir.replace("\\", "/"),  # We use '/' regardless of OS
+       'mediaType': audioOrVideo,
        }
     
     return embedTxt

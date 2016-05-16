@@ -84,7 +84,7 @@ class Logger(object):
 
     
 def runExperiment(leafFolder, sequenceFile, languageFile, disableRefresh,
-                  audioExtList=None, allowUtilityScripts=False,
+                  audioExtList=None, videoExtList=None, allowUtilityScripts=False,
                   allowUsersToRelogin=False):
 
     form = cgi.FieldStorage(keep_blank_values=True)
@@ -158,6 +158,7 @@ def runExperiment(leafFolder, sequenceFile, languageFile, disableRefresh,
 
     survey = rpt_main.WebSurvey(leafFolder, sequenceFile, languageFile,
                                 disableRefresh, audioExtList=audioExtList,
+                                videoExtList=videoExtList,
                                 allowUsersToRelogin=allowUsersToRelogin)
 
     # For utility scripts that need the survey:
