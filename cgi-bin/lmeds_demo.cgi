@@ -7,5 +7,6 @@ experiment_runner.runExperiment("lmeds_demo",
                                 "english.txt",
                                 disableRefresh=False,
                                 audioExtList=[".ogg", ".mp3"],
-                                allowUtilityScripts=True)
+                                allowUtilityScripts=True,
+                                allowUsersToRelogin=True)
     

@@ -40,6 +40,7 @@ class WebSurvey(object):
     
     def __init__(self, surveyName, sequenceFN, languageFileFN,
                  disableRefreshFlag, sourceCGIFN=None, audioExtList=None,
+                 allowUsersToRelogin=False
                  ):
         
         self.surveyRoot = join(constants.rootDir, "tests", surveyName)
@@ -47,6 +48,7 @@ class WebSurvey(object):
         self.txtDir = join(self.surveyRoot, "txt")
         self.imgDir = join(self.surveyRoot, "imgs")
         self.outputDir = join(self.surveyRoot, "output")
+        self.allowUsersToRelogin = allowUsersToRelogin
         
         self.surveyName = surveyName
         self.sequenceFN = join(self.surveyRoot, sequenceFN)
@@ -135,16 +137,34 @@ class WebSurvey(object):
             
             # Return to the login page without setting the userName if there is
             # already data associated with that user name
-            outputFN = join(self.outputDir, sequenceTitle, userName + ".txt")
-            outputFN2 = join(self.outputDir, sequenceTitle, userName + ".csv")
-            nameAlreadyExists = (os.path.exists(outputFN) or
-                                 os.path.exists(outputFN2))
+            outputFN = join(self.outputDir, sequenceTitle, userName + ".csv")
+            nameAlreadyExists = (os.path.exists(outputFN))
             
             if nameAlreadyExists or userName == "":
-                nextPage = factories.loadPage(self, "login_bad_user_name",
-                                              [userName, ], {})
-                # We wrongly guessed that we would be progressing in the test
-                pageNum -= 1
+                
+                # Is relogging in allowed?
+                if self.allowUsersToRelogin is True:
+                    # Find the last page of saved user data
+                    # If the user is coming back, the 'login' page will
+                    # reappear on their output file
+                    pageLineList = open(outputFN, "r").readlines()
+                    while len(pageLineList) > 0:
+                        pageLine = pageLineList.pop(-1)
+                        pageArgList = pageLine.split(";,")[0].split(",")
+                        if pageArgList[0] == "login":
+                            continue
+                        
+                        pageNum = int(pageArgList[-1]) + 1
+                        break
+                    
+                    nextPage = testSequence.getPage(pageNum)
+                    
+                # If not, throw an error page
+                else:
+                    nextPage = factories.loadPage(self, "login_bad_user_name",
+                                                  [userName, ], {})
+                    # We wrongly guessed that we would be progressing
+                    pageNum -= 1
         
         # Otherwise, the user name, should be stored in the form
         elif "user_name" in form:
@@ -322,6 +342,7 @@ class WebSurvey(object):
             fd = codecs.open(outputFN, "aU", encoding="utf-8")
         except ValueError:
             fd = open(outputFN, "a", encoding="utf-8", newline=None)
-        fd.write("%s,%s,%s,%s,%s;,%s\n" % (key, taskArgumentStr, numPlays1,
-                                           numPlays2, taskDuration, value))
+        fd.write("%s,%s,%s,%s,%s,%s;,%s\n" % (key, taskArgumentStr, numPlays1,
+                                              numPlays2, taskDuration,
+                                              pageNum, value))
         fd.close()

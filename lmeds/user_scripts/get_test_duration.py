@@ -23,7 +23,7 @@ from lmeds.utilities import constants
 def printTestDuration(path):
     allTime = []
     for fn in utils.findFiles(path, filterExt=".csv"):
-        timeStrList = [rowTuple[2].split(",")[-1] for rowTuple in
+        timeStrList = [rowTuple[2].split(",")[-2] for rowTuple in
                        user_response.loadUserResponse(join(path, fn))]
         timeList = []
         for timeStamp in timeStrList:
