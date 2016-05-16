@@ -38,7 +38,7 @@ def transposeSurvey(path, surveyFullPathList, outputPath):
             for widgetType, widgetTextList in surveyItem.widgetList:
                 if widgetType == "None":
                     continue
-                if widgetType == "Multiline_Textbox":
+                if widgetType in ["Multiline_Textbox", "Sliding_Scale"]:
                     widgetTextList = ["", ]
                 blankTxt = ["", ] * (len(widgetTextList) - 1)
                 # Removing commas b/c we're using csv files
