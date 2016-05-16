@@ -1,5 +1,5 @@
-StimulusID,Word,sum.bn,sum.bn,bob.bn,mary.bn,sarah.bn,bob.pn,mary.pn,sarah.pn
-StimulusID,Word,sum.bn,sum.bn,t1.bn,t2.bn,t3.bn,t1.pn,t2.pn,t3.pn
+StimulusID,Word,sum.bn,sum.pn,bob.bn,mary.bn,sarah.bn,bob.pn,mary.pn,sarah.pn
+StimulusID,Word,sum.bn,sum.pn,t1.bn,t2.bn,t3.bn,t1.pn,t2.pn,t3.pn
 apples,today,1.000,0.667,1,1,1,1,0,1
 apples,is,0.000,0.000,0,0,0,0,0,0
 apples,a,0.000,0.000,0,0,0,0,0,0

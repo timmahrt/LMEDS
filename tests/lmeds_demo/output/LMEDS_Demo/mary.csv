@@ -1,22 +1,29 @@
-login,[],None,None,0;,[]
-text_page,['first_page'],None,None,0:1.5;,[]
-text_page,['speed_warning'],None,None,0:1.3;,[]
-text_page,['remote_experiment_notice'],None,None,0:1.9;,[]
-consent,['demo_consent'],None,None,0:2.9;,[]
-text_page,['presurvey_instructions'],None,None,0:1.4;,[]
-survey,['presurvey'],None,None,1:57.1;,0,1,36,No,No,African American,1,0,,Portland OR,,New York NY,0,0,1,0,0,Chemical Engineer,English,1,0,Roomate Chinese,1,0,French 3 years and Arabic 2 years,1,0,China Chinese,10,3 years,,,1,0,Flute 5 years,0,1,0,1,0,1,0,1,0
-text_page,['multingual_support'],None,None,0:13.3;,[]
-text_page,['audio_list_instructions'],None,None,0:1.5;,[]
-audio_list,['1', '1', '1', ['water', 'apples', 'water']],1,None,0:15.8;,
-text_page,['same_different_instructions'],None,None,0:1.7;,[]
-same_different_stream,['0.5', '1', '-1', ['water', 'apples']],1,None,0:8.4;,0,1
-text_page,['fill_in_the_blank_instructions'],None,None,0:1.6;,[]
-fill_in_the_blank,['water_blank', '10.0', 'polluted', 'cold', 'not_drinkable'],None,None,0:3.7;,0,0,1,0
-text_page,['boundary_and_prominence_mechanics_instructions'],None,None,0:2.2;,[]
-text_page,['boundary_and_prominence_nonspecific_instructions'],None,None,0:1.0;,[]
-boundary_and_prominence,['apples', 'apples', '-1', '-1', 'nonspecific', 'true'],2,2,0:18.7;,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-text_page,['boundary_and_prominence_constrained_instructions'],None,None,0:1.4;,[]
-boundary,['apples', 'apples', '2', '2', 'nonspecific', 'true'],2,None,0:9.0;,1,0,0,0,0,0,0,0
-prominence,['apples', 'apples', '2', '2', 'nonspecific', 'true'],2,None,0:8.9;,1,0,0,0,0,0,0,1
-text_page,['post_survey_instructions'],None,None,0:1.3;,[]
-survey,['postsurvey'],None,None,0:21.5;,0,0,0,0,1,0,0,1,0,1,0,0,1,0,0,0,1,0,No complaints.,Just a demo.
+login,[],None,None,0,0;,[]
+text_page,['first_page'],None,None,0:1.5,1;,[]
+text_page,['speed_warning'],None,None,0:1.3,2;,[]
+text_page,['remote_experiment_notice'],None,None,0:1.9,3;,[]
+consent,['demo_consent'],None,None,0:2.9,4;,[]
+text_page,['presurvey_instructions'],None,None,0:1.4,5;,[]
+survey,['presurvey'],None,None,1:57.1,6;,0,1,36,No,No,African American,1,0,,Portland OR,,New York NY,0,0,1,0,0,Chemical Engineer,English,1,0,Roomate Chinese,1,0,French 3 years and Arabic 2 years,1,0,China Chinese,10,3 years,,,1,0,Flute 5 years,0,1,0,1,0,1,0,1,0
+text_page,['multingual_support'],None,None,0:13.3,7;,[]
+text_page,['audio_list_instructions'],None,None,0:1.5,8;,[]
+media_list,['audio', '1', '1', '1', ['water', 'apples', 'water']],1,None,0:15.8,9;,
+text_page,['same_different_instructions'],None,None,0:1.7,10;,[]
+media_choice,['same_different_instr', 'audio', '0.5', '1', '-1', [['water', 'apples']], ['same', 'different']],1,None,0:11.5,11;,1,0
+media_choice,['same_different_instr', 'audio', '0.5', '1', '2', [['water'], ['apples']], ['same', 'different']],1,1,0:10.6,12;,0,1
+text_page,['video_ok'],None,None,0:5.5,13;,[]
+media_choice,['prominence_video_instr', 'video', '0.5', '1', '-1', [['syllables_video']], ['vnonprom', 'nonprominent', 'neutral', 'prominent', 'vprom']],1,None,0:12.8,14;,1,0,0,0,0
+text_page,['fill_in_the_blank_instructions'],None,None,0:1.6,13;,[]
+fill_in_the_blank,['water_blank', '10.0', 'polluted', 'cold', 'not_drinkable'],None,None,0:3.7,14;,0,0,1,0
+text_page,['boundary_and_prominence_mechanics_instructions'],None,None,0:2.2,15;,[]
+text_page,['boundary_and_prominence_nonspecific_instructions'],None,None,0:1.0,16;,[]
+boundary_and_prominence,['apples', 'apples', '-1', '-1', 'nonspecific_boundary_instr', 'nonspecific_prominence_instr', 'true'],2,2,0:18.7,17;,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+text_page,['boundary_and_prominence_constrained_instructions'],None,None,0:1.4,18;,[]
+boundary,['apples', 'apples', '2', '2', 'nonspecific_boundary_instr', 'true'],2,None,0:9.0,19;,1,0,0,0,0,0,0,0
+prominence,['apples', 'apples', '2', '2', 'nonspecific_prominence_instr', 'true'],2,None,0:8.9,20;,1,0,0,0,0,0,0,1
+syllable_marking,['syllables', 'syllables', '1', '-1', 'nonspecific_syllables', 'true', 'syllableDemarcator=.'],1,None,0:9.0,21;,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1
+text_page,['boundary_and_prominence_alternatives'],None,None,0:3.1,22;,[]
+media_choice,['prominence_point_instr', 'audio', '0.5', '1', '-1', [['water']], ['vnonprom', 'nonprominent', 'neutral', 'prominent', 'vprom'], 'transcriptList=', ['water_word']],1,None,0:4.7,23;,0,1,0,0,0
+media_slider,['prominence_scale_instr', 'audio', '1', '-1', 'water', 'water_word', '0', '100', 'leftRangeLabel=nonprominent', 'rightRangeLabel=prominent'],1,None,0:6.5,24;,14
+text_page,['post_survey_instructions'],None,None,0:1.3,25;,[]
+survey,['postsurvey'],None,None,0:21.5,26;,0,0,0,0,1,0,0,1,0,1,0,0,1,0,0,0,1,0,25,No complaints.,Just a demo.

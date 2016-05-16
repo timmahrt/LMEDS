@@ -14,27 +14,30 @@ survey presurvey
 text_page multingual_support
 
 text_page audio_list_instructions
-audio_list 1 1 1 [water apples water]
+media_list audio 1 1 1 [water apples water]
 
 text_page same_different_instructions
-audio_choice same_different_instr 0.5 1 -1 [[water apples]] [same different]
-audio_choice same_different_instr 0.5 1 2 [[water] [apples]] [same different]
+media_choice same_different_instr audio 0.5 1 -1 [[water apples]] [same different]
+media_choice same_different_instr audio 0.5 1 2 [[water] [apples]] [same different]
+
+text_page video_ok
+media_choice prominence_video_instr video 0.5 1 -1 [[syllables_video]] [vnonprom nonprominent neutral prominent vprom]
 
 text_page fill_in_the_blank_instructions
 fill_in_the_blank water_blank 10.0 polluted cold not_drinkable
 
 text_page boundary_and_prominence_mechanics_instructions
 text_page boundary_and_prominence_nonspecific_instructions
-boundary_and_prominence apples apples 2 2 nonspecific true
+boundary_and_prominence apples apples 2 2 nonspecific_boundary_instr nonspecific_prominence_instr true
 
 text_page boundary_and_prominence_constrained_instructions
-boundary apples apples 2 2 nonspecific true
-prominence apples apples 2 2 nonspecific true
+boundary apples apples 2 2 nonspecific_boundary_instr true
+prominence apples apples 2 2 nonspecific_boundary_instr true
 syllable_marking syllables syllables 1 -1 nonspecific_syllables true syllableDemarcator=.
 
 text_page boundary_and_prominence_alternatives
-audio_choice prominence_point_instr 0.5 1 -1 [[water]]  [vnonprom nonprominent neutral prominent vprom] transcriptList=[water_word]
-audio_slider prominence_scale_instr 1 -1 water water_word 0 100 leftRangeLabel=nonprominent rightRangeLabel=prominent
+media_choice prominence_point_instr audio 0.5 1 -1 [[water]]  [vnonprom nonprominent neutral prominent vprom] transcriptList=[water_word]
+media_slider prominence_scale_instr audio 1 -1 water water_word 0 100 leftRangeLabel=nonprominent rightRangeLabel=prominent
 
 text_page post_survey_instructions
 survey postsurvey

@@ -170,6 +170,12 @@ this task, which involves listening to large audio files.<br /><br />
 If you are on an old computer or have a slow internet connection, please release this
 HIT.
 
+====================
+video_ok
+====================
+
+LMEDS can also play use video.  Any pages shown with audio files can have the audio replaced with video, as demonstrated next.
+
 ------------------------------
 consent
 ------------------------------
@@ -240,7 +246,7 @@ error_consent_or_dissent
 To continue you must either choose either to consent or to not consent.
 
 ------------------------------
-audio_list
+media_list
 ------------------------------
 
 ====================
@@ -262,7 +268,7 @@ memory_instruct
 Blaah
 
 ------------------------------
-audio_choice
+media_choice
 ------------------------------
 
 ====================
@@ -282,6 +288,12 @@ prominence_point_instr
 ====================
 
 Please mark on a five point scale, the degree of prominence carried by the word marked in bold.
+
+====================
+prominence_video_instr
+====================
+
+How prominent is the most prominent word in this list?
 
 ====================
 same
@@ -328,17 +340,7 @@ boundary_and_prominence
 ------------------------------
 
 ====================
-prominence_nonspecific_post_boundary_instructions_short
-====================
-
-Mark the words that the speaker <font color="blue">highlighted for the listener, to make them stand out</font>.
-
-------------------------------
-prominence
-------------------------------
-
-====================
-prominence_nonspecific_instructions_short
+nonspecific_prominence_instr
 ====================
 
 Mark the words that the speaker <font color="blue">highlighted for the listener, to make them stand out</font>.
@@ -348,13 +350,13 @@ syllable_marking
 ------------------------------
 
 ====================
-syllable_marking_nonspecific_syllables_instructions_short
+nonspecific_syllables
 ====================
 
 Please mark the most prominent syllable in each word.
 
 ------------------------------
-audio_slider
+media_slider
 ------------------------------
 
 ====================
@@ -401,53 +403,7 @@ You have chosen not to participate in this study. Thank you for your time.
 <br /><br />
 
 ------------------------------
-login,text_page,consent,login_bad_user_name
-------------------------------
-
-====================
-title
-====================
-
-A Demonstration of LMEDS
-
-------------------------------
-lmeds_interface,login,login_bad_user_name
-------------------------------
-
-====================
-back_button_warning
-====================
-
-<font color="red">Please note that pressing 'back' or 'refresh' will invalidate this experiment session.</font>
-
-------------------------------
-boundary_and_prominence,boundary
-------------------------------
-
-====================
-boundary_nonspecific_instructions_short
-====================
-
-Mark a boundary between words <font color="red">that belong to different chunks</font>.
-
-------------------------------
-audio_choice,audio_slider
-------------------------------
-
-====================
-nonprominent
-====================
-
-Nonprominent
-
-====================
-prominent
-====================
-
-Prominent
-
-------------------------------
-audio_list,audio_choice,boundary_and_prominence,boundary,prominence,syllable_marking,audio_slider
+media_list,media_choice,boundary_and_prominence,boundary,prominence,syllable_marking,media_slider
 ------------------------------
 
 ====================
@@ -467,6 +423,52 @@ play_button
 ====================
 
 Play
+
+------------------------------
+boundary_and_prominence,boundary,prominence
+------------------------------
+
+====================
+nonspecific_boundary_instr
+====================
+
+Mark a boundary between words <font color="red">that belong to different chunks</font>.
+
+------------------------------
+login,text_page,consent,login_bad_user_name
+------------------------------
+
+====================
+title
+====================
+
+A Demonstration of LMEDS
+
+------------------------------
+media_choice,media_slider
+------------------------------
+
+====================
+nonprominent
+====================
+
+Nonprominent
+
+====================
+prominent
+====================
+
+Prominent
+
+------------------------------
+lmeds_interface,login,login_bad_user_name
+------------------------------
+
+====================
+back_button_warning
+====================
+
+<font color="red">Please note that pressing 'back' or 'refresh' will invalidate this experiment session.</font>
 
 ------------------------------
 login,login_bad_user_name
