@@ -96,16 +96,23 @@ def loadTxtFileWHTML(fn):
     return txtList
 
 
+def splitTranscript(fnFullPath):
+    wordList = loadTxtFile(fnFullPath)
+    returnList = []
+    for line in wordList:
+        if '<' in line:  # HTML check
+            continue
+        returnList.append(line.split(" "))
+    
+    return returnList
+
+
 def getNumWords(fnFullPath):
     '''
     Get number of words in a transcript
     '''
-    wordList = loadTxtFile(fnFullPath)
-    numOutputs = 0
-    for line in wordList:
-        if '<' in line:  # HTML check
-            continue
-        numOutputs += len(line.split(" "))
+    transcriptList = splitTranscript(fnFullPath)
+    numOutputs = sum([len(row) for row in transcriptList])
 
     return numOutputs
 

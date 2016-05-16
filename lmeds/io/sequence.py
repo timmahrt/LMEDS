@@ -80,34 +80,13 @@ class TestSequence(object):
         self.sequenceFN = sequenceFN
     
         self.webSurvey = webSurvey  # Needed to instantiate pages
-        self.sequenceTitle, self.testItemList = self.quickParse()
+        self.sequenceTitle, self.testItemList = parseSequence(sequenceFN)
     
     def getNumPages(self):
         return len(self.testItemList)
-    
+        
     def getPage(self, pageNum):
-        
-        # Fetching page text from sequence file
-        pageName, pageArgStr = self.getPageStr(pageNum)
-        
-        # Get non-keyword arguments
-        argList = []
-        while len(pageArgStr) > 0:
-            if '=' not in pageArgStr[0]:
-                argList.append(pageArgStr.pop(0))
-            else:
-                break
-        
-        # Get keyword arguments
-        kargDict = {}
-        while len(pageArgStr) > 0:
-            if len(pageArgStr) > 1 and isinstance(pageArgStr[1], type([])):
-                key = pageArgStr.pop(0).split("=", 1)[0]
-                value = pageArgStr.pop(0)
-            else:
-                key, value = pageArgStr.pop(0).split("=", 1)
-            kargDict[key] = value
-        
+        pageName, argList, kargDict = getPageArgs(self.testItemList[pageNum])
         page = factories.loadPage(self.webSurvey, pageName, argList, kargDict)
         
         return page
@@ -119,23 +98,24 @@ class TestSequence(object):
         pageName = chunkList.pop(0)
         
         return pageName, chunkList
+
+
+def parseSequence(sequenceFN):
+    data = open(sequenceFN, "rU").read()
+    testItemList = data.split("\n")
+    testItemList = [row.strip() for row in testItemList]
+    testItemList = [row for row in testItemList if row != '']
+
+    # Validate the test title
+    sequenceTitle = testItemList.pop(0)
+    if sequenceTitle[0] != "*":
+        raise InvalidFirstLine(sequenceTitle)
     
-    def quickParse(self):
-        data = open(self.sequenceFN, "rU").read()
-        testItemList = data.split("\n")
-        testItemList = [row.strip() for row in testItemList]
-        testItemList = [row for row in testItemList if row != '']
+    # Now that we've validated this is the sequence title,
+    # get rid of the '*'
+    sequenceTitle = sequenceTitle[1:]
 
-        # Validate the test title
-        sequenceTitle = testItemList.pop(0)
-        if sequenceTitle[0] != "*":
-            raise InvalidFirstLine(sequenceTitle)
-        
-        # Now that we've validated this is the sequence title,
-        # get rid of the '*'
-        sequenceTitle = sequenceTitle[1:]
-
-        return sequenceTitle, testItemList
+    return sequenceTitle, testItemList
 
 
 def _parse(txt, startDelim, endDelim, startI):
@@ -177,6 +157,32 @@ def _splitTxt(txt, splitItem):
         tmpDataList = [row.strip() for row in tmpDataList if row.strip() != ""]
         
     return tmpDataList
+
+
+def getPageArgs(pageRow):
+    
+    pageArgStr = recChunkLine(pageRow)
+    pageName = pageArgStr.pop(0)
+    
+    # Get non-keyword arguments
+    argList = []
+    while len(pageArgStr) > 0:
+        if '=' not in pageArgStr[0]:
+            argList.append(pageArgStr.pop(0))
+        else:
+            break
+    
+    # Get keyword arguments
+    kargDict = {}
+    while len(pageArgStr) > 0:
+        if len(pageArgStr) > 1 and isinstance(pageArgStr[1], type([])):
+            key = pageArgStr.pop(0).split("=", 1)[0]
+            value = pageArgStr.pop(0)
+        else:
+            key, value = pageArgStr.pop(0).split("=", 1)
+        kargDict[key] = value
+        
+    return pageName, argList, kargDict
 
 
 def recChunkLine(line, splitItem=None):
