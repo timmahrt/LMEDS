@@ -1,2 +1,4 @@
-[run]
-source = lmeds
+[report]
+omit =
+    */python?.?/*
+    */site-packages/nose/*
