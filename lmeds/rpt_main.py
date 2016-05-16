@@ -72,13 +72,14 @@ class WebSurvey(object):
         if sourceCGIFN is None:
             self.sourceCGIFN = os.path.split(__main__.__file__)[1]
     
-    def run(self):
+    def run(self, cgiForm=None):
         
         # Imported here to prevent it from being run in runDebug?
-        import cgitb
-        cgitb.enable()
-        
-        cgiForm = cgi.FieldStorage(keep_blank_values=True)
+        if cgiForm is None:
+            import cgitb
+            cgitb.enable()
+            
+            cgiForm = cgi.FieldStorage(keep_blank_values=True)
         
         # The user has not started the test
         if "pageNumber" not in cgiForm:

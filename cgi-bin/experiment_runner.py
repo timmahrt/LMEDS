@@ -14,6 +14,8 @@ import cgitb
 
 import sys
 import os
+from os.path import join
+import datetime
 
 # The local server is started one level above cgi-bin.  The web server starts
 # in cgi-bin. Try to move into cgi-bin.  If we can't, we're already there.
@@ -32,11 +34,142 @@ sys.path.append("..")
 cgitb.enable()
 
 from lmeds import rpt_main
+from lmeds.io import sequence
+from lmeds.utilities import constants
+from lmeds.utilities import utils
+from lmeds.user_scripts import generate_language_dictionary as gen_dict
+from lmeds.user_scripts import sequence_check
+from lmeds.user_scripts import get_test_duration
+from lmeds.user_scripts import post_process_results
 
+from io import BytesIO
 
+class Logger(object):
+    '''
+    By default logs in html to stdout, but can also log to a txt file
+    '''
+    def __init__(self, fn=None):
+        self.fn = fn
+        self.outputList = []
+        
+        if fn is None:
+            lineSplitter = "<br />\n"
+        else:
+            lineSplitter = "\n"
+        self.lineSplitter = lineSplitter
+    
+    def __enter__(self):
+        self._stdout = sys.stdout
+        sys.stdout = self._stringio = BytesIO()
+        return self
+    
+    def __exit__(self, errType, errValue, errTraceback):
+        self.outputList.extend(self._stringio.getvalue().splitlines())
+        sys.stdout = self._stdout
+        
+        outputTxt = self.lineSplitter.join(self.outputList) + self.lineSplitter
+        if self.fn is None:
+            print(outputTxt)
+        else:
+            open(self.fn, "w").write(outputTxt)
+            
+        if errValue != None:
+            print("Error occurred in running script. "
+                  "Please see logfile (/lmeds/tests/[project-name]/logs)")
+        elif self.fn is not None:
+            print("Script finished.  For more information please see logfile"
+                  "(/lmeds/tests/[project-name]/logs)")
+        
+        return False
+
+    
 def runExperiment(leafFolder, sequenceFile, languageFile, disableRefresh,
-                  audioExtList=None):
+                  audioExtList=None, allowUtilityScripts=False):
+
+    form = cgi.FieldStorage(keep_blank_values=True)
+
+    # Utility scripts that override the main functionality
+    keyList = ["get_duration", "sequence_check", "create_dictionary",
+               "update_dictionary", "crop_dictionary", "post_process_results",
+               ]
+    keyDict = {}
+    for key in keyList:
+        if key in form:
+            keyDict[key] = utils.decodeUnicode(form[key].value.lower())
+    
+    if allowUtilityScripts and len(keyDict) > 0:
+        
+        # Get experiment and sequence information
+        surveyRoot = join(constants.rootDir, "tests", leafFolder)
+        
+        timestampFmt = '{:%Y-%m-%d_%H-%M-%S}'
+        projectName = sequence.parseSequence(join(surveyRoot, sequenceFile))[0]
+        outputDir = join(surveyRoot, "output", projectName)
+        loggerPath = join(surveyRoot, "logs")
+        utils.makeDir(loggerPath)
+        
+        print('Content-Type: text/html')
+        print("\n\n")
+
+        if "create_dictionary" in keyDict.keys():
+
+            with Logger() as output:
+                print("Creating dictionary...")
+                gen_dict.generateLanguageDictionary("new",
+                                                    leafFolder,
+                                                    sequenceFile,
+                                                    languageFile)
+                
+
+        if "update_dictionary" in keyDict.keys():
+            with Logger() as output:
+                print("Updating dictionary...")
+                gen_dict.generateLanguageDictionary("update",
+                                                    leafFolder,
+                                                    sequenceFile,
+                                                    languageFile)
+
+        if "crop_dictionary" in keyDict.keys():
+            with Logger() as output:
+                print("Cropping dictionary...")
+                gen_dict.generateLanguageDictionary("crop",
+                                                    leafFolder,
+                                                    sequenceFile,
+                                                    languageFile)
+
+        if "get_duration" in keyDict.keys():
+            print("Getting experiment duration...")
+            now = timestampFmt.format(datetime.datetime.now())
+            fn = now + "get_duration.txt"
+            with Logger(join(loggerPath, fn)) as output:
+                get_test_duration.printTestDuration(outputDir)
+            print
+        
+        if "post_process_results" in keyDict.keys():
+            print("Post processing results...")
+            now = timestampFmt.format(datetime.datetime.now())
+            fn = now + "_post_process_results.txt"
+            with Logger(join(loggerPath, fn)) as output: 
+                post_process_results.postProcessResults(leafFolder,
+                                                        sequenceFile,
+                                                        True)
+            
+
     survey = rpt_main.WebSurvey(leafFolder, sequenceFile, languageFile,
                                 disableRefresh, audioExtList=audioExtList)
-    survey.run()
+
+    # For utility scripts that need the survey:
+    if allowUtilityScripts and len(keyDict) > 0:
+
+        if "sequence_check" in keyDict.keys():
+            with Logger() as output:
+                print("Checking sequence file for errors...")
+                sequence_check.checkSequenceFile(survey)
+            
+        print("<br /><br />Done")
+        exit()
+
+    
+    # The main survey
+    survey.run(form)
     

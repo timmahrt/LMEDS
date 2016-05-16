@@ -166,6 +166,7 @@ def generateLanguageDictionary(mode, testName, sequenceFN, outputFN):
     
     # Exit without doing anything if the old dictionary exists and
     # we're in 'new' mode
+    outputFlag = True
     if mode == "new":
         try:
             assert(not os.path.exists(outputFNFullPath))
@@ -173,15 +174,16 @@ def generateLanguageDictionary(mode, testName, sequenceFN, outputFN):
             errorStr = ("Dictionary file '%s' already exists.  Please delete "
                         "it or input a different dictionary file")
             print(errorStr % outputFNFullPath)
-            exit()
+            outputFlag = False
     
     # Create a backup
-    if os.path.exists(outputFNFullPath):
-        backupFN = (os.path.splitext(outputFNFullPath)[0] +
-                    "_autobackup.txt")
-        shutil.copy(outputFNFullPath, backupFN)
-
-    codecs.open(outputFNFullPath, "w", encoding="utf-8").write(outputTxt)
+    if outputFlag is True:
+        if os.path.exists(outputFNFullPath):
+            backupFN = (os.path.splitext(outputFNFullPath)[0] +
+                        "_autobackup.txt")
+            shutil.copy(outputFNFullPath, backupFN)
+    
+        codecs.open(outputFNFullPath, "w", encoding="utf-8").write(outputTxt)
     
 
 if __name__ == "__main__":

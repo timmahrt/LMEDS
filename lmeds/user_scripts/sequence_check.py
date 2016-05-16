@@ -22,6 +22,7 @@ from lmeds.pages import abstract_pages
 from lmeds.utilities import user_script_helper
 from lmeds.utilities import utils
 
+
 def checkSequenceFile(survey):
     
     outputDir = join(survey.outputDir, survey.testSequence.sequenceTitle)

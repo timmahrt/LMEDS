@@ -6,5 +6,6 @@ experiment_runner.runExperiment("lmeds_demo",
                                 "sequence.txt",
                                 "english.txt",
                                 disableRefresh=False,
-                                audioExtList=[".ogg", ".mp3"])
+                                audioExtList=[".ogg", ".mp3"],
+                                allowUtilityScripts=True)
     
