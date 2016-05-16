@@ -12,13 +12,6 @@ from lmeds.io import loader
 from lmeds.utilities import constants
 from lmeds.utilities import utils
 
-embedTemplate = ('<audio id="%s" preload="none" '
-                 'oncanplaythrough="increment_audio_loaded_count()">'
-                 '<source src="%s" type="audio/ogg">'
-                 '<source src="%s" type="audio/mpeg">'
-                 '</audio>'
-                 )
-
 _tmpButton = ('<input type="button" id="button%%d" '
               'value="%(button_label)s" '
               '''onClick="EvalSound(this, true, '%%d', %%f, '%%s')">'''
@@ -130,18 +123,17 @@ function recPlayAudioList(audioList, pauseDurationMS) {
 
     var timeout = pauseDurationMS + (1000 * audioFile.duration);
 
-    // When the last audio finishes playing, running any post-audio operations
-    if (audioList.length == 0) {
-        setTimeout(function(){
-        audioFile.addEventListener('ended', audio_buttons_enable);
-        %(autosubmit_code)s
-        }, timeout - pauseDurationMS);
-    }
-    
     // After the audio has finished playing, play the next file in the list
     if (audioList.length > 0) {
         setTimeout(function(){recPlayAudioList(audioList, pauseDurationMS);},
                    timeout);
+    }
+    // When the last audio finishes playing, running any post-audio operations
+    else if (audioList.length == 0) {
+        setTimeout(function(){
+        audioFile.addEventListener('ended', audio_buttons_enable);
+        %(autosubmit_code)s
+        }, timeout - pauseDurationMS);
     }
 
 }
@@ -174,8 +166,15 @@ function audio_buttons_disable() {
   }
 }
 
-function audio_buttons_enable()
+function audio_buttons_enable(e = null)
 {
+  // if audio_buttons_enable is a handler for an event listener, once it is
+  // called, it should remove itself as a handler until it is told to listen
+  // again.
+  if (e != null) {
+    e.target.removeEventListener('ended', audio_buttons_enable);
+  }
+
   var silence = silenceFlag == false;
     for (var i=0; i<numSoundFiles;i++)
     {
