@@ -138,7 +138,7 @@ def runExperiment(leafFolder, sequenceFile, languageFile, disableRefresh,
                                                     sequenceFile,
                                                     languageFile)
 
-        if "get_duration" in keyDict.keys():
+        if "get_test_duration" in keyDict.keys():
             print("Getting experiment duration...")
             now = timestampFmt.format(datetime.datetime.now())
             fn = now + "get_duration.txt"
