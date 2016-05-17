@@ -13,7 +13,7 @@ from os.path import dirname, abspath, join
 os.chdir(dirname(dirname(abspath(__file__))))
 sys.path.append("..")
 
-from lmeds import rpt_main
+from lmeds import lmeds_main
 
 from lmeds.io import sequence
 from lmeds.io import loader
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     elif _disable_refresh_flag.lower() == 'false':
         _disable_refresh_flag = False
     
-    survey = rpt_main.WebSurvey(_test_name, _sequence_fn, _language_fn,
-                                _disable_refresh_flag,
-                                audioExtList=_audio_ext_list)
+    survey = lmeds_main.WebSurvey(_test_name, _sequence_fn, _language_fn,
+                                  _disable_refresh_flag,
+                                  audioExtList=_audio_ext_list)
     checkSequenceFile(survey)

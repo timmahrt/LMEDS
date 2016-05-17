@@ -18,7 +18,7 @@ os.chdir(dirname(dirname(abspath(__file__))))
 sys.path.append("..")
 
 from lmeds.io import sequence
-from lmeds import rpt_main
+from lmeds import lmeds_main
 from lmeds.io import loader
 from lmeds.utilities import user_script_helper
 from lmeds.pages import core_pages
@@ -46,8 +46,8 @@ def generateLanguageDictionary(mode, testName, sequenceFN, outputFN):
     mode = mode.lower()
     assert(mode in ['update', 'crop', 'new'])
     
-    webSurvey = rpt_main.WebSurvey(testName, sequenceFN, None,
-                                   disableRefreshFlag=True, sourceCGIFN=None)
+    webSurvey = lmeds_main.WebSurvey(testName, sequenceFN, None,
+                                     disableRefreshFlag=True, sourceCGIFN=None)
     
     outputFNFullPath = join(webSurvey.surveyRoot, outputFN)
     

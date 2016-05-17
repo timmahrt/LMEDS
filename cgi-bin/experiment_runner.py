@@ -33,7 +33,7 @@ sys.path.append("..")
 # cgitb.enable(display=0, logdir="../error_logs")
 cgitb.enable()
 
-from lmeds import rpt_main
+from lmeds import lmeds_main
 from lmeds.io import sequence
 from lmeds.utilities import constants
 from lmeds.utilities import utils
@@ -156,10 +156,10 @@ def runExperiment(leafFolder, sequenceFile, languageFile, disableRefresh,
                                                         True)
             
 
-    survey = rpt_main.WebSurvey(leafFolder, sequenceFile, languageFile,
-                                disableRefresh, audioExtList=audioExtList,
-                                videoExtList=videoExtList,
-                                allowUsersToRelogin=allowUsersToRelogin)
+    survey = lmeds_main.WebSurvey(leafFolder, sequenceFile, languageFile,
+                                  disableRefresh, audioExtList=audioExtList,
+                                  videoExtList=videoExtList,
+                                  allowUsersToRelogin=allowUsersToRelogin)
 
     # For utility scripts that need the survey:
     if allowUtilityScripts and len(keyDict) > 0:
