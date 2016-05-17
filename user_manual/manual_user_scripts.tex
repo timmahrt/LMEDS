@@ -6,19 +6,31 @@
 %%%%%%%%%%%%%%%%%%%%%
 
 \paragraph{}
-Everything in LMEDS can be done by hand, but the provided scripts located in \texttt{/lmeds/user\_scripts} enable you to easily perform certain routine tasks.
+Everything in LMEDS can be done by hand, but the provided scripts located in \\\texttt{/lmeds/user\_scripts} enable you to easily perform certain routine tasks.
 
 \paragraph{}
-All scripts can be run in one of two ways.  
+All scripts can be run in one of three ways.  
 
 \paragraph{}
-\textbf{First}, they can be run from the command line (\textit{cmd} on Windows or \textit{terminal} on OS X or Linux).  \texttt{python <<script\_name>>.py -h} will print out the options for that script.  For example, 
+\textbf{The first}, and most user-friendly option, is from the web browser.  Begin by entering the URL of the relevant experiment.  Add a `?' and then the script name.  For example,
+\begin{lstlisting}
+http://127.0.0.1:8123/cgi-bin/lmeds_demo.py?sequence_check
+\end{lstlisting}
+
+\paragraph{}
+Each script requires certain information.  Conveniently, all of this information is already specified in the .cgi/.py file, so if you choose this option, you don't need to enter any further information--unlike the other two options.  The output is displayed directly in the browser--except for get\_duration and post\_process\_results which may display confidential information (e.g. if the subjects write their full name as their user id).  Instead, for those, a log file is generated that the experimenter can access later.
+
+\paragraph{}
+In order to run scripts via the web browser, the cgi file must be configured properly.  See section \ref{sec:cgitemplate}.
+
+\paragraph{}
+\textbf{Second}, the user scripts can be run from the command line (\textit{cmd} on Windows or \textit{terminal} on OS X or Linux).  \texttt{python <<script\_name>>.py -h} will print out the options for that script.  For example, 
 \begin{lstlisting}
 python sequence_check.py -h
 \end{lstlisting}
 
 \paragraph{}
-\textbf{Second}, they can be run from within a python development environment, such as IDLE, which is bundled with every version of python.  If you open IDLE, choose \texttt{File >> Open} and open the desired script.  The script will open in a new window.  Select \texttt{Run >> Run Module}.  The application will launch.  It will ask if you want to go into interactive mode.  Type "yes".  The script will then ask question-by-question for all of the information it needs to run.
+\textbf{Third}, user scripts can be run from within a python development environment, such as IDLE, which is bundled with every version of python.  If you open IDLE, choose \texttt{File >> Open} and open the desired script.  The script will open in a new window.  Select \texttt{Run >> Run Module}.  The application will launch.  It will ask if you want to go into interactive mode.  Type ``yes".  The script will then ask question-by-question for all of the information it needs to run.
 
 \subsection{Generating the language dictionary}
 
@@ -30,6 +42,31 @@ python generate_language_dictionary.py -m update lmeds_demo
 				sequence.txt english.txt
 \end{lstlisting}
 
+\paragraph{}
+There are three versions of this script that can be run from the web browser.
+
+\paragraph{}
+To create a dictionary for a new project:
+\begin{lstlisting}
+http://127.0.0.1:8123/cgi-bin/lmeds_demo.py?create_dictionary
+\end{lstlisting}
+
+\paragraph{}
+To update an existing dictionary (preserves existing keys and text):
+\begin{lstlisting}
+http://127.0.0.1:8123/cgi-bin/lmeds_demo.py?update_dictionary
+\end{lstlisting}
+
+\paragraph{}
+To remove keys that are no longer relevant to a sequence file.  Note that if there is a language dictionary
+that is common to two different sequence files, running crop in this manner on one sequence file may
+make the dictionary no longer work with the other sequence.
+\begin{lstlisting}
+http://127.0.0.1:8123/cgi-bin/lmeds_demo.py?crop_dictionary
+\end{lstlisting}
+
+
+
 \subsection{Verifying experiment integrity}
 
 \paragraph{}
@@ -38,6 +75,14 @@ This user script ensures that an experiment is ready to be run.  It makes sure t
 \begin{lstlisting}
 python sequence_check.py lmeds_demo sequence.txt english.txt true
 \end{lstlisting}
+
+\paragraph{}
+To run this from a web browser:
+\begin{lstlisting}
+http://127.0.0.1:8123/cgi-bin/lmeds_demo.py?sequence_check
+\end{lstlisting}
+
+
 
 \subsection{Getting test duration}
 
@@ -48,6 +93,14 @@ This simple script will output the length of time each user spent on your experi
 python get_test_duration.py lmeds_demo sequence.txt
 \end{lstlisting}
 
+\paragraph{}
+To run this from a web browser:
+\begin{lstlisting}
+http://127.0.0.1:8123/cgi-bin/lmeds_demo.py?get_test_duration
+\end{lstlisting}
+
+
+
 \subsection{Post-processing the results}
 
 \paragraph{}
@@ -57,7 +110,7 @@ Each user will have their data stored in a separate file.  For doing many kinds 
 This script was made to remedy some of these issues.  First, items are separated by page type.  Then, for survey items and rpt experiments, items are transposed, paired with the inputs (survey questions and transcripts, respectively) and then all of the data is combined into one spreadsheet for each page type.  This makes it much more convenient to explore the data and to do statistical analysis.
 
 \paragraph{}
-Currently, LMEDS may experience duplicate data entries--in particular when the \textbf{rot\_main.py}'s \textit{disableRefreshFlag} is set to False and the user hits back or refresh.  The code will warn when it detects multiple items and prevent the user from continuing but there is also the option to remove duplicate entries when they appear (printing the found instances).  This happens before anything else in the script.
+Currently, LMEDS may experience duplicate data entries--in particular when the \textbf{lmeds\_main.py}'s \textit{disableRefreshFlag} is set to False and the user hits back or refresh.  The code will warn when it detects multiple items and prevent the user from continuing but there is also the option to remove duplicate entries when they appear (printing the found instances).  This happens before anything else in the script.
 
 \paragraph{}
 The script can also remove from consideration any test items used in the experiment.
@@ -69,4 +122,9 @@ Output data can be found in subfolders created in the output folder of the exper
 python post_process_results.py lmeds_demo sequence.txt false
 \end{lstlisting}
 
+\paragraph{}
+To run this from a web browser:
+\begin{lstlisting}
+http://127.0.0.1:8123/cgi-bin/lmeds_demo.py?post_process_results
+\end{lstlisting}
 

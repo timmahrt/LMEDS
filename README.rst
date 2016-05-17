@@ -8,7 +8,7 @@ LMEDS
 
 .. image:: https://coveralls.io/repos/github/timmahrt/LMEDS/badge.svg?branch=master
     :target: https://coveralls.io/github/timmahrt/LMEDS?branch=master
-
+    
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg?
    :target: http://opensource.org/licenses/MIT
 
@@ -23,6 +23,20 @@ different types of perceptual experiments (memory tasks, AXB-type tasks, etc.).
 
 Major revisions
 ================
+
+Ver 2.3 (May 17, 2015)
+
+- Video now supported with the same controls and functionality as audio
+
+- User scripts utilities can now be run from a web browser for great ease of use
+
+- Sliding scales are now a supported widget
+
+- New syllable-marking page (branch of prominence-marking pages)
+
+- Experiment participants can now relogin and resume from where they left off
+
+- Integration tests added for greater reliability.  Also, numerous bugfixes.
 
 Ver 2.2 (Dec 15, 2015)
 
@@ -60,9 +74,11 @@ Ver 1.0 (December 04, 2013)
 Requirements
 ==============
 
-``Python 2.7.*`` or above
+``Python 2.6.*`` or above
 
-``Python 3.5.*`` or above
+``Python 3.3.*`` or above
+
+`Click here to see the specific versions of python that praatIO is tested under <https://travis-ci.org/timmahrt/LMEDS>`_
 
 
 Usage
@@ -93,5 +109,8 @@ https://github.com/timmahrt/LMEDS, 2016.
 Acknowledgements
 ================
 
-Development of LMEDS was supported by NSF grant **BCS 12-51343**
-to Jennifer Cole, José Hualde, and Caroline Smith.
+Development of LMEDS was possible thanks to NSF grant **BCS 12-51343** to
+Jennifer Cole, José I. Hualde, and Caroline Smith and to the A*MIDEX project
+(n° **ANR-11-IDEX-0001-02**) to James Sneed German funded by the
+Investissements d'Avenir French Government program,
+managed by the French National Research Agency (ANR).

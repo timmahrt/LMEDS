@@ -21,10 +21,10 @@ To run LMEDS experiments online, you're going to need a server.  This server cou
 Whichever route you go, the server you use will need to have cgi enabled and also be use python (apache's mod\_python).  If your server has these two things, drop the unzipped contents of the LMEDS distribution on the server
 
 \paragraph{}
-Not all commercial servers have python or cgi enabled.  One web service that I have used for running LMEDS experiments is \url{https://www.nearlyfreespeech.net/}.  They are a pay-as-you-go website, unlike many web hosts online.  Their pricing model is a little confusing but to run just under 1000 subjects over the last 2 years has cost me less than \$50.  Other, similar, services can be found online if you search around.
+Not all commercial servers have python or cgi enabled.  One web service that I have used for running LMEDS experiments is \url{https://www.nearlyfreespeech.net/}.  They are a pay-as-you-go website, unlike many web hosts online.  Their pricing model is a little confusing but to run just under 1000 subjects over the last 2 years has cost me less than \$50.  Other similar services can be found online if you search around.
 
 \paragraph{}
-If you are installing a server from scratch, you'll need to make sure it comes with hooks to python--which is fortunately fairly typical these days.  In your httpd.conf file you'll want to enable .cgi files.  That is all!  LMEDS only uses standard python libraries and is based on python 2.7 (although I don't believe any 2.7-specific features are being used).
+If you are installing a server from scratch, you'll need to make sure it comes with hooks to python--which is fortunately fairly typical these days.  In your httpd.conf file you'll want to enable .cgi files.  That is all!  LMEDS only uses standard python libraries and was developed under python 2.7 (please check the readme.rst file distributed with LMEDS for information on what versions of python LMEDS has been tested with--several versions in the 2.x and 3.x series have been tested and worked fine).
 
 \paragraph{}
 \begin{tcolorbox}[breakable,colback=white,colframe=green,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm,enlarge right by=6mm]
@@ -44,7 +44,7 @@ LMEDS comes with it's own local server.  Unlike a regular server, experiments ca
 \end{itemize}
 
 \paragraph{}
-The only requirement for the local server is python 2.7 (\url{https://www.python.org/downloads/}).  Any of the variants of 2.7 will work fine (e.g. 2.7.9 or 2.7.10).
+The only requirement for the local server is python (\url{https://www.python.org/downloads/}).  The most recent version of 2.7 and 3.x should work with LMEDS.  Please check README.rst for more information on what versions of python LMEDS works with.
 
 \subsubsection{Running the server}
 

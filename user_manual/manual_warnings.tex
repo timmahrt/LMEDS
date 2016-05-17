@@ -1,5 +1,7 @@
 % !TEX root = LMEDS_manual.tex
 
+\begin{tcolorbox}[breakable,colback=white,colframe=red,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm]
+
 %%%%%%%%%%%%%%%%%%%%%
 \section{Notices and warnings}
 %%%%%%%%%%%%%%%%%%%%%
@@ -10,11 +12,35 @@
 
 The input and outputs to LMEDS shouldn't be edited in a word processor.  A plain text editor should be used.  The text editors that come with most operating systems (notepad on Windows or Text Edit on mac) should be suitable however, you may want a more developed plain text editor.  I have personal experience with NotePad++, Gedit, and TextWrangler, which are all freely available tools.  If you search online, you can find reviews for editors that might suit you better.
 
+\paragraph{}
+
+Specifically, a plain text editor should be used for the following data types:
+
+\begin{quote}
+\textbf{.txt .csv .cgi .py .rst}
+\end{quote}
+
+\paragraph{}
+
+The output \textbf{.csv} files can also be opened in spreadsheet viewers like Excel or statistical analysis tools like R.
+
 \subsection{No spaces in names}
 
 \paragraph{}
 
 Please do not include spaces in folder or file names.  If you have a file composed of multiple words, either do not use spaces or use underscores.  E.g. for a folder that you want to call ``lmeds demo'', reasonable names include ``lmeds\_demo'' or ``lmedsDemo'' or ``lmedsdemo''.
+
+\subsection{Audio and video file formats}
+
+\paragraph{}
+
+Users can specify the audio and video formats they wish LMEDS to use (see Section \ref{sec:cgitemplate}).  If none are specified, LMEDS will default to certain formats.  Regardless, for any resources in a sequence file, experiment administrators \textbf{must} provide copies of each resource file for all the specified formats.  
+
+\paragraph{}
+
+Suppose the user specifies in the .cgi file that they want to use .wav, .ogg, and .mp3 files.  If there is an audio file named sound1.wav, there must also be a corresponding sound1.wav and sound1.mp3.  If these files do not exist, LMEDS will ungracefully crash when it is time to load sound1.wav, even if the experiment participant can load sound1.wav and doesn't need the other two files.
+
+
 
 \subsection{Errors in LMEDS}
 
@@ -23,7 +49,7 @@ Please do not include spaces in folder or file names.  If you have a file compos
 LMEDS was written in python.  If something goes wrong (an unexpected or anticipated error) python will print out a formatted error report called a \textbf{stack trace}.  Unintuitively, the direct cause of the error is printed at the \textbf{bottom} of this report.  
 
 \paragraph{}
-While the stack trace can be difficult to understand for non-programmers, usually the direct cause is printed as reasonably understandable English.  For example the last line in the stack trace might be \textit{ERROR: Folder, ../tests/lmeds\_demo, does not exist} or it might be \textit{Text key axb\_instructions not in dictionary file english.txt.  Please add text key to dictionary and try again.'}
+While the stack trace can be difficult to understand for non-programmers, usually the direct cause of the error is printed as reasonably understandable English.  For example the last line in the stack trace might be \textit{ERROR: Folder, ../tests/lmeds\_demo, does not exist} or it might be \textit{Text key axb\_instructions not in dictionary file english.txt.  Please add text key to dictionary and try again.'}
 
 \paragraph{}
 Errors are common when designing a new experiment (although the included script /lmeds/user\_scripts/sequence\_check.py can be used to automatically find common errors like missing resource files or incorrectly specified page definitions).  If an error occurs, don't panic.  Consult the error log as specified above.  If you are unsure about the error, please send it to me.

@@ -10,18 +10,20 @@
 
 An LMEDS test has the following components
 
-\subsubsection{Audio files}
+\subsubsection{Audio and video files}
 
 \paragraph{}
-An audio file can be any common type (.mp3, .wav, etc.).   Some web browsers are unable to play audio in certain file types.  Personally, I encode every file as both .mp3 and .ogg
+An audio file can be any common type (.mp3, .wav, etc.) and a video file can be one of (.mp4, .ogg, or .webm).   Some web browsers are unable to play audio in certain file types.  Personally, I encode every audio file as both .mp3 and .ogg and every video file as .mp4 and .ogg.  I recommend encoding each file in two different formats.  If a user is unable to load one file format, their browser will automatically load the other file format.
 
 \paragraph{}
-See this page for more information on browser compatibility:
+See the following pages for more information on browser compatibility:
 
 \url{http://www.w3schools.com/tags/tag\_audio.asp}
 
+\url{http://www.w3schools.com/html/html5_video.asp}
+
 \paragraph{}
-Audacity makes it very easy to convert entire directories of audio files into multiple audio formats with it's `chain' functionality.  
+For audio files, audacity makes it very easy to convert entire directories of audio files into multiple audio formats with it's `chain' functionality.  
 
 \url{http://audacityteam.org/}
 
@@ -119,7 +121,7 @@ Here is a short, concrete example of a dictionary file
 
 \paragraph{}
 
-\begin{tcolorbox}[breakable,colback=white,colframe=blue,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm]
+\begin{tcolorbox}[colback=white,colframe=blue,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm]
 
 \begin{lstlisting}
 ---------------
@@ -215,6 +217,18 @@ Level of education completed:
 Choicebox High School, Some College, Bachelor's Degree
 \end{lstlisting}
 
+\subsubsection{Sliding\_Scale}
+
+\paragraph{}
+A sliding scale.  Specify the numerical scale (which controls the granularity of the user's choice) and the labels for the two extremes of the scales.
+
+e.g.
+
+\begin{lstlisting}
+How satisfied were you with this experiment?
+Sliding_Scale 0, 100, Very Unsatisfied, Very Satisfied
+\end{lstlisting}
+
 \subsubsection{Textbox}
 
 \paragraph{}
@@ -261,7 +275,7 @@ Here is a short concrete example demonstrating the key features discussed above
 
 \paragraph{}
 
-\begin{tcolorbox}[breakable,colback=white,colframe=blue,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm,enlarge right by=6mm]
+\begin{tcolorbox}[colback=white,colframe=blue,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm,enlarge right by=6mm]
 
 \begin{lstlisting}
 Please answer the questions below.
@@ -327,14 +341,14 @@ Arguments that have default values do not have to be specified in a sequence fil
 There are two ways that you can specify an optional value.  One is to list it as normal e.g.
 
 \begin{lstlisting}
-prominence water water 1 3 acoustics true
+prominence water water 1 3 p_ac_instr true
 \end{lstlisting}
 
 \paragraph{}
 A second way is to refer to it explicitly by its name as described in sections \ref{sec:sequenceSpecBasic} and \ref{sec:sequenceSpecSpecific}. e.g.
 
 \begin{lstlisting}
-prominence water 1 3 instructions=acoustics presentAudio=true
+prominence water 1 3 instructions=p_ac_instr presentAudio=true
 \end{lstlisting}
 
 \paragraph{}
@@ -356,13 +370,13 @@ Prominence water 1 3 true
 \label{sec:sequenceFileExample}
 
 \paragraph{}
-An example sequence file is also distributed with the lmeds source:
+Unlike the below example, in a sequence file each page description should fit on one line.  In this example, for the purposes of space, some pages span several lines.  A proper example sequence file is also distributed with the lmeds source:
 
 \textbf{/tests/lmeds\_demo/sequence.txt}
 
 \paragraph{}
 
-\begin{tcolorbox}[breakable,colback=white,colframe=blue,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm,enlarge right by=6mm]
+\begin{tcolorbox}[colback=white,colframe=blue,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm,enlarge right by=6mm]
 
 \begin{lstlisting}
 *LMEDS_Demo
@@ -372,10 +386,13 @@ text_page demo_instructions
 consent demo_consent
 survey presurvey
 
-audio_list 1 1 1 [water apples water]
-same_different_stream 0.5 1 -1 [water apples]
-boundary_and_prominence water water 0 -1 nonspecific true
-boundary_and_prominence apples apples 2 2 nonspecific true
+media_list audio 1 1 1 [water apples water]
+media_choice same_different_instr audio 0.5 1 -1
+	[[water apples]] [same different]
+boundary_and_prominence water water 0 -1
+	boundary_instr prominence_instr true
+boboundary_and_prominence apples apples 2 2 
+	boundary_instr prominence_instr true
 end
 \end{lstlisting}
 \end{tcolorbox}
@@ -396,22 +413,27 @@ This is the first page that users see.  They enter their name here.  Names must 
 \paragraph{}
 ``login'' takes no arguments.
 
-\subsubsection{audio\_test}
+\subsubsection{media\_test}
 
 \paragraph{}
-Some users have reported an inability to hear audio in LMEDS--perhaps there is an issue with the browser they are using and it won't load audio or their internet is too slow.  For this reason there is the audio\_test page.  This page can be presented right after a user logs in to save them time in the event that their browser is not correctly playing audio.
+Some users have reported an inability to hear audio in LMEDS--perhaps there is an issue with the browser they are using and it won't load audio or their internet is too slow.  For this reason there is the media\_test page.  This page can be presented right after a participant logs in to save them time in the event that their browser is not correctly playing audio or video.
 
 \paragraph{}
-``audio\_test'' takes a single audio file as an argument.
+``media\_test'' takes the following arguments
+
+\begin{itemize}
+\item \texttt{audio} if the page presents an audio file.  \texttt{video} if it presents a video file.
+\item the name of the audio or video file
+\end{itemize}
 
 e.g.
 
 \begin{lstlisting}
-audio_test example_audio_file
+audio_test audio example_audio_file
 \end{lstlisting}
 
 \paragraph{}
-I recommend using a file that is similar to the stimuli they will hear in the experiment.  If the stimuli are long, a short test audio file might not represent the kind of load the user might encounter while doing the experiment.
+I recommend using a file that is similar to the stimuli they will experience in the experiment.  If the stimuli are long, a short test file might not represent the kind of load the user's computer might encounter while doing the experiment.
 
 \subsubsection{consent}
 
@@ -419,7 +441,10 @@ I recommend using a file that is similar to the stimuli they will hear in the ex
 Presents the consent form.  If users opt not to consent, the test ends immediately.  If they consent, they proceed to the next page.
 
 \paragraph{}
-``consent'' takes one argument which specifies the consent form to display to users (the consent form is contained within the language dictionary)
+``consent'' takes one argument
+\begin{itemize}
+\item the name of the consent form to display to users (the name is a key contained in the language dictionary -- so consent forms can be of the appropriate language)
+\end{itemize}
 
 e.g.
 
@@ -432,6 +457,11 @@ consent main_consent
 \paragraph{}
 A page that displays nothing but the text from a single text key.  This page could be used to provide task instructions to users, indicate that they should take a break, etc.
 
+\paragraph{}
+``text\_page'' takes one argument
+\begin{itemize}
+\item the name of the dictionary key
+\end{itemize}
 e.g.
 
 \begin{lstlisting}
@@ -444,7 +474,10 @@ text_page first_block_instructions
 Specifies a survey page (see Section \ref{sec:surveySpec} for info on surveys).
 
 \paragraph{}
-``survey'' takes a single argument, the file name of the survey that it should load
+``survey'' takes a single argument
+\begin{itemize}
+\item the name of the survey file that should be loaded (without the .txt extension)
+\end{itemize}
 
 e.g.
 
@@ -483,15 +516,33 @@ Users are presented with an audio file and the associated transcript.  They can 
 \item transcriptName - the name of the text file
 \item minPlays - the minimum number of times the audio file has to be played before the user can continue.
 \item maxPlays - the maximum number of times the audio file can be played before the audio button is disabled. 
-\item instructions - on the page users will encounter short (~one line) instructions reminding them of the task.  With this argument, you can present different stimuli with different short instructions (e.g. meaning, acoustics, vague).  \textbf{Default}: None (no specific instructions for this page--a generic instruction key .
+\item instructions - on the page users will encounter short (~one line) instructions reminding them of the task.  With this argument, you can present different stimuli with different short instructions (e.g. meaning, acoustics, vague). 
 \item presentAudio - either ``true'' or ``false'', specifies whether the audio is hidden or presented.  If ``false'' the values for ``minPlays'' and ``maxPlays'' are ignored. \textbf{Default}: True
 \end{itemize}
 
 e.g.
 
 \begin{lstlisting}
-prominence water water 1 3 acoustics true
-prominence apples apples 1 1
+prominence water water 1 3 prominence_acoustics true
+prominence apples apples 1 1 prominence_meaning
+\end{lstlisting}
+
+\subsubsection{syllable\_marking}
+
+\paragraph{}
+``syllable\_marking'' is the same as \textbf{prominence} except that the user can mark individual syllables rather than the word
+
+\paragraph{}
+``syllable\_marking'' takes the same arguments as \textbf{prominence} pages but with the addition of one final obligatory argument:
+
+\begin{itemize}
+\item syllableDemarcator - specify the symbol for dividing syllables in the text transcript (e.g. `.')
+\end{itemize}
+
+e.g.
+\begin{lstlisting}
+syllable_marking syllables syllables 1 -1 
+	nonspecific_syllables true syllableDemarcator=.
 \end{lstlisting}
 
 \subsubsection{boundary}
@@ -502,14 +553,15 @@ Users are presented with an audio file and the associated transcript.  They can 
 \paragraph{}
 ``boundary'' takes the same arguments as \textbf{prominence} pages but with the addition of one final, optional argument:
 
-\paragraph{}
-boundaryToken - specify the symbol to use for marking boundaries between words.  The default symbol used by LMDS is a vertical bar ``\texttt{|}'').
+\begin{itemize}
+\item boundaryToken - specify the symbol to use for marking boundaries between words.  The default symbol used by LMDS is a vertical bar ``\texttt{|}'').
+\end{itemize}
 
 e.g.
 
 \begin{lstlisting}
-boundary water water 1 3 acoustics true &
-boundary apples apples 1 2
+boundary water water 1 3 boundary_acoustics true &
+boundary apples apples 1 2 boundary_meaning
 \end{lstlisting}
 
 
@@ -519,47 +571,49 @@ boundary apples apples 1 2
 A combination of prominences and boundaries.  Users first mark boundaries.  They then can mark prominences.  While marking prominences they can see but not change the boundaries that they marked--this is the only difference between this page and splitting the prominence and boundary task across two pages.
 
 \paragraph{}
-The arguments for boundary\_and\_prominence are the same as for boundary pages.
+The arguments for boundary\_and\_prominence are the same as for boundary, except that users need to indicate both the instructions for boundaries and the instructions for prominences.
 
 e.g.
 \begin{lstlisting}
-boundary_and_prominence water water 0 3 acoustics true
+boundary_and_prominence water water 0 3 b_instr p_instr true &
 \end{lstlisting}
 
-\subsubsection{audio\_list}
+\subsubsection{media\_list}
 
 \paragraph{}
-The user is presented with a single button.  On being pressed, a series of audio files will be played  On a follow up page, they could answer questions about the audio they heard.
+The user is presented with a single button.  On being pressed, a series of audio or video files will be played.  On a follow up page, the user could answer questions about the stimuli that were seen or heard.
 
 \paragraph{}
-audio\_list takes the following arguments:
+media\_list takes the following arguments:
 
 \begin{itemize}
-\item the length of pause between each audio file
+\item \texttt{audio} if the page will present audio files.  \texttt{video} if the page will present video files.
+\item the length of pause in seconds between each file
 \item the minimum number of times the audio series can be played
 \item the maximum number of times the audio series can be played
-\item the list of audio files to play, enclosed by \texttt{[ ]}
+\item the list of media files to play, enclosed by \texttt{[ ]}
 \end{itemize}
 
 e.g.
 \begin{lstlisting}
-audio_list 1 1 1 [water apples water]
+media_list audio 1 1 1 [water apples water]
 \end{lstlisting}
 
-\subsubsection{audio\_choice}
+\subsubsection{media\_choice}
 
 \paragraph{}
-This is used for presenting forced-choice-like tasks to the user with the number of audio files (stimuli) and responses set by the experimenter.
+This is used for presenting forced-choice-like tasks to the user with the number of media files (stimuli) and responses set by the experimenter.
 
 \paragraph{}
 This page replaces the various functionality of the pages: same\_different\_stream, axb, ab, and their many variants.  These pages have been removed from LMEDS.
 
 \paragraph{}
-audio\_choice takes the following arguments:
+media\_choice takes the following arguments:
 
 \begin{itemize}
 \item the short form instructions to present on the page
-\item duration of pause for audio files
+\item \texttt{audio} if the page will present audio files.  \texttt{video} if the page will present video files.
+\item duration of pause in seconds for media files
 \item the minimum number of times the audio series can be played
 \item the maximum number of times the audio series can be played
 \item a list of lists of audio files (see discussion below)
@@ -623,58 +677,85 @@ The user response is a string of comma-separated values.  Every individual item 
 Let's look at a real example.  Here we have the sequence:
 
 \begin{lstlisting}
-boundary_and_prominence water water 0 3 acoustics true
-same_different water water 1 -1
-axb water water water 0 2
-ab water 0 2
+login
+boundary_and_prominence water water 0 3 b_acoustics
+	p_acoustics true
+media_choice same_different_instr audio 0.5 1 -1 
+	[[water apples]] [same different]
+media_choice axb_instr audio 0.5 1 -1
+	[[water] [water2] [water3]] [ax xb]
+media_choice ab_instr audio 0.5 1 -1 [[water]] [a b]
+end
 \end{lstlisting}
 
 \paragraph{}
-And here is one possible output for it
+The first page is a typical boundary and prominence page.  The three subsequent pages are all media choice pages.  The first would be used for a same different task, the second for an axb task (the user listens to three audio files, is one of the files more similar to one of the other two?  And in the third one, a labeling task--is the file a member of category `a' or category `b'?
+And here is one possible output for this sequence.
 
 \begin{lstlisting}
-boundary_and_prominence,[water, water, 0, -1, acoustics, true],
-	1,1,0:8.9;,0,1,0,0,0,0,0,0,1,0,0,0,0,0
-same_different,[water, water, 1, -1],0,0,0:4.8;,1,0
-axb,[water, water, water, 0, 2],0,0,0:6.7;,0,1
-ab,[water, 0, 2],0,0,0:3.3;,1,0
+boundary_and_prominence,[water water 0 3 b_acoustics
+	p_acoustics true], 1,1,0:8.9,1;,
+	0,1,0,0,0,0,0,0,1,0,0,0,0,0
+media_choice,[same_different_instr audio 0.5 1 -1 [[water apples]]
+	[same different]],0,0,0:4.8,2;,1,0
+media_choice,[axb_instr audio 0.5 1 -1 [[water] [water2] [water3]]
+	[ax xb]],0,0,0:6.7,3;,0,1
+media_choice,[ab_instr audio 0.5 1 -1 [[water]] [a b]],
+	0,0,0:3.3,4;,1,0
 \end{lstlisting}
 
 \paragraph{}
-If we separate out just the page name and the user response we can easily see the data that we want to analyze: 
+If we separate out just the page name (the content before the first `,') and the user response (everything after the `;,') we can easily see the data that we want to analyze: 
 
 \begin{lstlisting}
 boundary_and_prominence;,0,1,0,0,0,0,0,0,1,0,0,0,0,0
-same_different;,1,0
-axb;,0,1
-ab;,1,0
+media_choice;,1,0
+media_choice;,0,1
+media_choice;,1,0
 \end{lstlisting}
 
 \paragraph{}
 LMEDS offers some useful post-processing that can help prep data for analysis (see \ref{users_scripts}.  Otherwise, with the above information, you should have everything you need to do your own analysis.
 
 %%%%%%%%%%%%%%%%%%%%%
-\subsection{CGI template}
+\subsection{CGI File (experiment-wide configuration)}
 \label{sec:cgitemplate}
 %%%%%%%%%%%%%%%%%%%%%
 
 \paragraph{}
-The cgi file  specifies the location of the experiment files, the sequence name, and the dictionary name.  Using these pieces of information, LMEDS will correctly locate the inputs and place the outputs.  The CGI file itself is quite short.  You can copy and paste the text below, changing only the four arguments to the function \textbf{runExperiment}.
+The cgi file  specifies the location of the experiment files, the sequence name, and the dictionary name.  Using these pieces of information, LMEDS will correctly locate the inputs and place the outputs.  The CGI file itself is quite short.  You can copy and paste the text below, changing only the arguments to the function \textbf{runExperiment}.
 
 \paragraph{}
+\textbf{Through the CGI file, one can indicate experiment-wide parameters.}
 
-\begin{tcolorbox}[breakable,colback=white,colframe=blue,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm,enlarge right by=6mm]
+\paragraph{}
+runExperiment() has the following arguments
+
+\begin{itemize}
+\item name of the folder in /lmeds/tests
+\item name of the sequence file
+\item name of the dictionary file
+\item disableRefresh: if `True' and users try to refresh a page or click back, they will be unable to progress.  Set to `True' if you suspect your subjects might try to revisit completed pages.  Otherwise, in my experience, let them use back and refresh--they're only going to use it if their browser freezes up.
+\item audioExtList: the list of audio extentions to use in an experiment.  The default value is [`.ogg', `.mp3']
+\item videoExtList: the list of video extensions to use in an experiment.  The default value is [`.ogg', `.mp4']
+\item allowUtilityScripts: if `True', users can run utility scripts from the browser.  Could be `True' for a local LMEDS install used for testing but should be `False' for the online version.  See section \ref{users_scripts} for more information on the utility user scripts.
+\item allowUsersToRelogin: if `True', users can use their login name to resume their progress if the are stopped midway through an experiment (loss of internet, audio fails to load, etc).  Otherwise, if `False', users will have to restart from the beginning.
+\end{itemize}
+
+\begin{tcolorbox}[colback=white,colframe=blue,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm,enlarge right by=6mm]
 
 \begin{lstlisting}
 \#!/usr/bin/env python
 \# -*- coding: utf-8 -*-
 
-import experiment_runner
-experiment_runner.runExperiment(`name_of_folder_in_tests', 
-				`name_of_sequence_file.txt', 
-				`name_of_dictionary_file.txt', 
-				disableRefresh=True)
+import experiment_runner as exp_runner
+exp_runner.runExperiment(`lmeds_demo',
+                         `sequence.txt',
+                         `english.txt',
+                         disableRefresh=False,
+                         audioExtList=[`.ogg', `.wav'],
+                         videoExtList=[`.webm', `.mp4'],
+                         allowUtilityScripts=True,
+                         allowUsersToRelogin=True)
 \end{lstlisting}
-
 \end{tcolorbox}
-
