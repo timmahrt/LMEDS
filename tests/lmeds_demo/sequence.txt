@@ -2,6 +2,7 @@
 login
 
 text_page first_page
+media_test audio apples
 
 text_page speed_warning
 text_page remote_experiment_notice

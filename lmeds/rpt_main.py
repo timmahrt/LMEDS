@@ -184,9 +184,9 @@ class WebSurvey(object):
                 nextPage = factories.loadPage(self, "consent_end")
         
         # Go to a special end state if the user cannot play audio files
-        if lastPage.pageName == 'audio_test':
+        if lastPage.pageName == 'media_test':
             if form['radio'].value == 'dissent':
-                nextPage = factories.loadPage(self, "audio_test_end", [], {})
+                nextPage = factories.loadPage(self, "media_test_end", [], {})
     
         return pageNum, cookieTracker, nextPage, userName
     

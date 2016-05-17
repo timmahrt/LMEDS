@@ -513,6 +513,8 @@ class MediaListPage(abstract_pages.AbstractPage):
         self.minPlays = minPlays
         self.maxPlays = maxPlays
         
+        assert(audioOrVideo in ["audio", "video"])
+        
         self.wavDir = self.webSurvey.wavDir
 
         self.submitProcessButtonFlag = False

@@ -89,8 +89,8 @@ def generateLanguageDictionary(mode, testName, sequenceFN, outputFN):
     # These pages are never called directly but may appear if another page
     # is called.
     implicitPageNameList = []
-    implicitDict = {core_pages.AudioTestPage.pageName:
-                    core_pages.AudioTestEndPage.pageName,
+    implicitDict = {core_pages.MediaTestPage.pageName:
+                    core_pages.MediaTestEndPage.pageName,
                     core_pages.ConsentPage.pageName:
                     core_pages.ConsentEndPage.pageName,
                     core_pages.LoginPage.pageName:

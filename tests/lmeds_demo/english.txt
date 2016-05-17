@@ -177,6 +177,37 @@ video_ok
 LMEDS can also play use video.  Any pages shown with audio files can have the audio replaced with video, as demonstrated next.
 
 ------------------------------
+media_test
+------------------------------
+
+====================
+error_verify_media
+====================
+
+You must mark one of the choices before you continue
+
+====================
+mediaTest_affirm
+====================
+
+I can hear the audio
+
+====================
+mediaTest_reject
+====================
+
+I cannot hear the audio
+
+====================
+mediaTest_text
+====================
+
+Please listen to the sound file and indicate whether or not you can hear it.
+<br /><br />
+
+You may also use this time to adjust your volume.
+
+------------------------------
 consent
 ------------------------------
 
@@ -392,6 +423,17 @@ error_user_name_exists
 <font color="red"> ERROR: Username '%s' already exists or is invalid.  You may have already done this experiment, in which case you may not participate in it again. If you were forced to restart, use a similar name to your worker id (e.g. add a 1 to the end).</font>
 
 ------------------------------
+media_test_end
+------------------------------
+
+====================
+mediaTest_no_audio
+====================
+
+You have indicated that you are unable to hear the audio file.  You are not
+able to participate in this experiment.  Thank you for your time.
+
+------------------------------
 consent_end
 ------------------------------
 
@@ -403,7 +445,7 @@ You have chosen not to participate in this study. Thank you for your time.
 <br /><br />
 
 ------------------------------
-media_list,media_choice,boundary_and_prominence,boundary,prominence,syllable_marking,media_slider
+media_test,media_list,media_choice,boundary_and_prominence,boundary,prominence,syllable_marking,media_slider
 ------------------------------
 
 ====================
