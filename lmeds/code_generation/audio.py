@@ -130,14 +130,15 @@ function recPlayAudioList(audioList, pauseDurationMS) {
     }
     // When the last audio finishes playing, running any post-audio operations
     else if (audioList.length == 0) {
-        setTimeout(function(){
         audioFile.addEventListener('ended', audio_buttons_enable);
         %(autosubmit_code)s
-        }, timeout - pauseDurationMS);
     }
 
 }
-
+function auto_submit(e) {
+    e.target.removeEventListener('ended', auto_submit);
+    processSubmit()
+}
 function loading_progress_show() {
 $("#loading_status_indicator").show();
 }
@@ -293,7 +294,7 @@ def getPlaybackJS(doSilence, numItems, maxNumPlays, minNumPlays,
     
     autoSubmitHTML = ""
     if autosubmit is True:
-        autoSubmitHTML = "setTimeout(function(){processSubmit()}, timeout);"
+        autoSubmitHTML = "audioFile.addEventListener('ended', auto_submit);"
     if runOnFinish is not None:
         autoSubmitHTML += "\n" + runOnFinish
     if runOnMinThreshold is None:
