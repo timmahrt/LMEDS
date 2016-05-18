@@ -24,7 +24,7 @@ different types of perceptual experiments (memory tasks, AXB-type tasks, etc.).
 Major revisions
 ================
 
-Ver 2.3 (May 17, 2015)
+Ver 2.3 (May 17, 2016)
 
 - Video now supported with the same controls and functionality as audio
 
