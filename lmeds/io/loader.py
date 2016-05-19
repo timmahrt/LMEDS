@@ -53,7 +53,7 @@ class TextNotInDictionaryException(Exception):
         self.dictionaryFN = textDict.sourceFN
         
     def __str__(self):
-        errorTxt = ("Text key <<%s>> not in dictionary file <<%s>\n\n"
+        errorTxt = ("Text key [%s] not in dictionary file [%s]\n\n"
                     "Please add text key to dictionary and try again.")
         
         return errorTxt % (self.txtKey, self.dictionaryFN)
