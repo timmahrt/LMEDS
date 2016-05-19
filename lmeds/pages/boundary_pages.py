@@ -156,7 +156,12 @@ def _makeTogglableWord(testType, word, idNum, boundaryToken, labelClass):
     htmlTxt = ('<label for="%(idNum)d" class="%(class)s">'
                '<input type="checkbox" name="%(testType)s" id="%(idNum)d"'
                'value="%(idNum)d"/>'
-               '%(word)s' + tokenTxt + '</label>')
+               '%(word)s' + tokenTxt)
+    
+    if labelClass == "word":
+        htmlTxt += "\n"
+    
+    htmlTxt += '</label>'
 
     return htmlTxt % {"testType": testType, "word": word, "idNum": idNum,
                       "class": labelClass}
