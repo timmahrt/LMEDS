@@ -71,7 +71,6 @@ def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textNameStr,
                                                      wordIDNum, token,
                                                      "word")
                     wordIDNum += 1
-                    tmpHTMLTxt += "\n"
 
             sentenceListTxtList.append(tmpHTMLTxt)
     
