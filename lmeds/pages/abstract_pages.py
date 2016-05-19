@@ -17,12 +17,14 @@ audioTextKeys = ["error_must_play_audio_at_least", "error_must_play_audio",
 
 class KeyNotInFormError(Exception):
     
-    def __init__(self, key):
+    def __init__(self, key, form):
         super(KeyNotInFormError, self).__init__()
         self.key = key
+        self.form = form
         
     def __str__(self):
-        errStr = "Attempted to get testoutput but key '%s' not in form."
+        errStr = "Attempted to get testoutput but key '%s' not in form.<br />\n"
+        errStr += repr(str(self.form.keys()))
         return errStr % self.key
 
 
@@ -48,7 +50,7 @@ def getoutput(key, form, appendDefault=False):
     #    way but at least it alerts them that something is wrong
     if numItems > 0:
         if key not in form:
-            raise KeyNotInFormError(key)
+            raise KeyNotInFormError(key, form)
     
     # Contains index of all of the positively marked items
     # (ignores unmarked items)

@@ -629,7 +629,14 @@ class FillInTheBlankPage(abstract_pages.AbstractPage):
         return 3
 
     def getOutput(self, form):
-        return abstract_pages.getoutput(self.pageName, form, True)
+        value = form.getvalue("fill_in_the_blank")
+        responseList = ["0", "0", "0", "0"]
+        if value is None:
+            value = 3
+        else:
+            value = int(value)
+        responseList[value] = "1"
+        return ",".join(responseList)
     
     def getHTML(self):
         '''

@@ -85,6 +85,10 @@ fill_in_the_blank_instructions
 ====================
 
 On the next page, please select the word that appears in the audio given.
+<br /><br />
+In LMEDS, it is possible to set a timer.  If the timer expires, the item is
+automatically marked as incomplete and LMEDS progresses to the next page.
+<b>The next page has a 10 second timer</b>.
 
 ====================
 first_page
