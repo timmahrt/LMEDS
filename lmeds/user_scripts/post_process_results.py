@@ -76,8 +76,8 @@ def extractFromTest(path, keyList, removeItemList=None, onlyKeepList=None):
             if subjectDataSubsetList == []:
                 continue
             
-            open(join(outputDir, fn),
-                 "w").write("\n".join(subjectDataSubsetList))
+            with open(join(outputDir, fn), "w") as fd:
+                fd.write("\n".join(subjectDataSubsetList))
 
 
 def removeDuplicates(path, overwrite=False):
@@ -92,7 +92,8 @@ def removeDuplicates(path, overwrite=False):
     
     for fn in utils.findFiles(path, filterExt=".csv"):
         
-        data = open(join(path, fn), "r").read()
+        with open(join(path, fn), "r") as fd:
+            data = fd.read()
         dataList = data.splitlines()
         
         outputList = [dataList[0], ]
@@ -110,7 +111,8 @@ def removeDuplicates(path, overwrite=False):
             
             prevString = curString
         
-        open(join(outputPath, fn), "w").write("\n".join(outputList))
+        with open(join(outputPath, fn), "w") as fd:
+            fd.write("\n".join(outputList))
 
     if anyDuplicatesFound is True:
         print("End of duplicates listing")
@@ -127,7 +129,8 @@ def agglutinateSpreadsheets(csvFNList, outputFN):
         outputDataList.append(",".join(rowList))
         
     outputTxt = "\n".join(outputDataList) + "\n"
-    codecs.open(outputFN, "w", encoding="utf-8").write(outputTxt)
+    with codecs.open(outputFN, "w", encoding="utf-8") as fd:
+        fd.write(outputTxt)
 
 
 def postProcessResults(testName, sequenceFN, removeDuplicatesFlag,

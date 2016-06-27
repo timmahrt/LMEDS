@@ -154,8 +154,8 @@ class ConsentPage(abstract_pages.NonRecordingPage):
     
     def _getHTMLTxt(self):
         
-        consentText = open(join(constants.htmlSnippetsDir, "consent.html"),
-                           "r").read()
+        with open(join(constants.htmlSnippetsDir, "consent.html"), "r") as fd:
+            consentText = fd.read()
         consentText %= (self.textDict["title"],
                         self.textDict["consent_title"],
                         self.textDict[self.consentName])

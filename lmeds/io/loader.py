@@ -60,7 +60,8 @@ class TextNotInDictionaryException(Exception):
     
 
 def loadTxtFile(fn):
-    txt = codecs.open(fn, "rU", encoding="utf-8").read()
+    with codecs.open(fn, "rU", encoding="utf-8") as fd:
+        txt = fd.read()
     txtList = txt.splitlines()
     
     # Removes redundant whitespace
@@ -73,7 +74,8 @@ def loadTxtFile(fn):
 
 
 def loadTxtFileWHTML(fn):
-    txt = codecs.open(fn, "rU", encoding="utf-8").read()
+    with codecs.open(fn, "rU", encoding="utf-8") as fd:
+        txt = fd.read()
     
     lineEnding = utils.detectLineEnding(txt)
     if lineEnding is None:  # Should be only a single line

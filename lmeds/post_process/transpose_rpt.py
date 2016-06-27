@@ -102,14 +102,14 @@ def _outputScores(featPath, aspect, stimulusID, returnDict,
     scoreTxt = "%s_%sscores" % (aspect, scoreType.lower())
     scorePath = join(featPath, scoreTxt)
     utils.makeDir(scorePath)
-    open(join(scorePath, "%s.csv" % stimulusID),
-         "w").write("\n".join([str(val) for val in sumList]))
+    with open(join(scorePath, "%s.csv" % stimulusID), "w") as fd:
+        fd.write("\n".join([str(val) for val in sumList]))
     
     scorePath = join(featPath, scoreTxt + "_judgements")
     utils.makeDir(scorePath)
-    open(join(scorePath, "%s.csv" % stimulusID),
-         "w").write("\n".join([",".join(val) for val in
-                               returnDict[stimulusID][aspect][scoreType]]))
+    with open(join(scorePath, "%s.csv" % stimulusID), "w") as fd:
+        fd.write("\n".join([",".join(val) for val in
+                            returnDict[stimulusID][aspect][scoreType]]))
 
 
 def _getSmallestPrefix(keywordList):

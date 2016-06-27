@@ -183,7 +183,8 @@ def generateLanguageDictionary(mode, testName, sequenceFN, outputFN):
                         "_autobackup.txt")
             shutil.copy(outputFNFullPath, backupFN)
     
-        codecs.open(outputFNFullPath, "w", encoding="utf-8").write(outputTxt)
+        with codecs.open(outputFNFullPath, "w", encoding="utf-8") as fd:
+            fd.write(outputTxt)
     
 
 if __name__ == "__main__":

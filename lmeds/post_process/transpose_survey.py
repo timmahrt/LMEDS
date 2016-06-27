@@ -93,7 +93,8 @@ def transposeSurvey(path, surveyFullPathList, outputPath):
         outputTxtList += mainSurveyData
         
         outputTxt = "\n".join(outputTxtList)
-        codecs.open(join(outputPath, stimulusID + ".csv"),
-                    "wU", encoding="utf-8").write(outputTxt)
+        outputFN = join(outputPath, stimulusID + ".csv")
+        with codecs.open(outputFN, "wU", encoding="utf-8") as fd:
+            fd.write(outputTxt)
             
     return returnDict, idKeyList, aspectKeyList

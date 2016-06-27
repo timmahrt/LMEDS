@@ -101,7 +101,8 @@ class TestSequence(object):
 
 
 def parseSequence(sequenceFN):
-    data = open(sequenceFN, "rU").read()
+    with open(sequenceFN, "rU") as fd:
+        data = fd.read()
     testItemList = data.split("\n")
     testItemList = [row.strip() for row in testItemList]
     testItemList = [row for row in testItemList if row != '']

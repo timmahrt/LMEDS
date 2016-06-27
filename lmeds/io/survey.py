@@ -93,7 +93,8 @@ def recParseSurveyFile(dataList, currentDepth):
 
 
 def parseSurveyFile(fn):
-    data = codecs.open(fn, "rU", encoding="utf-8").read()
+    with codecs.open(fn, "rU", encoding="utf-8") as fd:
+        data = fd.read()
     dataList = data.splitlines()
     dataList += [""]  # Parser requires a trailing blank line
     

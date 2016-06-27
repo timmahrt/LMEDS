@@ -217,7 +217,8 @@ def transposeChoice(path, pageName, outputPath):
     outputTxt = "\n".join([",".join(row) for row in outputList])
     
     outputFN = join(outputPath, pageName + ".csv")
-    codecs.open(outputFN, "wU", encoding="utf-8").write(outputTxt)
+    with codecs.open(outputFN, "wU", encoding="utf-8") as fd:
+        fd.write(outputTxt)
 
     # Output a template users can fill in to auto score the results
     name = pageName + "_answer_template.csv"
@@ -227,7 +228,8 @@ def transposeChoice(path, pageName, outputPath):
               % name)
     else:
         outputTxt = "\n".join(stimuliList)
-        codecs.open(answersFN, "wU", encoding="utf-8").write(outputTxt)
+        with codecs.open(answersFN, "wU", encoding="utf-8") as fd:
+            fd.write(outputTxt)
 
 
 def generateCorrectResponse(correctionFN, ruleFunc, outputFN):
@@ -247,7 +249,8 @@ def generateCorrectResponse(correctionFN, ruleFunc, outputFN):
         outputList.append("%s,%s" % (row, decision))
     
     outputTxt = "\n".join(outputList)
-    codecs.open(outputFN, "w", encoding="utf-8").write(outputTxt)
+    with codecs.open(outputFN, "w", encoding="utf-8") as fd:
+        fd.write(outputTxt)
     
 
 def markCorrect(inputFN, correctionFN, outputFN, evalFunc=None):
@@ -277,7 +280,8 @@ def markCorrect(inputFN, correctionFN, outputFN, evalFunc=None):
     markedList = [",".join([_recListToStr(item) for item in row])
                   for row in markedList]
     outputTxt = "\n".join(markedList)
-    codecs.open(outputFN, "w", encoding="utf-8").write(outputTxt)
+    with codecs.open(outputFN, "w", encoding="utf-8") as fd:
+        fd.write(outputTxt)
 
     # Generate confusion matrix
     responseValList = [rTuple[1] for rTuple in responseList]
@@ -293,4 +297,5 @@ def markCorrect(inputFN, correctionFN, outputFN, evalFunc=None):
     matrixOutputFN = os.path.splitext(outputFN)[0] + "_confusion_matrix.csv"
     confusionMatrix = [",".join(row) for row in confusionMatrix]
     outputTxt = "\n".join(confusionMatrix)
-    codecs.open(matrixOutputFN, "w", encoding="utf-8").write(outputTxt)
+    with codecs.open(matrixOutputFN, "w", encoding="utf-8") as fd:
+        fd.write(outputTxt)
