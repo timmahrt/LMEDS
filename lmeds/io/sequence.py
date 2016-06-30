@@ -4,6 +4,7 @@ Created on May 30, 2013
 @author: timmahrt
 '''
 
+import io
 
 from lmeds.pages import factories
 
@@ -101,7 +102,7 @@ class TestSequence(object):
 
 
 def parseSequence(sequenceFN):
-    with open(sequenceFN, "rU") as fd:
+    with io.open(sequenceFN, "r", encoding='utf-8') as fd:
         data = fd.read()
     testItemList = data.split("\n")
     testItemList = [row.strip() for row in testItemList]

@@ -4,7 +4,7 @@ Created on Nov 17, 2013
 @author: timmahrt
 '''
 
-import codecs
+import io
 
 
 def alpha(num):
@@ -93,7 +93,7 @@ def recParseSurveyFile(dataList, currentDepth):
 
 
 def parseSurveyFile(fn):
-    with codecs.open(fn, "rU", encoding="utf-8") as fd:
+    with io.open(fn, "r", encoding="utf-8") as fd:
         data = fd.read()
     dataList = data.splitlines()
     dataList += [""]  # Parser requires a trailing blank line

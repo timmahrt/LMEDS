@@ -6,7 +6,7 @@ Created on Mar 28, 2013
 '''
 
 
-import codecs
+import io
 
 from lmeds.utilities import utils
 
@@ -60,7 +60,7 @@ class TextNotInDictionaryException(Exception):
     
 
 def loadTxtFile(fn):
-    with codecs.open(fn, "rU", encoding="utf-8") as fd:
+    with io.open(fn, "r", encoding="utf-8") as fd:
         txt = fd.read()
     txtList = txt.splitlines()
     
@@ -74,7 +74,7 @@ def loadTxtFile(fn):
 
 
 def loadTxtFileWHTML(fn):
-    with codecs.open(fn, "rU", encoding="utf-8") as fd:
+    with io.open(fn, "r", encoding="utf-8") as fd:
         txt = fd.read()
     
     lineEnding = utils.detectLineEnding(txt)

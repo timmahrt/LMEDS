@@ -4,7 +4,7 @@ Created on Dec 29, 2013
 @author: tmahrt
 '''
 
-import codecs
+import io
 
 from lmeds.io import sequence
 HEADER_DEMARCATOR = ";,"  # Splits the header from its data
@@ -12,7 +12,7 @@ HEADER_DEMARCATOR = ";,"  # Splits the header from its data
 
 def loadUserResponse(fn):
     
-    with codecs.open(fn, "rU", encoding="utf-8") as fd:
+    with io.open(fn, "r", encoding="utf-8") as fd:
         featureList = fd.read().split("\n")
         featureList = [row.strip() for row in featureList]
         
