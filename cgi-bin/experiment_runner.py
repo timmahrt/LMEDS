@@ -17,6 +17,11 @@ import os
 from os.path import join
 import datetime
 
+try:
+    from StringIO import StringIO  # Python 2
+except ImportError:
+    from io import StringIO  # Python 3
+    
 # The local server is started one level above cgi-bin.  The web server starts
 # in cgi-bin. Try to move into cgi-bin.  If we can't, we're already there.
 # If the code doesn't start in cgi-bin or one level above cgi-bin, probably
@@ -42,7 +47,6 @@ from lmeds.user_scripts import sequence_check
 from lmeds.user_scripts import get_test_duration
 from lmeds.user_scripts import post_process_results
 
-from io import BytesIO
 
 class Logger(object):
     '''
@@ -60,7 +64,7 @@ class Logger(object):
     
     def __enter__(self):
         self._stdout = sys.stdout
-        sys.stdout = self._stringio = BytesIO()
+        sys.stdout = self._stringio = StringIO()
         return self
     
     def __exit__(self, errType, errValue, errTraceback):
@@ -71,7 +75,8 @@ class Logger(object):
         if self.fn is None:
             print(outputTxt)
         else:
-            open(self.fn, "w").write(outputTxt)
+            with open(self.fn, "w") as fd:
+                fd.write(outputTxt)
             
         if errValue != None:
             print("Error occurred in running script. "
@@ -139,15 +144,16 @@ def runExperiment(leafFolder, sequenceFile, languageFile, disableRefresh,
                                                     languageFile)
 
         if "get_test_duration" in keyDict.keys():
-            print("Getting experiment duration...")
+            with Logger() as output:
+                print("Getting experiment duration...")
             now = timestampFmt.format(datetime.datetime.now())
             fn = now + "get_duration.txt"
             with Logger(join(loggerPath, fn)) as output:
                 get_test_duration.printTestDuration(outputDir)
-            print
-        
+            
         if "post_process_results" in keyDict.keys():
-            print("Post processing results...")
+            with Logger() as output:
+                print("Post processing results...")
             now = timestampFmt.format(datetime.datetime.now())
             fn = now + "_post_process_results.txt"
             with Logger(join(loggerPath, fn)) as output: 

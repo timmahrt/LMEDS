@@ -39,6 +39,7 @@ def checkSequenceFile(survey):
     seq = sequence.TestSequence(survey, survey.sequenceFN)
     numErrors = 0
     for pageNum in range(seq.getNumPages()):
+    
         try:
             page = seq.getPage(pageNum)
         except TypeError:
@@ -46,16 +47,16 @@ def checkSequenceFile(survey):
             continue
         except (utils.FilesDoNotExist,
                 loader.TextNotInDictionaryException) as e:
-            print("Page %d: %s\n" % (pageNum, e))
+            print("Page %d: %s\n" % (pageNum, str(e)))
             numErrors += 1
             continue
         
         try:
             page = page.getHTML()
-        except BaseException, e:
+        except BaseException as e:
             errStr = ("Page %d: Problem with at least one of the arguments: "
-                      "%s\n%s:%s\n")
-            print(errStr % (pageNum, seq.testItemList[pageNum], type(e), e))
+                      "'%s'\n%s:%s\n")
+            print(errStr % (pageNum, str(seq.testItemList[pageNum]), e.__class__.__name__, str(e)))
             numErrors += 1
             continue
     

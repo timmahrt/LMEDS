@@ -53,10 +53,10 @@ class TextNotInDictionaryException(Exception):
         self.dictionaryFN = textDict.sourceFN
         
     def __str__(self):
-        errorTxt = ("Text key [%s] not in dictionary file [%s]\n\n"
+        errorTxt = ("Text key(s) [%s] not in dictionary file [%s]\n\n"
                     "Please add text key to dictionary and try again.")
         
-        return errorTxt % (self.txtKey, self.dictionaryFN)
+        return errorTxt % (str(self.txtKey), self.dictionaryFN)
     
 
 def loadTxtFile(fn):
@@ -240,8 +240,15 @@ def getText(key):
 
 
 def batchGetText(keyList):
+    errorList = []
     retDict = {}
     for key in keyList:
-        retDict[key] = getText(key)
+        try:
+            retDict[key] = getText(key)
+        except TextNotInDictionaryException:
+            errorList.append(key)
+
+    if len(errorList) > 0:
+        raise TextNotInDictionaryException(errorList)
     
     return retDict
