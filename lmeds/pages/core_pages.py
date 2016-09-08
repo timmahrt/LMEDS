@@ -256,10 +256,13 @@ class TextAndMediaPage(abstract_pages.NonValidatingPage):
     
     pageName = "text_and_media_page"
     
-    def __init__(self, audioOrVideo, textName, mediaList, *args, **kargs):
+    def __init__(self, audioOrVideo, minPlays, maxPlays, textName,
+                 mediaList, *args, **kargs):
         
         super(TextAndMediaPage, self).__init__(*args, **kargs)
         self.audioOrVideo = audioOrVideo
+        self.minPlays = minPlays
+        self.maxPlays = maxPlays
         self.textName = textName
         self.mediaList = mediaList
         self.wavDir = self.webSurvey.wavDir
@@ -298,7 +301,8 @@ class TextAndMediaPage(abstract_pages.NonValidatingPage):
         else:
             extList = self.webSurvey.videoExtList
         
-        embedTxt = audio.getPlaybackJS(True, len(mediaNameList), -1, 1)
+        embedTxt = audio.getPlaybackJS(True, len(mediaNameList),
+                                       self.maxPlays, self.minPlays)
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, mediaNameList,
                                                  extList, self.audioOrVideo)
         

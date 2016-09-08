@@ -234,7 +234,7 @@ def postProcessResults(testName, sequenceFN, removeDuplicatesFlag,
             transpose_rpt.transposeRPT(join(pathToData, pageName),
                                        txtPath, pageName, outputPath)
             
-    choicePageList = ["audio_choice", ]
+    choicePageList = ["media_choice", ]
     for pageName in choicePageList:
         if pageName in uniquePageList:
             transpose_choice.transposeChoice(join(pathToData, pageName),
