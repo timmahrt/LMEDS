@@ -95,7 +95,7 @@ def runExperiment(leafFolder, sequenceFile, languageFile, disableRefresh,
     form = cgi.FieldStorage(keep_blank_values=True)
 
     # Utility scripts that override the main functionality
-    keyList = ["get_duration", "sequence_check", "create_dictionary",
+    keyList = ["get_test_duration", "sequence_check", "create_dictionary",
                "update_dictionary", "crop_dictionary", "post_process_results",
                ]
     keyDict = {}
