@@ -165,6 +165,12 @@ On the next page, you will hear two audio files.  Please press the appropriate b
 to indicate whether they are the same or different.
 
 ====================
+sliders_in_surveys
+====================
+
+Sliders can also be used in surveys.
+
+====================
 speed_warning
 ====================
 
@@ -179,6 +185,21 @@ video_ok
 ====================
 
 LMEDS can also play use video.  Any pages shown with audio files can have the audio replaced with video, as demonstrated next.
+
+====================
+whats_new_in_2.3
+====================
+
+LMEDS 2.3 has several new features.  Showcased here are the new kinds of pages that can be crafted in LMEDS 2.3.
+These pages are included in the full demo, but for those just wanting to see the new stuff, this demo is for you.<br /><br />
+
+New Features<br /><br />
+
+<ul>
+<li>Video now supported with the same controls and functionality as audio</li>
+<li>Sliding scales are now a supported widget
+<li>New syllable-marking page (branch of prominence-marking pages)
+</ul>
 
 ------------------------------
 media_test
