@@ -328,7 +328,8 @@ class WebSurvey(object):
         # The arguments to the task hold the information that distinguish
         #    this trial from other trials
         
-        taskArgumentStr = self.testSequence.getPageStr(pageNum)[1]
+        taskArgumentList = self.testSequence.getPageStr(pageNum)[1]
+        taskArgumentStr = utils.recNestedListToStr(taskArgumentList)
 
         numPlays1 = form.getvalue('audioFilePlays0')
         numPlays2 = form.getvalue('audioFilePlays1')

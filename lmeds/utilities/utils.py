@@ -6,6 +6,7 @@ Created on Nov 17, 2013
 
 import sys
 import os
+import numbers
 
 # Python 2-to-3 compatibility hack
 try:
@@ -129,6 +130,20 @@ def safeZip(listOfLists, enforceLength):
         assert(all([length == len(subList) for subList in listOfLists]))
     
     return zip_longest(*listOfLists)
+
+
+def recNestedListToStr(targetList):
+    
+    strList = []
+    for item in targetList:
+        if isinstance(item, list):
+            item = recNestedListToStr(item)
+        if isinstance(item, numbers.Real):
+            item = str(item)
+        strList.append(item)
+        
+    retStr = "[%s]" % ",".join(strList)
+    return retStr
 
 
 def orderOfMagnitude(val):
