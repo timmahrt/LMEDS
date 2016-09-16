@@ -111,6 +111,12 @@ def removeDuplicates(path, overwrite=False):
             
             prevString = curString
         
+        # Special case: pop the last item in the sequence if it is 'login'
+        # -- this happens when a user tries to log in to an experiment after
+        #    already completing it
+        if outputList[-1][:6] == "login," and len(outputList) > 1:
+            outputList.pop(-1)
+        
         with open(join(outputPath, fn), "w") as fd:
             fd.write("\n".join(outputList))
 
