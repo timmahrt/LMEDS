@@ -32,8 +32,8 @@ text_page boundary_and_prominence_nonspecific_instructions
 boundary_and_prominence apples apples 2 2 nonspecific_boundary_instr nonspecific_prominence_instr true
 
 text_page boundary_and_prominence_constrained_instructions
-boundary apples apples 2 2 nonspecific_boundary_instr true
-prominence apples apples 2 2 nonspecific_boundary_instr true
+boundary apples apples 1 -1 nonspecific_boundary_instr true
+prominence apples apples 1 -1 nonspecific_prominence_instr true
 syllable_marking syllables syllables 1 -1 nonspecific_syllables true syllableDemarcator=.
 
 text_page boundary_and_prominence_alternatives
