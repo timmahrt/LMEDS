@@ -72,9 +72,47 @@ formTemplate2 = """
 </form>
 """
 
+# From http://stackoverflow.com/questions/11807944/
+# jquery-trigger-keypress-function-on-entire-document-but-not-inside-inputs-and-t
+# Check for keypresses when the user isn't in a textfield
+# eg
+
+# Letters and some keys such as 'enter' are universal across browsers
+# Otherwise, there are lots of imcompatibilities.  See
+# http://unixpapa.com/js/key.html
+bindKeyJSTemplate = ("""
+<script>
+$(document).on('keypress', function(e) {
+    var tag = e.target.tagName.toLowerCase();
+    if (tag != 'input' && tag != 'textarea') {
+    %s
+    }
+});
+</script>""")
+
+bindKeySubSnippetJS = """if (e.which == %s) {%s}"""
+
+bindToSubmitButtonJS = """
+if (e.which == %s) {document.getElementById("submitButton").click();}
+"""
+
 submitButtonHTML = ('<input name="submitButton" id="submitButton" '
                     'type="button" value="%s">'
                     )
+
+
+def keyboardletterToChar(letter):
+    
+    # Exceptional cases
+    if letter.lower() == "enter":
+        retVal = 13
+    
+    # Normal case (ascii char)
+    else:
+        assert(len(letter) == 1)
+        retVal = ord(str(letter))
+    
+    return retVal
 
 
 def getWidgetSubmit(widgetName):
