@@ -226,7 +226,7 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         self.textDict.update(loader.batchGetText(txtKeyList))
         
         self.numAudioButtons = len(mediaListOfLists)
-        self.processSubmitList = ["verifyAudioPlayed", ]
+        self.processSubmitList = ["verifyAudioPlayed()", ]
         
     def _getHTMLTxt(self):
         radioButton = ('<p>\n'
@@ -414,7 +414,7 @@ class MediaSliderPage(abstract_pages.AbstractPage):
         self.textDict.update(loader.batchGetText(txtKeyList))
         
         self.numAudioButtons = 1
-        self.processSubmitList = ["verifyAudioPlayed", ]
+        self.processSubmitList = ["verifyAudioPlayed()", ]
         
     def _getHTMLTxt(self):
         
@@ -528,7 +528,7 @@ class MediaListPage(abstract_pages.AbstractPage):
         
         # Although there are many files, there is just one button
         self.numAudioButtons = 1
-        self.processSubmitList = ["verifyAudioPlayed", ]
+        self.processSubmitList = ["verifyAudioPlayed()", ]
     
     def _getHTMLTxt(self):
         return "%s<br /><br />"

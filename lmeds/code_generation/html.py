@@ -239,7 +239,7 @@ def createWidget(widgetType, argList, i):
     elementDictionary = {"Choice": createChoice,
                          "Item_List": partial(createChoice, checkboxFlag=True),
                          "Choicebox": createChoicebox,
-                         "Sliding_Scale":createSlidingScale,
+                         "Sliding_Scale": createSlidingScale,
                          }
     
     if widgetType == "Textbox":

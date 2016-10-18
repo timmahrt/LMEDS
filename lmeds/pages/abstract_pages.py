@@ -152,7 +152,7 @@ class AbstractPage(object):
         
         htmlList = []
         for func in self.processSubmitList:
-            htmlList.append("returnValue = returnValue && %s();" % func)
+            htmlList.append("returnValue = returnValue && %s;" % func)
     
         htmlTxt = "\n".join(htmlList)
     

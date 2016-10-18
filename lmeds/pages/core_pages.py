@@ -44,7 +44,7 @@ class LoginPage(abstract_pages.NonRecordingPage):
 
         # Variables that all pages need to define
         self.numAudioButtons = 0
-        self.processSubmitList = ["validateForm", ]
+        self.processSubmitList = ["validateForm()", ]
 
     def _getHTMLTxt(self):
         txtBox = """<input type="text" name="%s" value=""/>"""
@@ -150,7 +150,7 @@ class ConsentPage(abstract_pages.NonRecordingPage):
     
         # Variables that all pages need to define
         self.numAudioButtons = 0
-        self.processSubmitList = ["validateForm", ]
+        self.processSubmitList = ["validateForm()", ]
     
     def _getHTMLTxt(self):
         
@@ -331,7 +331,7 @@ class MediaTestPage(abstract_pages.NonRecordingPage):
     
         # Variables that all pages need to define
         self.numAudioButtons = 1
-        self.processSubmitList = ["validateForm", "verifyAudioPlayed"]
+        self.processSubmitList = ["validateForm()", "verifyAudioPlayed()"]
     
     def _getHTMLTxt(self):
         
