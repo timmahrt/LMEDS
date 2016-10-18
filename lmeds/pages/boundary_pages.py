@@ -166,7 +166,10 @@ def _makeTogglableWord(testType, word, idNum, boundaryToken, labelClass):
                       "class": labelClass}
 
 
-def _getTogglableWordEmbed(numWords, boundaryMarking):
+def _getTogglableWordEmbed(numWords, boundaryMarking, minV, maxV):
+    
+    doMinMaxClickedCheck = "didPlay &= verifySelectedWithinRange(%d,%d,'%s');"
+    doMinMaxClickedCheck %= (minV, maxV, "boundary_and_prominence")
     
     boundaryMarkingCode_showHide = """
         $("#"+x).closest("label").css({
@@ -200,11 +203,14 @@ def _getTogglableWordEmbed(numWords, boundaryMarking):
 </script>
 
 <script>
+var didShowHide = false;
 function ShowHide()
 {
 var didPlay = verifyFirstAudioPlayed();
+%(verifyMinMaxClicked)s
 
 if(didPlay == true) {
+    didShowHide = true;
     document.getElementById("ShownDiv").style.display='none';
     document.getElementById("HiddenDiv").style.display='block';
     document.getElementById("HiddenForm").style.display='block';
@@ -269,6 +275,8 @@ $(document).ready(function(){
 
     return javascript % {"numWords":
                          numWords,
+                         "verifyMinMaxClicked":
+                         doMinMaxClickedCheck,
                          "boundaryMarkingCode_toggle":
                          boundaryMarkingCode_toggle,
                          "boundaryMarkingCode_showHide":
@@ -297,12 +305,96 @@ def _getKeyPressEmbed(playID, submitID):
     return returnJS
 
 
+_verifySelectedWithinRangeJS = """
+function getHowManyMarked(startI, endI, widgetName) {
+  var numMarked = 0;
+  var chboxList = document.getElementsByName(widgetName);
+  for(var i=startI; i<endI; i++) {
+    if(chboxList[i].checked == true) {
+        numMarked++;
+    }
+  }
+  return numMarked;
+}
+function isPBMarkingTask() {
+  var markingTaskArray = [false, false];
+  if (document.getElementById("submitButton") !== null)
+    {
+      if (document.getElementById("halfwaySubmitButton") !== null)
+      {
+        markingTaskArray[0] = true;
+        if (didShowHide == true)
+        {
+          markingTaskArray[1] = true;
+        }
+      }
+    }
+
+  return markingTaskArray;
+}
+function verifySelectedWithinRange(min_to_mark, max_to_mark, widgetName) {
+    
+    var returnValue = true;
+    var min = 0;
+    var max = document.getElementsByName(widgetName).length;
+    
+    // If doing both b and p marking, we need to divide the max value by two.
+    // If doing the 2nd half (p marking) we need to shift the min and max value
+    var shiftArray = isPBMarkingTask();
+    var isPBTask = shiftArray[0];
+    var doShift = shiftArray[1];
+    
+    if (isPBTask == true) {
+        max = max / 2;
+    }
+    if (doShift == true) {
+        min = max + 1;
+        max = (2 * max);
+    }
+    
+    var numMarked = getHowManyMarked(min, max, widgetName);
+    var alertMsg = "";
+
+    if (min_to_mark > 0 && numMarked < min_to_mark)
+    {
+        returnValue = false;
+        if (max_to_mark == -1)
+        {
+            alertMsg = "%(pbMinSelectedErrorMsg)s";
+        }
+        else
+        {
+            alertMsg = "%(pbMinMaxSelectedErrorMsg)s";
+        }
+    }
+    else if (max_to_mark > 0 && numMarked > max_to_mark)
+    {
+        returnValue = false;
+        if (min_to_mark == -1) {
+            alertMsg = "%(pbMaxSelectedErrorMsg)s";
+        }
+        else
+        {
+            alertMsg = "%(pbMinMaxSelectedErrorMsg)s";
+        }
+    }
+        
+    if (alertMsg != "") {
+        alert(alertMsg);
+    }
+    
+    return returnValue;
+}
+"""
+
+
 class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
     
     def __init__(self, name, transcriptName, minPlays, maxPlays,
                  instructions, presentAudio="true", boundaryToken=None,
                  doProminence=True, syllableDemarcator=None,
                  bindPlayKeyID=None, bindSubmitID=None,
+                 minNumSelected=-1, maxNumSelected=-1,
                  *args, **kargs):
         
         super(BoundaryOrProminenceAbstractPage, self).__init__(*args, **kargs)
@@ -312,6 +404,9 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
             bindPlayKeyID = html.keyboardletterToChar(bindPlayKeyID)
         if bindSubmitID is not None:
             bindSubmitID = html.keyboardletterToChar(bindSubmitID)
+        
+        minNumSelected = int(minNumSelected)
+        maxNumSelected = int(maxNumSelected)
         
         # Set instance variables
         self.name = name
@@ -324,6 +419,8 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         self.syllableDemarcator = syllableDemarcator
         self.bindPlayKeyID = bindPlayKeyID
         self.bindSubmitID = bindSubmitID
+        self.minNumSelected = minNumSelected
+        self.maxNumSelected = maxNumSelected
         
         self.txtDir = self.webSurvey.txtDir
         self.wavDir = self.webSurvey.wavDir
@@ -334,6 +431,14 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         txtKeyList = []
         txtKeyList.extend(abstract_pages.audioTextKeys)
         txtKeyList.append(self.instructText)
+        
+        if minNumSelected != -1:
+            txtKeyList.append("pbMinSelectedErrorMsg")
+        if maxNumSelected != -1:
+            txtKeyList.append("pbMaxSelectedErrorMsg")
+        if minNumSelected != -1 and maxNumSelected != -1:
+            txtKeyList.append("pbMinMaxSelectedErrorMsg")
+        
         self.textDict.update(loader.batchGetText(txtKeyList))
         
         # Variables that all pages need to define
@@ -341,7 +446,14 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
             self.numAudioButtons = 1
         else:
             self.numAudioButtons = 0
-        self.processSubmitList = ["verifyAudioPlayed", ]
+        
+        if self.doProminence:
+            taskStr = "prominence"
+        else:
+            taskStr = "boundary"
+        verifyNumSelected = 'verifySelectedWithinRange(%d, %d, "%s")'
+        verifyNumSelected %= (minNumSelected, maxNumSelected, taskStr)
+        self.processSubmitList = ["verifyAudioPlayed()", verifyNumSelected]
         
         self.checkArgs()
         
@@ -429,6 +541,30 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         embedTxt += "\n\n"
         embedTxt += _getProminenceOrBoundaryWordEmbed(self.doProminence)
         
+        # Add javascript that checks user markings
+        if self.minNumSelected != -1 or self.maxNumSelected != -1:
+            minErrMsg = ""
+            maxErrMsg = ""
+            minMaxErrMsg = ""
+            if self.minNumSelected != -1:
+                minErrMsg = self.textDict['pbMinSelectedErrorMsg']
+                minErrMsg %= self.minNumSelected
+            if self.maxNumSelected != -1:
+                maxErrMsg = self.textDict['pbMaxSelectedErrorMsg']
+                maxErrMsg %= self.maxNumSelected
+            if self.minNumSelected != -1 and self.maxNumSelected != -1:
+                minMaxErrMsg = self.textDict['pbMinMaxSelectedErrorMsg']
+                minMaxErrMsg %= (self.minNumSelected, self.maxNumSelected)
+            
+            verificationDict = {'pbMinSelectedErrorMsg': minErrMsg,
+                                'pbMaxSelectedErrorMsg': maxErrMsg,
+                                'pbMinMaxSelectedErrorMsg': minMaxErrMsg,
+                                }
+            
+            embedTxt += "\n<script>\n"
+            embedTxt += _verifySelectedWithinRangeJS % verificationDict
+            embedTxt += "\n</script>"
+        
         htmlTxt = html.makeNoWrap(htmlTxt)
         
         return htmlTxt, pageTemplate, {'embed': embedTxt}
@@ -467,8 +603,10 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
 
     def __init__(self, name, transcriptName, minPlays, maxPlays,
                  boundaryInstructions, prominenceInstructions,
-                 presentAudio="true", boundaryToken=None, *args, **kargs):
+                 presentAudio="true", boundaryToken=None,
                  bindPlayKeyID=None, bindSubmitID=None,
+                 minNumSelected=-1, maxNumSelected=-1,
+                 *args, **kargs):
         
         super(BoundaryAndProminencePage, self).__init__(*args, **kargs)
         
@@ -482,6 +620,9 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         if bindSubmitID is not None:
             bindSubmitID = html.keyboardletterToChar(bindSubmitID)
         
+        minNumSelected = int(minNumSelected)
+        maxNumSelected = int(maxNumSelected)
+        
         # Set instance variables
         self.name = name
         self.transcriptName = transcriptName
@@ -491,6 +632,8 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         self.boundaryToken = boundaryToken
         self.bindPlayKeyID = bindPlayKeyID
         self.bindSubmitID = bindSubmitID
+        self.minNumSelected = minNumSelected
+        self.maxNumSelected = maxNumSelected
         
         self.txtDir = self.webSurvey.txtDir
         self.wavDir = self.webSurvey.wavDir
@@ -503,6 +646,14 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         txtKeyList.extend(abstract_pages.audioTextKeys)
         txtKeyList.extend([self.stepOneInstructText,
                            self.stepTwoInstructText])
+        
+        if minNumSelected != -1:
+            txtKeyList.append("pbMinSelectedErrorMsg")
+        if maxNumSelected != -1:
+            txtKeyList.append("pbMaxSelectedErrorMsg")
+        if minNumSelected != -1 and maxNumSelected != -1:
+            txtKeyList.append("pbMinMaxSelectedErrorMsg")
+        
         self.textDict.update(loader.batchGetText(txtKeyList))
         
         # Variables that all pages need to define
@@ -511,7 +662,10 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
             self.numAudioButtons = 2
         else:
             self.numAudioButtons = 0
-        self.processSubmitList = ["verifyAudioPlayed", ]
+        verifyNumSelected = "verifySelectedWithinRange(%d, %d, '%s')"
+        verifyNumSelected %= (minNumSelected, maxNumSelected,
+                              "boundary_and_prominence")
+        self.processSubmitList = ["verifyAudioPlayed()", verifyNumSelected]
     
     def checkResponseCorrect(self, responseList, correctResponse):
         raise abstract_pages.NoCorrectResponseError()
@@ -607,7 +761,33 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
             embedTxt = ""
         
         embedTxt += "\n\n" + _getTogglableWordEmbed(numWords,
-                                                    self.boundaryToken)
+                                                    self.boundaryToken,
+                                                    self.minNumSelected,
+                                                    self.maxNumSelected)
+        
+        # Add javascript that checks user markings
+        if self.minNumSelected != -1 or self.maxNumSelected != -1:
+            minErrMsg = ""
+            maxErrMsg = ""
+            minMaxErrMsg = ""
+            if self.minNumSelected != -1:
+                minErrMsg = self.textDict['pbMinSelectedErrorMsg']
+                minErrMsg %= self.minNumSelected
+            if self.maxNumSelected != -1:
+                maxErrMsg = self.textDict['pbMaxSelectedErrorMsg']
+                maxErrMsg %= self.maxNumSelected
+            if self.minNumSelected != -1 and self.maxNumSelected != -1:
+                minMaxErrMsg = self.textDict['pbMinMaxSelectedErrorMsg']
+                minMaxErrMsg %= (self.minNumSelected, self.maxNumSelected)
+            
+            verificationDict = {'pbMinSelectedErrorMsg': minErrMsg,
+                                'pbMaxSelectedErrorMsg': maxErrMsg,
+                                'pbMinMaxSelectedErrorMsg': minMaxErrMsg,
+                                }
+            
+            embedTxt += "\n<script>\n"
+            embedTxt += _verifySelectedWithinRangeJS % verificationDict
+            embedTxt += "\n</script>"
         
         htmlTxt = html.makeNoWrap(htmlTxt)
         
