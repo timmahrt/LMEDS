@@ -275,15 +275,45 @@ $(document).ready(function(){
                          boundaryMarkingCode_showHide}
 
 
+def _getKeyPressEmbed(playID, submitID):
+    
+    bindKeyTxt = ""
+    
+    # Bind key press to play button?
+    if playID is not None:
+        clickJS = 'document.getElementById("%s").click();' % "button0"
+        bindTuple = (playID, clickJS)
+        bindKeyTxt += ("\n" + html.bindKeySubSnippetJS % bindTuple)
+        
+    # Bind key press to submit event?
+    if submitID is not None:
+        bindKeyTxt += ("\n" +
+                       html.bindToSubmitButtonJS % submitID)
+    
+    returnJS = ""
+    if bindKeyTxt != "":
+        returnJS = html.bindKeyJSTemplate % bindKeyTxt
+    
+    return returnJS
+
+
 class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
     
     def __init__(self, name, transcriptName, minPlays, maxPlays,
                  instructions, presentAudio="true", boundaryToken=None,
                  doProminence=True, syllableDemarcator=None,
+                 bindPlayKeyID=None, bindSubmitID=None,
                  *args, **kargs):
         
         super(BoundaryOrProminenceAbstractPage, self).__init__(*args, **kargs)
         
+        # Normalize variables
+        if bindPlayKeyID is not None:
+            bindPlayKeyID = html.keyboardletterToChar(bindPlayKeyID)
+        if bindSubmitID is not None:
+            bindSubmitID = html.keyboardletterToChar(bindSubmitID)
+        
+        # Set instance variables
         self.name = name
         self.transcriptName = transcriptName
         self.minPlays = minPlays
@@ -292,18 +322,20 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         self.boundaryToken = boundaryToken
         self.doProminence = doProminence
         self.syllableDemarcator = syllableDemarcator
+        self.bindPlayKeyID = bindPlayKeyID
+        self.bindSubmitID = bindSubmitID
         
         self.txtDir = self.webSurvey.txtDir
         self.wavDir = self.webSurvey.wavDir
         
         self.instructText = instructions
-    
+        
         # Strings used in this page
         txtKeyList = []
         txtKeyList.extend(abstract_pages.audioTextKeys)
         txtKeyList.append(self.instructText)
         self.textDict.update(loader.batchGetText(txtKeyList))
-    
+        
         # Variables that all pages need to define
         if presentAudio == "true":
             self.numAudioButtons = 1
@@ -390,6 +422,8 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
                                         self.webSurvey.audioExtList,
                                         "audio")
             embedTxt += "\n\n" + embed
+            embedTxt += _getKeyPressEmbed(self.bindPlayKeyID,
+                                          self.bindSubmitID)
         else:
             embedTxt = ""
         embedTxt += "\n\n"
@@ -434,6 +468,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
     def __init__(self, name, transcriptName, minPlays, maxPlays,
                  boundaryInstructions, prominenceInstructions,
                  presentAudio="true", boundaryToken=None, *args, **kargs):
+                 bindPlayKeyID=None, bindSubmitID=None,
         
         super(BoundaryAndProminencePage, self).__init__(*args, **kargs)
         
@@ -441,12 +476,21 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         if presentAudio.lower() == "false":
             minPlays = "0"
         
+        # Normalize variables
+        if bindPlayKeyID is not None:
+            bindPlayKeyID = html.keyboardletterToChar(bindPlayKeyID)
+        if bindSubmitID is not None:
+            bindSubmitID = html.keyboardletterToChar(bindSubmitID)
+        
+        # Set instance variables
         self.name = name
         self.transcriptName = transcriptName
         self.minPlays = minPlays
         self.maxPlays = maxPlays
         self.presentAudio = presentAudio
         self.boundaryToken = boundaryToken
+        self.bindPlayKeyID = bindPlayKeyID
+        self.bindSubmitID = bindSubmitID
         
         self.txtDir = self.webSurvey.txtDir
         self.wavDir = self.webSurvey.wavDir
@@ -556,9 +600,12 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
                                         self.webSurvey.audioExtList,
                                         "audio")
             embedTxt += "\n\n" + embed
+            embedTxt += "\n\n" + _getKeyPressEmbed(self.bindPlayKeyID,
+                                                   self.bindSubmitID)
+                
         else:
             embedTxt = ""
-
+        
         embedTxt += "\n\n" + _getTogglableWordEmbed(numWords,
                                                     self.boundaryToken)
         
