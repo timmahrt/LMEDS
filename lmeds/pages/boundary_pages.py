@@ -168,8 +168,10 @@ def _makeTogglableWord(testType, word, idNum, boundaryToken, labelClass):
 
 def _getTogglableWordEmbed(numWords, boundaryMarking, minV, maxV):
     
-    doMinMaxClickedCheck = "didPlay &= verifySelectedWithinRange(%d,%d,'%s');"
-    doMinMaxClickedCheck %= (minV, maxV, "boundary_and_prominence")
+    doMinMaxClickedCheck = ""
+    if minV != -1 and maxV != -1:
+        doMinMaxClickedCheck = "didPlay &= verifySelectedWithinRange(%d,%d,'%s');"
+        doMinMaxClickedCheck %= (minV, maxV, "boundary_and_prominence")
     
     boundaryMarkingCode_showHide = """
         $("#"+x).closest("label").css({
@@ -451,9 +453,13 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
             taskStr = "prominence"
         else:
             taskStr = "boundary"
-        verifyNumSelected = 'verifySelectedWithinRange(%d, %d, "%s")'
-        verifyNumSelected %= (minNumSelected, maxNumSelected, taskStr)
-        self.processSubmitList = ["verifyAudioPlayed()", verifyNumSelected]
+        
+        self.processSubmitList = ["verifyAudioPlayed()"]
+        
+        if minNumSelected != -1 or maxNumSelected != -1:
+            verifyNumSelected = 'verifySelectedWithinRange(%d, %d, "%s")'
+            verifyNumSelected %= (minNumSelected, maxNumSelected, taskStr)
+            self.processSubmitList.append(verifyNumSelected)
         
         self.checkArgs()
         
@@ -662,10 +668,13 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
             self.numAudioButtons = 2
         else:
             self.numAudioButtons = 0
-        verifyNumSelected = "verifySelectedWithinRange(%d, %d, '%s')"
-        verifyNumSelected %= (minNumSelected, maxNumSelected,
-                              "boundary_and_prominence")
-        self.processSubmitList = ["verifyAudioPlayed()", verifyNumSelected]
+            
+        self.processSubmitList = ["verifyAudioPlayed()", ]
+        if minNumSelected != -1 or maxNumSelected != -1:
+            verifyNumSelected = "verifySelectedWithinRange(%d, %d, '%s')"
+            verifyNumSelected %= (minNumSelected, maxNumSelected,
+                                  "boundary_and_prominence")
+            self.processSubmitList.append(verifyNumSelected)
     
     def checkResponseCorrect(self, responseList, correctResponse):
         raise abstract_pages.NoCorrectResponseError()
