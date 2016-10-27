@@ -4,7 +4,10 @@ Created on May 30, 2013
 @author: timmahrt
 '''
 
+import os
+from os.path import join
 import io
+import random
 
 from lmeds.pages import factories
 
@@ -45,7 +48,7 @@ class InvalidFirstLine(Exception):
         self.item = item
         
     def __str__(self):
-        return ("ERROR: The first line in a sequence file must be"
+        return ("ERROR: The first line in a sequence file must be "
                 "the sequence title (i.e. start with '*').\n\nFound '%s."
                 ) % self.item
     
@@ -57,7 +60,7 @@ class InvalidSequenceFileError(Exception):
         self.item = item
         
     def __str__(self):
-        return ("ERROR: The first command in a sequence file cannot be"
+        return ("ERROR: The first command in a sequence file cannot be "
                 "a subsequence (i.e. start with '#').\n\nFound '%s'."
                 ) % self.item
 
@@ -75,13 +78,94 @@ class UnbalancedWrapperError(Exception):
                 % (self.startDelim, self.endDelim, self.text))
 
 
+class UserSequencePathError(Exception):
+    
+    def __init__(self, path):
+        super(UserSequencePathError, self).__init__()
+        self.path = path
+        
+    def __str__(self):
+        return ("Path '%s' does not exist in test folder. "
+                "Please create it and try again."
+                % self.path)
+
+
+def _createUserSequence(fromFN, toFN):
+    title, sequenceList = parseSequence(fromFN, True)
+    
+    outputSequenceTxt = '*' + title + "\n"
+    
+    i = 0
+    decrement = 0  # Don't count directives
+    while i < len(sequenceList):
+        if sequenceList[i] == "<randomize>":
+            decrement += 1
+            outputSequenceTxt += "\n"
+            
+            # Mark the original order of the stimuli,
+            # so we can reconstruct it later
+            subList = []
+            i += 1
+            j = 0
+            while True:
+                row = sequenceList[i + j]
+                if row == "</randomize>":
+                    break
+                else:
+                    subList.append((row, i - decrement + j))
+                j += 1
+                
+            # Randomize order and mark the order this user did the sequence in
+            random.shuffle(subList)
+            for j, rowTuple in enumerate(subList):
+                row, origI = rowTuple
+                rowArgs = (row, origI, i - decrement + j)
+                outputSequenceTxt += "%s order=(%d,%d)\n" % rowArgs
+            outputSequenceTxt += "\n"
+            i += len(subList)
+            
+            # Extra 1 for </randomize> tag
+            decrement += 1
+            i += 1
+        
+        else:
+            row = sequenceList[i]
+            outputSequenceTxt += ("%s order=(%d,%d)\n" %
+                                  (row, i - decrement, i - decrement))
+            i += 1
+    
+    with io.open(toFN, "w") as fd:
+        fd.write(outputSequenceTxt)
+
+
 class TestSequence(object):
     
-    def __init__(self, webSurvey, sequenceFN):
+    def __init__(self, webSurvey, sequenceFN, individualSequenceName=None):
+
+        if individualSequenceName is not None:
+            sequencePath = os.path.split(sequenceFN)[0]
+            
+            # Loading the sequence title -- dropping the '*' prefix
+            with open(sequenceFN, "r") as fd:
+                sequenceTitle = fd.readline().strip()[1:]
+            
+            newPath = join(sequencePath, "individual_sequences", sequenceTitle)
+            
+            if not os.path.exists(newPath):
+                raise UserSequencePathError(join("<test_root>",
+                                                 "individual_sequences",
+                                                 sequenceTitle))
+            
+            newSequenceFN = join(newPath, individualSequenceName + ".txt")
+            if not os.path.exists(newSequenceFN):
+                _createUserSequence(sequenceFN, newSequenceFN)
+            sequenceFN = newSequenceFN
+        
         self.sequenceFN = sequenceFN
     
         self.webSurvey = webSurvey  # Needed to instantiate pages
         self.sequenceTitle, self.testItemList = parseSequence(sequenceFN)
+        print(sequenceFN)
     
     def getNumPages(self):
         return len(self.testItemList)
@@ -101,12 +185,15 @@ class TestSequence(object):
         return pageName, chunkList
 
 
-def parseSequence(sequenceFN):
+def parseSequence(sequenceFN, keepDirectives=False):
     with io.open(sequenceFN, "r", encoding='utf-8') as fd:
         data = fd.read()
     testItemList = data.split("\n")
     testItemList = [row.strip() for row in testItemList]
     testItemList = [row for row in testItemList if row != '']
+    
+    if keepDirectives is False:
+        testItemList = [row for row in testItemList if row[0] != '<']
 
     # Validate the test title
     sequenceTitle = testItemList.pop(0)
