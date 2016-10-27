@@ -40,7 +40,8 @@ class WebSurvey(object):
     
     def __init__(self, surveyName, sequenceFN, languageFileFN,
                  disableRefreshFlag, sourceCGIFN=None, audioExtList=None,
-                 videoExtList=None, allowUsersToRelogin=False
+                 videoExtList=None, allowUsersToRelogin=False,
+                 individualSequences=False
                  ):
         
         self.surveyRoot = join(constants.rootDir, "tests", surveyName)
@@ -49,6 +50,7 @@ class WebSurvey(object):
         self.imgDir = join(self.surveyRoot, "imgs")
         self.outputDir = join(self.surveyRoot, "output")
         self.allowUsersToRelogin = allowUsersToRelogin
+        self.individualSequences = individualSequences
         
         self.surveyName = surveyName
         self.sequenceFN = join(self.surveyRoot, sequenceFN)
@@ -130,7 +132,7 @@ class WebSurvey(object):
         # if we need to override that decision
         pageNum += 1
         sequenceTitle = testSequence.sequenceTitle
-        nextPage = testSequence.getPage(pageNum)
+        nextPage = None
         
         # If a user name text control is on the page,
         # extract the user name from it
@@ -161,8 +163,6 @@ class WebSurvey(object):
                         pageNum = int(pageArgList[-1]) + 1
                         break
                     
-                    nextPage = testSequence.getPage(pageNum)
-                    
                 # If not, throw an error page
                 else:
                     nextPage = factories.loadPage(self, "login_bad_user_name",
@@ -173,7 +173,8 @@ class WebSurvey(object):
         # Otherwise, the user name, should be stored in the form
         elif "user_name" in form:
             userName = utils.decodeUnicode(form["user_name"].value)
-        
+            self._testSequenceOverride(userName)
+            
         # Serialize all variables
         self.serializeResults(form, lastPage, lastPageNum,
                               userName, sequenceTitle)
@@ -188,10 +189,16 @@ class WebSurvey(object):
             if form['radio'].value == 'dissent':
                 nextPage = factories.loadPage(self, "media_test_end", [], {})
     
+        if nextPage is None:
+            nextPage = self.testSequence.getPage(pageNum)
+        
         return pageNum, cookieTracker, nextPage, userName
     
     def buildPage(self, pageNum, cookieTracker, page, userName,
                   testSequence, sourceCGIFN):
+        
+        self._testSequenceOverride(userName)
+            
         html.printCGIHeader(cookieTracker, self.disableRefreshFlag)
 
         validateText = page.getValidation()
@@ -281,6 +288,20 @@ class WebSurvey(object):
         htmlOutput = pageTemplate % htmlDict
         
         utils.outputUnicode(htmlOutput)
+    
+    def _testSequenceOverride(self, userName):
+        '''
+        Override the test sequence
+        
+        This is done only when we're using individual sequences
+        '''
+
+        if self.individualSequences is True:
+            if userName != "" and self.sequenceFN != userName + ".txt":
+                testSequence = sequence.TestSequence(self,
+                                                     self.sequenceFN,
+                                                     userName)
+                self.testSequence = testSequence
     
     def _getLeafSequenceName(self, page):
         '''

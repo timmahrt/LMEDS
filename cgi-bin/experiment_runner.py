@@ -89,8 +89,9 @@ class Logger(object):
 
     
 def runExperiment(leafFolder, sequenceFile, languageFile, disableRefresh,
-                  audioExtList=None, videoExtList=None, allowUtilityScripts=False,
-                  allowUsersToRelogin=False):
+                  audioExtList=None, videoExtList=None,
+                  allowUtilityScripts=False, allowUsersToRelogin=False,
+                  individualSequences=False):
 
     form = cgi.FieldStorage(keep_blank_values=True)
 
@@ -165,7 +166,8 @@ def runExperiment(leafFolder, sequenceFile, languageFile, disableRefresh,
     survey = lmeds_main.WebSurvey(leafFolder, sequenceFile, languageFile,
                                   disableRefresh, audioExtList=audioExtList,
                                   videoExtList=videoExtList,
-                                  allowUsersToRelogin=allowUsersToRelogin)
+                                  allowUsersToRelogin=allowUsersToRelogin,
+                                  individualSequences=individualSequences)
 
     # For utility scripts that need the survey:
     if allowUtilityScripts and len(keyDict) > 0:

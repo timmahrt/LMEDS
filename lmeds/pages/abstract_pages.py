@@ -95,9 +95,15 @@ class AbstractPage(object):
     '''
     pageName = None
     
-    def __init__(self, webSurvey, *args, **kargs):
+    def __init__(self, webSurvey, order=None, *args, **kargs):
         super(AbstractPage, self).__init__(*args, **kargs)
         self.webSurvey = webSurvey
+        
+        # Order is a tuple (sequence i, actual i) where the sequence i
+        # specifies that this is the ith page in the sequence file and
+        # actual i specifies when the user actually encountered the page
+        # (in the event that the sequence order has been shuffled or randomized)
+        self.order = None
         
         # These are variables that all pages can define
         
