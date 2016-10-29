@@ -10,8 +10,8 @@ import codecs
 
 from lmeds.io import loader
 from lmeds.io import user_response
+from lmeds.post_process import transpose_utils
 from lmeds.utilities import utils
-from lmeds.io import sequence
 
 P = "p"
 B = "b"
@@ -129,7 +129,7 @@ def _getSmallestPrefix(keywordList):
     return wordPrefixDict
 
 
-def _buildHeader(fnList, aspectKeyList, pageName):
+def _buildHeader(fnList, aspectKeyList, pageName, doSequenceOrder):
     # Build the name lists, which will take up the first two rows in the
     # spreadsheet.  One is normal, and one is anonymized
     oom = utils.orderOfMagnitude(len(fnList))
@@ -180,12 +180,28 @@ def _buildHeader(fnList, aspectKeyList, pageName):
 
     headerRow = rowTemplate % (sumTxt, headerStr)
     anonHeaderRow = rowTemplate % (sumTxt, anonHeaderStr)
+    
+    # Add the sequence order if needed
+    if doSequenceOrder:
+        txtPrefixDict2 = {"boundary": "b%(aspect)s",
+                          "prominence": "p%(aspect)s",
+                          "syllable_marking": "p%(aspect)s",
+                          "boundary_and_prominence": "bp%(aspect)s"}
+        sequencePageCode = txtPrefixDict2[pageName] % {'aspect': aspectInitial}
+        tmpTuple = transpose_utils.getUserSeqHeader(fnList,
+                                                    sequencePageCode,
+                                                    oom)
+        seqHeader, anonSeqHeader = tmpTuple
+        headerRow += "," + ",".join(seqHeader)
+        anonHeaderRow += "," + ",".join(anonSeqHeader)
+    
     return headerRow, anonHeaderRow
 
 
 def _unifyRow(row):
     return [",".join(cells) if isinstance(cells, list) else cells
             for cells in row]
+
 
 def _getDemarcator(argList):
     syllableDemarcator = None
@@ -194,7 +210,8 @@ def _getDemarcator(argList):
             syllableDemarcator = arg.split("=")[1]
             
     return syllableDemarcator
-    
+        
+        
 def transposeRPT(path, txtPath, pageName, outputPath):
     '''
     Transposes RPT data
@@ -203,29 +220,33 @@ def transposeRPT(path, txtPath, pageName, outputPath):
     Output files: one file per stimuli
     '''
     utils.makeDir(outputPath)
-        
-    # Load p/b-score data
-    rptDataList = []
+
+    # Load response data
+    responseDataList = []
     fnList = utils.findFiles(path, filterExt=".csv")
     for fn in fnList:
-        scoreFN = join(path, fn)
-        userResponse = codecs.open(scoreFN, encoding="utf-8").readlines()
-        userResponse = [line.strip() for line in userResponse]
-        
         a = user_response.loadUserResponse(join(path, fn))
+        responseDataList.append(a)
+    
+    # Load the demarcator, if there is one
+    # and load the order info if present
+    demarcator = None
+    pageName, pageArgs, _, _ = responseDataList[0][0]
+    if pageName == "syllable_marking":
         
-        # Load the demarcator, if there is one
-        for pageName, pageArgs, _, _ in a:
-            demarcator = None
-            if pageName == "syllable_marking":
-                
-                # The demarcator can either be an arg or a keyword arg.
-                # Either way, it should be the last item in the list
-                demarcator = pageArgs[-1]
-                if "syllableDemarcator" in demarcator:
-                    demarcator = demarcator.split("=")[1]
-        
-        rptDataList.append(a)
+        # The demarcator can either be an arg or a keyword arg.
+        # Either way, it should be the last item in the list
+        demarcator = pageArgs[-1]
+        if "syllableDemarcator" in demarcator:
+            demarcator = demarcator.split("=")[1]
+    
+    # Sort response if sequence order information is available
+    parsedTuple = transpose_utils.parseResponse(responseDataList)
+    responseDataList, _, orderListOfLists = parsedTuple
+    orderList = []
+    if len(orderListOfLists) > 0:
+        orderList = [",".join(row) for row
+                     in utils.safeZip(orderListOfLists, True)]
     
     # Load Words
     txtDict = {}
@@ -246,12 +267,18 @@ def transposeRPT(path, txtPath, pageName, outputPath):
             txtDict[name] = [syllable for word in txt.split(",") if word != ""
                              for syllable in word.split(demarcator)]
     
-    returnDict, idKeyList, aspectKeyList = _transposeRPT(rptDataList)
+    returnDict, idKeyList, aspectKeyList = _transposeRPT(responseDataList)
     
-    headerRow, anonHeaderRow = _buildHeader(fnList, aspectKeyList, pageName)
+    doUserSeqHeader = len(orderListOfLists) > 0
+    headerRow, anonHeaderRow = _buildHeader(fnList, aspectKeyList, pageName,
+                                            doUserSeqHeader)
     
+    # Format the output rpt scores
     aggrOutputList = [headerRow, anonHeaderRow]
-    for stimulusID in idKeyList:
+    for i in range(len(idKeyList)):
+        
+        stimulusID = idKeyList[i]
+        
         wordList = txtDict[stimulusID]
         stimulusIDList = [stimulusID for _ in wordList]
         aspectSumList = [stimulusIDList, wordList, ]
@@ -261,6 +288,7 @@ def transposeRPT(path, txtPath, pageName, outputPath):
                                               B)
             pScoreList, pSumList = _getScores(returnDict[stimulusID][aspect],
                                               P)
+            
             if pageName == "boundary":
                 aspectSumList.extend([bSumList, ])
                 aspectList.extend([bScoreList, ])
@@ -270,7 +298,14 @@ def transposeRPT(path, txtPath, pageName, outputPath):
             elif pageName == "boundary_and_prominence":
                 aspectSumList.extend([bSumList, pSumList, ])
                 aspectList.extend([bScoreList, pScoreList, ])
-                
+        
+            # Extend header with sequence order information
+            if doUserSeqHeader:
+                orderStr = orderList[i]
+                numAnnotators = range(max([len(bSumList), len(pSumList)]))
+                tmpOrderList = [orderStr for _ in numAnnotators]
+                aspectList.extend([tmpOrderList, ])
+            
         dataList = aspectSumList + aspectList
         combinedList = [_unifyRow(row) for row in
                         utils.safeZip(dataList, enforceLength=True)]
@@ -279,4 +314,5 @@ def transposeRPT(path, txtPath, pageName, outputPath):
     outputTxt = "\n".join(aggrOutputList)
     
     outputFN = join(outputPath, pageName + ".csv")
-    codecs.open(outputFN, "w", encoding="utf-8").write(outputTxt)
+    with codecs.open(outputFN, "w", encoding="utf-8") as fd:
+        fd.write(outputTxt)

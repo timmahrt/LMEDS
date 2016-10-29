@@ -120,7 +120,7 @@ def _createUserSequence(fromFN, toFN):
             for j, rowTuple in enumerate(subList):
                 row, origI = rowTuple
                 rowArgs = (row, origI, i - decrement + j)
-                outputSequenceTxt += "%s order=(%d,%d)\n" % rowArgs
+                outputSequenceTxt += "%s orderSI=%d orderAI=%d\n" % rowArgs
             outputSequenceTxt += "\n"
             i += len(subList)
             
@@ -130,7 +130,7 @@ def _createUserSequence(fromFN, toFN):
         
         else:
             row = sequenceList[i]
-            outputSequenceTxt += ("%s order=(%d,%d)\n" %
+            outputSequenceTxt += ("%s orderSI=%d orderAI=%d\n" %
                                   (row, i - decrement, i - decrement))
             i += 1
     

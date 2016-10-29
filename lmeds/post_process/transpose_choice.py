@@ -54,15 +54,15 @@ import codecs
 
 from lmeds.io import sequence
 from lmeds.io import user_response
+from lmeds.post_process import transpose_utils
 from lmeds.utilities import utils
 
 
-def _buildHeader(fnList, numArgs, pageName):
+def _buildHeader(fnList, numArgs, pageName, doSequenceOrder):
     # Build the name lists, which will take up the first two rows in the
     # spreadsheet.  One is normal, and one is anonymized
     oom = utils.orderOfMagnitude(len(fnList))
     userNameTemplate = "t%%0%dd.%s" % (oom + 1, pageName)
-    
     nameList = [os.path.splitext(name)[0] + "." + pageName for name in fnList]
     anonNameList = [userNameTemplate % (i + 1)
                     for i in range(len(fnList))]
@@ -72,6 +72,12 @@ def _buildHeader(fnList, numArgs, pageName):
     
     nameList = headerPrefixList + nameList
     anonNameList = headerPrefixList + anonNameList
+    
+    if doSequenceOrder:
+        tmpTuple = transpose_utils.getUserSeqHeader(fnList, pageName, oom)
+        seqHeader, anonSeqHeader = tmpTuple
+        nameList += seqHeader
+        anonNameList += anonSeqHeader
     
     return nameList, anonNameList
 
@@ -106,18 +112,6 @@ def _parseTransposed(inputFN, isAnswerFlag):
         returnList = [(row[:i], row[i:]) for row in dataList]
     
     return headerList, returnList
-
-
-def _recListToStr(someObj):
-    if isinstance(someObj, list):
-        tmpList = []
-        for subVal in someObj:
-            tmpList.append(_recListToStr(subVal))
-        retStr = "[%s]" % " ".join(tmpList)
-    else:
-        retStr = str(someObj)
-    
-    return retStr
 
 
 def _generateConfusionMatrix(correctList, responseList, percentFlag):
@@ -159,59 +153,69 @@ def _generateConfusionMatrix(correctList, responseList, percentFlag):
         outputList.append(subList)
     
     return outputList
-    
-    
+
+
 def transposeChoice(path, pageName, outputPath):
     
     utils.makeDir(outputPath)
     
-    # Load choice data
-    choiceDataList = []
+    # Load response data
+    responseDataList = []
     fnList = utils.findFiles(path, filterExt=".csv")
     for fn in fnList:
         a = user_response.loadUserResponse(join(path, fn))
-        choiceDataList.append(a)
+        responseDataList.append(a)
+    
+    # Sort response if sequence order information is available
+    parsedTuple = transpose_utils.parseResponse(responseDataList)
+    responseDataList, stimuliListsOfLists, orderListOfLists = parsedTuple
     
     # Convert response to single answer
-    responseDataList = []
-    stimuliList = []
-    stimuliListsOfLists = []
-    for userDataList in choiceDataList:
+    tmpUserResponse = []
+    for userDataList in responseDataList:
+        # Get user response
         userResponse = [str(responseTuple[3].split(',').index('1'))
                         for responseTuple in userDataList]
-        responseDataList.append(userResponse)
-        
-        userStimuli = []
-        for responseTuple in userDataList:
-            rowData = [_recListToStr(row) for row in responseTuple[1]]
-            userStimuli.append(",".join(rowData))
-        
-        if stimuliList == []:
-            stimuliList = userStimuli
-        stimuliListsOfLists.append(userStimuli)
+        tmpUserResponse.append(userResponse)
     
-    # Assert all the headers are the same for each user
+    responseDataList = tmpUserResponse
+
+    # Verify that all responses have the same list of stimuli
     assert(all([stimuliListsOfLists[0] == header
                 for header in stimuliListsOfLists]))
     
     # Transpose data
     tResponseDataList = [row for row in utils.safeZip(responseDataList, True)]
+    tOrderListOfLists = []
+    if len(orderListOfLists) > 0:
+        tOrderListOfLists = [row for row
+                             in utils.safeZip(orderListOfLists, True)]
     
     # Add a unique id to each row
-    oom = utils.orderOfMagnitude(len(stimuliList))
+    oom = utils.orderOfMagnitude(len(stimuliListsOfLists[0]))
     stimID = "s%%0%dd" % (oom + 1)
     stimuliList = ["%s,%s" % (stimID % i, row)
-                   for i, row in enumerate(stimuliList)]
+                   for i, row in enumerate(stimuliListsOfLists[0])]
     
-    # Add stimuli information to each row
-    outputList = [[header, ] + list(row) for header, row
+    addSequenceInfo = len(tOrderListOfLists) > 0
+    if addSequenceInfo:  # Add sequence information to each row
+        tResponseDataList = [list(row) + list(sequenceInfo)
+                             for row, sequenceInfo
+                             in utils.safeZip([tResponseDataList,
+                                               tOrderListOfLists], True)]
+
+    # Aggregate the stimuli and the responses in rows
+    tResponseDataList = [list(row)
+                         for row
+                         in tResponseDataList]
+    outputList = [[header, ] + list(row)
+                  for header, row
                   in utils.safeZip([stimuliList, tResponseDataList], True)]
     
     # Add the column heading rows
-    # First row in unanonymized user names
-    # Second row is anonymized
+    # First row in unanonymized user names; Second row is anonymized
     numArgs = stimuliList[0].count(",")
-    rowOne, rowTwo = _buildHeader(fnList, numArgs, pageName)
+    rowOne, rowTwo = _buildHeader(fnList, numArgs, pageName, addSequenceInfo)
     outputList = [rowOne, rowTwo, ] + outputList
     
     outputTxt = "\n".join([",".join(row) for row in outputList])
@@ -277,7 +281,8 @@ def markCorrect(inputFN, correctionFN, outputFN, evalFunc=None):
         
         markedList.append(responseTuple[0] + markedRow)
     
-    markedList = [",".join([_recListToStr(item) for item in row])
+    markedList = [",".join([transpose_utils.recListToStr(item)
+                            for item in row])
                   for row in markedList]
     outputTxt = "\n".join(markedList)
     with codecs.open(outputFN, "w", encoding="utf-8") as fd:
