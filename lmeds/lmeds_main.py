@@ -101,7 +101,7 @@ class WebSurvey(object):
         
         # Extract the information from the form
         else:
-            formTuple = self.processForm(cgiForm, self.testSequence)
+            formTuple = self.processForm(cgiForm)
             pageNum, cookieTracker, page, userName = formTuple
         
         self.buildPage(pageNum, cookieTracker, page, userName,
@@ -114,7 +114,7 @@ class WebSurvey(object):
         self.buildPage(pageNum, cookieTracker, page, userName,
                        testSequence, self.sourceCGIFN)
 
-    def processForm(self, form, testSequence):
+    def processForm(self, form):
         '''
         Get page number + user info from previous page; serialize user data
         '''
@@ -125,13 +125,12 @@ class WebSurvey(object):
         cookieTracker += 1
         
         pageNum = int(form["pageNumber"].value)
-        lastPage = self.testSequence.getPage(pageNum)
         lastPageNum = pageNum
         
         # This is the default next page, but in the code below we will see
         # if we need to override that decision
         pageNum += 1
-        sequenceTitle = testSequence.sequenceTitle
+        sequenceTitle = self.testSequence.sequenceTitle
         nextPage = None
         
         # If a user name text control is on the page,
@@ -174,6 +173,10 @@ class WebSurvey(object):
         elif "user_name" in form:
             userName = utils.decodeUnicode(form["user_name"].value)
             self._testSequenceOverride(userName)
+        
+        # Get last page info
+        lastPage = self.testSequence.getPage(lastPageNum)
+        sequenceTitle = self.testSequence.sequenceTitle
             
         # Serialize all variables
         self.serializeResults(form, lastPage, lastPageNum,
