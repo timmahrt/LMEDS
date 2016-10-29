@@ -187,9 +187,7 @@ class TestSequence(object):
 
 def parseSequence(sequenceFN, keepDirectives=False):
     with io.open(sequenceFN, "r", encoding='utf-8') as fd:
-        data = fd.read()
-    testItemList = data.split("\n")
-    testItemList = [row.strip() for row in testItemList]
+        testItemList = [row.rstrip("\n") for row in fd.readlines()]
     testItemList = [row for row in testItemList if row != '']
     
     if keepDirectives is False:

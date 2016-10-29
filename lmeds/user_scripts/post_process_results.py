@@ -56,7 +56,7 @@ def extractFromTest(path, keyList, removeItemList=None, onlyKeepList=None):
     testSequenceDataList = []
     for fn in utils.findFiles(path, filterExt=".csv"):
         with io.open(join(path, fn), "r", encoding="utf-8") as fd:
-            subjectDataList = fd.read().split("\n")
+            subjectDataList = [row.rstrip("\n") for row in fd.readlines()]
         subjectDataList = [line.split(",", 1) for line in subjectDataList]
         testSequenceDataList.append((fn, subjectDataList))
      

@@ -13,9 +13,8 @@ HEADER_DEMARCATOR = ";,"  # Splits the header from its data
 def loadUserResponse(fn):
     
     with io.open(fn, "r", encoding="utf-8") as fd:
-        featureList = fd.read().split("\n")
-        featureList = [row.strip() for row in featureList]
-        
+        featureList = [row.rstrip('\n') for row in fd.readlines()]
+    
     returnList = []
     for line in featureList:
         if line == "":

@@ -75,13 +75,7 @@ def loadTxtFile(fn):
 
 def loadTxtFileWHTML(fn):
     with io.open(fn, "r", encoding="utf-8") as fd:
-        txt = fd.read()
-    
-    lineEnding = utils.detectLineEnding(txt)
-    if lineEnding is None:  # Should be only a single line
-        txtList = [txt, ]
-    else:
-        txtList = txt.split(lineEnding)
+        txtList = [row.rstrip("\n") for row in fd.readlines()]
     
     newTxtList = []
     for row in txtList:
