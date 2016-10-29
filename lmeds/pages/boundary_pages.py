@@ -350,7 +350,7 @@ function verifySelectedWithinRange(min_to_mark, max_to_mark, widgetName) {
         max = max / 2;
     }
     if (doShift == true) {
-        min = max + 1;
+        min = max;
         max = (2 * max);
     }
     
