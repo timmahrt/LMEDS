@@ -6,7 +6,7 @@ Created on Aug 11, 2015
 
 import os
 from os.path import join
-import codecs
+import io
 
 from lmeds.lmeds_io import survey
 from lmeds.lmeds_io import user_response
@@ -94,7 +94,7 @@ def transposeSurvey(path, surveyFullPathList, outputPath):
         
         outputTxt = "\n".join(outputTxtList)
         outputFN = join(outputPath, stimulusID + ".csv")
-        with codecs.open(outputFN, "wU", encoding="utf-8") as fd:
+        with io.open(outputFN, "w", encoding="utf-8") as fd:
             fd.write(outputTxt)
             
     return returnDict, idKeyList, aspectKeyList

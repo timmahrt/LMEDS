@@ -8,7 +8,7 @@ import cgi
 
 import __main__
 
-import codecs
+import io
 
 from lmeds.pages import factories
 from lmeds.code_generation import html
@@ -152,7 +152,8 @@ class WebSurvey(object):
                     # Find the last page of saved user data
                     # If the user is coming back, the 'login' page will
                     # reappear on their output file
-                    pageLineList = open(outputFN, "r").readlines()
+                    with io.open(outputFN, "r", encoding='utf-8') as fd:
+                        pageLineList = fd.readlines()
                     while len(pageLineList) > 0:
                         pageLine = pageLineList.pop(-1)
                         pageArgList = pageLine.split(";,")[0].split(",")
@@ -282,7 +283,8 @@ class WebSurvey(object):
                     }
         
         backButtonTxt = self.textDict['back_button_warning']
-        pageTemplate = open(pageTemplateFN, "r").read()
+        with io.open(pageTemplateFN, "r", encoding='utf-8') as fd:
+            pageTemplate = fd.read()
         pageTemplate %= {'form': formHTML,
                          'progressBar': progressBarHTML,
                          'pressBackWarning': backButtonTxt}
@@ -368,11 +370,11 @@ class WebSurvey(object):
             os.mkdir(experimentOutputDir)
             
         outputFN = join(experimentOutputDir, "%s.csv" % (userName))
-        try:
-            fd = codecs.open(outputFN, "aU", encoding="utf-8")
-        except ValueError:
-            fd = open(outputFN, "a", encoding="utf-8", newline=None)
-        fd.write("%s,%s,%s,%s,%s,%s;,%s\n" % (key, taskArgumentStr, numPlays1,
-                                              numPlays2, taskDuration,
-                                              pageNum, value))
-        fd.close()
+        
+        outputStr = u"%s,%s,%s,%s,%s,%s;,%s\n" % (key, taskArgumentStr,
+                                                  numPlays1, numPlays2,
+                                                  taskDuration, pageNum,
+                                                  value)
+
+        with io.open(outputFN, "a", encoding="utf-8") as fd:
+            fd.write(outputStr)

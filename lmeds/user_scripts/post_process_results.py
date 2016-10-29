@@ -9,7 +9,7 @@ import os
 from os.path import join
 import sys
 import argparse
-import codecs
+import io
 import shutil
 
 from os.path import dirname, abspath
@@ -43,7 +43,7 @@ def extractFromTest(path, keyList, removeItemList=None, onlyKeepList=None):
     # -- separate the command name on each line from the rest of the line
     testSequenceDataList = []
     for fn in utils.findFiles(path, filterExt=".csv"):
-        with open(join(path, fn), "Ur") as fd:
+        with io.open(join(path, fn), "r", encoding="utf-8") as fd:
             subjectDataList = fd.read().split("\n")
         subjectDataList = [line.split(",", 1) for line in subjectDataList]
         testSequenceDataList.append((fn, subjectDataList))
@@ -76,7 +76,7 @@ def extractFromTest(path, keyList, removeItemList=None, onlyKeepList=None):
             if subjectDataSubsetList == []:
                 continue
             
-            with open(join(outputDir, fn), "w") as fd:
+            with io.open(join(outputDir, fn), "w", encoding="utf-8") as fd:
                 fd.write("\n".join(subjectDataSubsetList))
 
 
@@ -92,7 +92,7 @@ def removeDuplicates(path, overwrite=False):
     
     for fn in utils.findFiles(path, filterExt=".csv"):
         
-        with open(join(path, fn), "r") as fd:
+        with io.open(join(path, fn), "r", encoding="utf-8") as fd:
             data = fd.read()
         dataList = data.splitlines()
         
@@ -117,7 +117,7 @@ def removeDuplicates(path, overwrite=False):
         if outputList[-1][:6] == "login," and len(outputList) > 1:
             outputList.pop(-1)
         
-        with open(join(outputPath, fn), "w") as fd:
+        with io.open(join(outputPath, fn), "w", encoding="utf-8") as fd:
             fd.write("\n".join(outputList))
 
     if anyDuplicatesFound is True:
@@ -126,8 +126,10 @@ def removeDuplicates(path, overwrite=False):
 
 def agglutinateSpreadsheets(csvFNList, outputFN):
     
-    csvDataList = [codecs.open(fn, "r", encoding="utf-8").readlines()
-                   for fn in csvFNList]
+    csvDataList = []
+    for fn in csvFNList:
+        with io.open(fn, "r", encoding="utf-8") as fd:
+            csvDataList.append(fd.readlines())
     
     outputDataList = []
     for rowList in utils.safeZip(csvDataList, enforceLength=True):
@@ -135,7 +137,7 @@ def agglutinateSpreadsheets(csvFNList, outputFN):
         outputDataList.append(",".join(rowList))
         
     outputTxt = "\n".join(outputDataList) + "\n"
-    with codecs.open(outputFN, "w", encoding="utf-8") as fd:
+    with io.open(outputFN, "w", encoding="utf-8") as fd:
         fd.write(outputTxt)
 
 

@@ -136,8 +136,8 @@ class TextDict(object):
     
     def _parse(self):
         
-        with open(self.sourceFN, 'rb') as fd:
-            data = fd.read().decode("utf-8")
+        with io.open(self.sourceFN, 'r', encoding="utf-8") as fd:
+            data = fd.read()
         testItemList = data.splitlines()
         
         keyValueList = self._findSections(testItemList, "-")

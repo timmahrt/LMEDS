@@ -134,7 +134,7 @@ def _createUserSequence(fromFN, toFN):
                                   (row, i - decrement, i - decrement))
             i += 1
     
-    with io.open(toFN, "w") as fd:
+    with io.open(toFN, "w", encoding='utf-8') as fd:
         fd.write(outputSequenceTxt)
 
 
@@ -146,7 +146,7 @@ class TestSequence(object):
             sequencePath = os.path.split(sequenceFN)[0]
             
             # Loading the sequence title -- dropping the '*' prefix
-            with open(sequenceFN, "r") as fd:
+            with io.open(sequenceFN, "r", encoding='utf-8') as fd:
                 sequenceTitle = fd.readline().strip()[1:]
             
             newPath = join(sequencePath, "individual_sequences", sequenceTitle)

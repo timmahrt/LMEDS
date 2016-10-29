@@ -6,7 +6,7 @@ Created on Aug 11, 2015
 
 import os
 from os.path import join
-import codecs
+import io
 
 from lmeds.lmeds_io import loader
 from lmeds.lmeds_io import user_response
@@ -102,12 +102,14 @@ def _outputScores(featPath, aspect, stimulusID, returnDict,
     scoreTxt = "%s_%sscores" % (aspect, scoreType.lower())
     scorePath = join(featPath, scoreTxt)
     utils.makeDir(scorePath)
-    with open(join(scorePath, "%s.csv" % stimulusID), "w") as fd:
+    fn = join(scorePath, "%s.csv" % stimulusID)
+    with io.open(fn, "w", encoding="utf-8") as fd:
         fd.write("\n".join([str(val) for val in sumList]))
     
     scorePath = join(featPath, scoreTxt + "_judgements")
     utils.makeDir(scorePath)
-    with open(join(scorePath, "%s.csv" % stimulusID), "w") as fd:
+    fn = join(scorePath, "%s.csv" % stimulusID)
+    with io.open(fn, "w", encoding="utf-8") as fd:
         fd.write("\n".join([",".join(val) for val in
                             returnDict[stimulusID][aspect][scoreType]]))
 
@@ -314,5 +316,5 @@ def transposeRPT(path, txtPath, pageName, outputPath):
     outputTxt = "\n".join(aggrOutputList)
     
     outputFN = join(outputPath, pageName + ".csv")
-    with codecs.open(outputFN, "w", encoding="utf-8") as fd:
+    with io.open(outputFN, "w", encoding="utf-8") as fd:
         fd.write(outputTxt)

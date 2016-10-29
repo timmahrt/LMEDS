@@ -6,7 +6,7 @@ Created on Apr 29, 2016
 @author: tmahrt
 '''
 from distutils.core import setup
-import codecs
+import io
 setup(name='lmeds',
       version='2.2.0',
       author='Tim Mahrt',
@@ -24,6 +24,6 @@ setup(name='lmeds',
       license='LICENSE',
       test_suite='nose.collector',
       tests_require=['nose'],
-      long_description=codecs.open('README.rst', 'r', encoding="utf-8").read(),
+      long_description=io.open('README.rst', 'r', encoding="utf-8").read(),
 #       install_requires=[], # No requirements! # requires 'from setuptools import setup'
       )

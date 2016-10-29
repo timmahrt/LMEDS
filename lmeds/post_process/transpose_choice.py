@@ -50,7 +50,7 @@ transpose_choice.markCorrect(originalFN, correctAnswersFN,
 
 import os
 from os.path import join
-import codecs
+import io
 
 from lmeds.lmeds_io import sequence
 from lmeds.lmeds_io import user_response
@@ -84,7 +84,8 @@ def _buildHeader(fnList, numArgs, pageName, doSequenceOrder):
 
 def _parseTransposed(inputFN, isAnswerFlag):
     
-    dataList = codecs.open(inputFN, "r", encoding="utf-8").readlines()
+    with io.open(inputFN, "r", encoding="utf-8") as fd:
+        dataList = fd.readlines()
     dataList = [sequence.recChunkLine(row, ",") for row in dataList]
     
     header = None
@@ -218,10 +219,9 @@ def transposeChoice(path, pageName, outputPath):
     rowOne, rowTwo = _buildHeader(fnList, numArgs, pageName, addSequenceInfo)
     outputList = [rowOne, rowTwo, ] + outputList
     
-    outputTxt = "\n".join([",".join(row) for row in outputList])
-    
+    outputTxt = u"\n".join([",".join(row) for row in outputList])
     outputFN = join(outputPath, pageName + ".csv")
-    with codecs.open(outputFN, "wU", encoding="utf-8") as fd:
+    with io.open(outputFN, "w", encoding="utf-8") as fd:
         fd.write(outputTxt)
 
     # Output a template users can fill in to auto score the results
@@ -231,8 +231,8 @@ def transposeChoice(path, pageName, outputPath):
         print("Response template '%s' already exists.  Not overwriting."
               % name)
     else:
-        outputTxt = "\n".join(stimuliList)
-        with codecs.open(answersFN, "wU", encoding="utf-8") as fd:
+        outputTxt = u"\n".join(stimuliList)
+        with io.open(answersFN, "w", encoding="utf-8") as fd:
             fd.write(outputTxt)
 
 
@@ -243,7 +243,8 @@ def generateCorrectResponse(correctionFN, ruleFunc, outputFN):
     /ruleFunc/ takes a list of arguments (one element for each cell in a row
     of the input) and outputs a decision, which is added to the row
     '''
-    dataList = codecs.open(correctionFN, "r", encoding="utf-8").readlines()
+    with io.open(correctionFN, "r", encoding="utf-8") as fd:
+        dataList = fd.readlines()
     dataList = [row.strip() for row in dataList if len(row) > 0]
     
     outputList = []
@@ -253,7 +254,7 @@ def generateCorrectResponse(correctionFN, ruleFunc, outputFN):
         outputList.append("%s,%s" % (row, decision))
     
     outputTxt = "\n".join(outputList)
-    with codecs.open(outputFN, "w", encoding="utf-8") as fd:
+    with io.open(outputFN, "w", encoding="utf-8") as fd:
         fd.write(outputTxt)
     
 
@@ -285,7 +286,7 @@ def markCorrect(inputFN, correctionFN, outputFN, evalFunc=None):
                             for item in row])
                   for row in markedList]
     outputTxt = "\n".join(markedList)
-    with codecs.open(outputFN, "w", encoding="utf-8") as fd:
+    with io.open(outputFN, "w", encoding="utf-8") as fd:
         fd.write(outputTxt)
 
     # Generate confusion matrix
@@ -302,5 +303,5 @@ def markCorrect(inputFN, correctionFN, outputFN, evalFunc=None):
     matrixOutputFN = os.path.splitext(outputFN)[0] + "_confusion_matrix.csv"
     confusionMatrix = [",".join(row) for row in confusionMatrix]
     outputTxt = "\n".join(confusionMatrix)
-    with codecs.open(matrixOutputFN, "w", encoding="utf-8") as fd:
+    with io.open(matrixOutputFN, "w", encoding="utf-8") as fd:
         fd.write(outputTxt)

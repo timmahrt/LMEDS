@@ -10,7 +10,7 @@ from os.path import join
 import sys
 import argparse
 import shutil
-import codecs
+import io
 
 from os.path import dirname, abspath
 
@@ -183,7 +183,7 @@ def generateLanguageDictionary(mode, testName, sequenceFN, outputFN):
                         "_autobackup.txt")
             shutil.copy(outputFNFullPath, backupFN)
     
-        with codecs.open(outputFNFullPath, "w", encoding="utf-8") as fd:
+        with io.open(outputFNFullPath, "w", encoding="utf-8") as fd:
             fd.write(outputTxt)
     
 

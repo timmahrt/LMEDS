@@ -9,6 +9,7 @@ experiment it is.  Pages that provide information to users, get their
 '''
 
 from os.path import join
+import io
 
 from lmeds.pages import abstract_pages
 from lmeds.lmeds_io import loader
@@ -153,7 +154,8 @@ class ConsentPage(abstract_pages.NonRecordingPage):
     
     def _getHTMLTxt(self):
         
-        with open(join(constants.htmlSnippetsDir, "consent.html"), "r") as fd:
+        fn = join(constants.htmlSnippetsDir, "consent.html")
+        with io.open(fn, "r", encoding='utf-8') as fd:
             consentText = fd.read()
         consentText %= (self.textDict["title"],
                         self.textDict["consent_title"],
