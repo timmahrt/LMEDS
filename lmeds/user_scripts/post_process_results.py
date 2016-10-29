@@ -34,6 +34,18 @@ ASPECT_WRITING = "writing"
 ASPECT_IMAGINE = "imagine"
 
 
+class EmptyUserDataFile(Exception):
+    
+    def __init__(self, fn):
+        super(EmptyUserDataFile, self).__init__()
+        self.fn = fn
+        
+    def __str__(self):
+        errMsg = ("User results file '%s' contains no user data. "
+                  "Remove file and try again.")
+        return errMsg % self.fn
+
+
 def extractFromTest(path, keyList, removeItemList=None, onlyKeepList=None):
     '''
     Extracts all matching keys from a user's results in an LMEDS test
@@ -96,7 +108,11 @@ def removeDuplicates(path, overwrite=False):
             data = fd.read()
         dataList = data.splitlines()
         
-        outputList = [dataList[0], ]
+        try:
+            outputList = [dataList[0], ]
+        except IndexError:
+            raise EmptyUserDataFile(fn)
+        
         prevString = dataList[0].split(";,")[0].rsplit("]", 1)[0]
         for i in range(1, len(dataList)):
             curString = dataList[i].split(";,")[0].rsplit("]", 1)[0]
