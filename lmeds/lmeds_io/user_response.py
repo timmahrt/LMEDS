@@ -31,8 +31,6 @@ def loadUserResponse(fn):
         stimuliArgs, metaData = argTxt.rsplit("],", 1)
         stimuliArgs = stimuliArgs.strip()[1:]  # Remove leading '['
         
-        # HACK: Why are quote marks around every item in the output?
-        stimuliArgs = stimuliArgs.replace("'", "")
         stimuliArgList = sequence.recChunkLine(stimuliArgs, ',')
         
         returnList.append((command, stimuliArgList, metaData, dataTxt))
