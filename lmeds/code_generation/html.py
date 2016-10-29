@@ -16,7 +16,7 @@ except ImportError:
 
 from functools import partial
 
-from lmeds.io import loader
+from lmeds.lmeds_io import loader
 
 choice = """<input type="radio" name="radio">"""
 img = """<img src="data/%s">"""

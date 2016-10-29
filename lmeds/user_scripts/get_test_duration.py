@@ -13,8 +13,8 @@ from os.path import dirname, abspath, join
 os.chdir(dirname(dirname(abspath(__file__))))
 sys.path.append("..")
 
-from lmeds.io import user_response
-from lmeds.io import sequence
+from lmeds.lmeds_io import user_response
+from lmeds.lmeds_io import sequence
 from lmeds.utilities import utils
 from lmeds.utilities import user_script_helper
 from lmeds.utilities import constants

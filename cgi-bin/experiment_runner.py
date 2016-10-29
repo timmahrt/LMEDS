@@ -39,7 +39,7 @@ sys.path.append("..")
 cgitb.enable()
 
 from lmeds import lmeds_main
-from lmeds.io import sequence
+from lmeds.lmeds_io import sequence
 from lmeds.utilities import constants
 from lmeds.utilities import utils
 from lmeds.user_scripts import generate_language_dictionary as gen_dict

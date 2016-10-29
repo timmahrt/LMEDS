@@ -15,8 +15,8 @@ sys.path.append("..")
 
 from lmeds import lmeds_main
 
-from lmeds.io import sequence
-from lmeds.io import loader
+from lmeds.lmeds_io import sequence
+from lmeds.lmeds_io import loader
 
 from lmeds.pages import abstract_pages
 from lmeds.utilities import user_script_helper

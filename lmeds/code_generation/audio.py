@@ -8,7 +8,7 @@ from os.path import join
 import wave
 import contextlib
 
-from lmeds.io import loader
+from lmeds.lmeds_io import loader
 from lmeds.utilities import constants
 from lmeds.utilities import utils
 

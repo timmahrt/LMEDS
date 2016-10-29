@@ -6,7 +6,7 @@ Created on Dec 29, 2013
 
 import io
 
-from lmeds.io import sequence
+from lmeds.lmeds_io import sequence
 HEADER_DEMARCATOR = ";,"  # Splits the header from its data
 
 

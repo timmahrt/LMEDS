@@ -17,10 +17,10 @@ from os.path import dirname, abspath
 os.chdir(dirname(dirname(abspath(__file__))))
 sys.path.append("..")
 
-from lmeds.io import sequence
-from lmeds.io import user_response
-from lmeds.io import survey
-from lmeds.io import loader
+from lmeds.lmeds_io import sequence
+from lmeds.lmeds_io import user_response
+from lmeds.lmeds_io import survey
+from lmeds.lmeds_io import loader
 from lmeds.utilities import utils
 from lmeds.utilities import user_script_helper
 from lmeds.utilities import constants

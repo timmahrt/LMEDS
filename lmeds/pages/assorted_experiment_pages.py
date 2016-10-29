@@ -10,8 +10,8 @@ from os.path import join
 
 from lmeds.pages import abstract_pages
 
-from lmeds.io import survey
-from lmeds.io import loader
+from lmeds.lmeds_io import survey
+from lmeds.lmeds_io import loader
 from lmeds.code_generation import html
 from lmeds.code_generation import audio
 from lmeds.utilities import constants

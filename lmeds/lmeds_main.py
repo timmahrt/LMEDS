@@ -13,8 +13,8 @@ import codecs
 from lmeds.pages import factories
 from lmeds.code_generation import html
 from lmeds.code_generation import audio
-from lmeds.io import sequence
-from lmeds.io import loader
+from lmeds.lmeds_io import sequence
+from lmeds.lmeds_io import loader
 from lmeds.utilities import constants
 from lmeds.utilities import utils
 

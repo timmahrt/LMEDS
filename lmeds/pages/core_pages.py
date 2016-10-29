@@ -11,8 +11,7 @@ experiment it is.  Pages that provide information to users, get their
 from os.path import join
 
 from lmeds.pages import abstract_pages
-
-from lmeds.io import loader
+from lmeds.lmeds_io import loader
 from lmeds.utilities import constants
 from lmeds.code_generation import html
 from lmeds.code_generation import audio

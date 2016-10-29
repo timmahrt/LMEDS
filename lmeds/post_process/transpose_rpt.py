@@ -8,8 +8,8 @@ import os
 from os.path import join
 import codecs
 
-from lmeds.io import loader
-from lmeds.io import user_response
+from lmeds.lmeds_io import loader
+from lmeds.lmeds_io import user_response
 from lmeds.post_process import transpose_utils
 from lmeds.utilities import utils
 
