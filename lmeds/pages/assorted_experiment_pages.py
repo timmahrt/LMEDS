@@ -193,8 +193,24 @@ class MediaChoicePage(abstract_pages.AbstractPage):
     def __init__(self, instructionText, audioOrVideo, pauseDuration,
                  minPlays, maxPlays, mediaListOfLists, responseButtonList,
                  buttonLabelList=None, transcriptList=None,
+                 bindPlayKeyIDList=None, bindResponseKeyIDList=None,
                  *args, **kargs):
         super(MediaChoicePage, self).__init__(*args, **kargs)
+        
+        # Normalize variables
+        if bindPlayKeyIDList is not None:
+            tmpKeyIDList = []
+            for keyID in bindPlayKeyIDList:
+                keyID = html.keyboardletterToChar(keyID)
+                tmpKeyIDList.append(keyID)
+            bindPlayKeyIDList = tmpKeyIDList
+        
+        if bindResponseKeyIDList is not None:
+            tmpKeyIDList = []
+            for keyID in bindResponseKeyIDList:
+                keyID = html.keyboardletterToChar(keyID)
+                tmpKeyIDList.append(keyID)
+            bindResponseKeyIDList = tmpKeyIDList
         
         self.instructionText = instructionText
         self.pauseDuration = pauseDuration
@@ -202,6 +218,14 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         self.minPlays = minPlays
         self.maxPlays = maxPlays
         self.responseButtonList = responseButtonList
+        self.bindPlayKeyIDList = bindPlayKeyIDList
+        self.bindResponseKeyIDList = bindResponseKeyIDList
+        
+        if bindPlayKeyIDList is not None:
+            assert(len(mediaListOfLists) == len(bindPlayKeyIDList))
+        
+        if bindResponseKeyIDList is not None:
+            assert(len(responseButtonList) == len(bindResponseKeyIDList))
         
         assert(audioOrVideo in ["audio", "video"])
         self.audioOrVideo = audioOrVideo
@@ -227,7 +251,31 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         
         self.numAudioButtons = len(mediaListOfLists)
         self.processSubmitList = ["verifyAudioPlayed()", ]
+
+    def _getKeyPressEmbed(self):
         
+        bindKeyTxt = ""
+        
+        # Bind key press to play button?
+        if self.bindPlayKeyIDList is not None:
+            for i, keyID in enumerate(self.bindPlayKeyIDList):
+                clickJS = 'document.getElementById("button%d").click();' % i
+                bindTuple = (keyID, clickJS)
+                bindKeyTxt += ("\n" + html.bindKeySubSnippetJS % bindTuple)
+            
+        # Bind key press to submit event?
+        if self.bindResponseKeyIDList is not None:
+            for i, keyID in enumerate(self.bindResponseKeyIDList):
+                clickJS = 'document.getElementById("%d").click();' % i
+                bindTuple = (keyID, clickJS)
+                bindKeyTxt += ("\n" + html.bindKeySubSnippetJS % bindTuple)
+        
+        returnJS = ""
+        if bindKeyTxt != "":
+            returnJS = html.bindKeyJSTemplate % bindKeyTxt
+        
+        return returnJS
+
     def _getHTMLTxt(self):
         radioButton = ('<p>\n'
                        '<input type="radio" name="media_choice"'
@@ -319,6 +367,7 @@ class MediaChoicePage(abstract_pages.AbstractPage):
                                                  extList,
                                                  self.audioOrVideo)
         embedTxt += "\n\n" + availableFunctions
+        embedTxt += self._getKeyPressEmbed()
         
         description = self.textDict[self.instructionText]
 
