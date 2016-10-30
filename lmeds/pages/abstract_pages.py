@@ -107,6 +107,8 @@ class AbstractPage(object):
         self.orderSI = orderSI
         self.orderAI = orderAI
         
+        self.autoSubmit = False
+        
         # These are variables that all pages can define
         
         # e.g. [('widget', 'myWidget'), ('timeout', 1.0)]

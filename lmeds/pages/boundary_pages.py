@@ -454,7 +454,7 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         else:
             taskStr = "boundary"
         
-        self.processSubmitList = ["verifyAudioPlayed()"]
+        self.processSubmitList = ["LmedsAudio.verifyAudioPlayed()"]
         
         if minNumSelected != -1 or maxNumSelected != -1:
             verifyNumSelected = 'verifySelectedWithinRange(%d, %d, "%s")'
@@ -669,7 +669,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         else:
             self.numAudioButtons = 0
             
-        self.processSubmitList = ["verifyAudioPlayed()", ]
+        self.processSubmitList = ["LmedsAudio.verifyAudioPlayed()", ]
         if minNumSelected != -1 or maxNumSelected != -1:
             verifyNumSelected = "verifySelectedWithinRange(%d, %d, '%s')"
             verifyNumSelected %= (minNumSelected, maxNumSelected,

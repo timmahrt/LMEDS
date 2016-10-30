@@ -9,7 +9,7 @@
 	<meta property="og:image" content="%%(websiteRootURL)s/imgs/lmeds_logo.png" />
 	<meta name="description" property="og:description" content="%%(metadata_description)s" />
 	<title>%%(program_title)s</title>
-	
+%%(embed)s
 	<script type="text/javascript">
 // Radio Button Validation
 // copyright Stephen Chapman, 15th Nov 2004,14th Sep 2005
@@ -76,17 +76,6 @@ function validateForm()
 	</script>
 
 
-	<script>
-function EvalSound(soundobj, button, silence) {
-  document.getElementById(soundobj).Play();
-  if(silence==true)
-  	{
-  	button.disabled=true;
- 	}
-}
-	</script>
-
-%%(embed)s
 </head>
 <body>
 

@@ -332,7 +332,8 @@ class MediaTestPage(abstract_pages.NonRecordingPage):
     
         # Variables that all pages need to define
         self.numAudioButtons = 1
-        self.processSubmitList = ["validateForm()", "verifyAudioPlayed()"]
+        self.processSubmitList = ["validateForm()",
+                                  "LmedsAudio.verifyAudioPlayed()"]
     
     def _getHTMLTxt(self):
         

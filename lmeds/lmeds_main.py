@@ -33,7 +33,9 @@ jqueryCode = ('''<script type="text/javascript" src='''
               ''''../html/jquery-1.11.0.min.js' '''
               '''type='text/javascript'%3E%3C/script%3E"));'''
               '''\n}\n'''
-              '''</script>''')
+              '''</script>\n'''
+              '''<script type="text/javascript" src='''
+              '''"../html/lmeds-audio.js"></script>\n''')
 
 
 class WebSurvey(object):
@@ -208,7 +210,7 @@ class WebSurvey(object):
         validateText = page.getValidation()
         
         # Defaults
-        embedTxt = audio.generateEmbed(self.wavDir, [], self.audioExtList,
+        embedTxt = jqueryCode + audio.generateEmbed(self.wavDir, [], self.audioExtList,
                                        "audio")
         
         # Estimate our current progress (this doesn't work well if the user
@@ -245,14 +247,17 @@ class WebSurvey(object):
         runOnLoad = ""
         submitAssociation = html.constructSubmitAssociation(submitWidgetList)
         runOnLoad += submitAssociation
+        
+        if page.autoSubmit is True:
+            runOnLoad += "\nLmedsAudio.autosubmit = true;\n"
     
         if page.getNumAudioButtons() > 0:
             runOnLoad += audio.loadAudioSnippet
         processSubmitHTML += html.taskDurationCode % runOnLoad
-        processSubmitHTML = jqueryCode + processSubmitHTML
+#         processSubmitHTML =  processSubmitHTML
             
         if 'embed' in updateDict.keys():
-            updateDict['embed'] = processSubmitHTML + updateDict['embed']
+            updateDict['embed'] = jqueryCode + processSubmitHTML + updateDict['embed']
         else:
             embedTxt += processSubmitHTML
             
