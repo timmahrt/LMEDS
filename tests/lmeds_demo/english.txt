@@ -1,4 +1,74 @@
 
+====================
+one_play_two_response
+====================
+
+Same or different?<br />
+Press 'p' to play the audio; 'z' for the left response and 'm' for the right response.
+
+====================
+prominence_point_instr
+====================
+
+Please mark on a five point scale, the degree of prominence carried by the word marked in bold.
+
+====================
+boundary_and_prominence_with_limits
+====================
+
+The next few pages contain more prominence and boundary pages.  However,
+on these pages, you'll be limited in the number of items you can select.
+Specific instructions will be given for each page.
+
+====================
+keyboard_shortcuts_boundary
+====================
+
+<front color="red">Boundary task.</font>  Press [p] to play the audio file and [enter] to continue
+
+====================
+keyboard_shortcuts_prominence
+====================
+
+<font color="blue">Prominence task.</font>  Press [p] to play the audio file and [enter] to continue
+
+====================
+mark_one_boundary
+====================
+
+Mark exactly one boundary.
+
+====================
+mark_one_prominence
+====================
+
+Mark exactly one prominence.
+
+====================
+pbMinMaxSelectedErrorMsg
+====================
+
+Error.  You must select at least %d word(s) but not more than %d word(s).
+
+====================
+boundary_at_most_one
+====================
+
+Mark at most one boundary.
+
+====================
+prominence_at_least_two
+====================
+
+Mark at least two prominences.
+
+====================
+two_play_two_response
+====================
+
+Same or different?<br />
+Press 'q' for the left audio and 'p' for the right audio.\n<br />
+Press 'z' for the left response and 'm' for the right response.
 
 ------------------------------
 lmeds_interface

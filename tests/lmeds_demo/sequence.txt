@@ -36,6 +36,16 @@ boundary apples apples 1 -1 nonspecific_boundary_instr true
 prominence apples apples 1 -1 nonspecific_prominence_instr true
 syllable_marking syllables syllables 1 -1 nonspecific_syllables true syllableDemarcator=.
 
+text_page boundary_and_prominence_with_limits
+prominence apples apples -1 -1 prominence_at_least_two true minNumSelected=2
+boundary apples apples -1 -1 boundary_at_most_one true maxNumSelected=1
+boundary_and_prominence apples apples -1 -1 mark_one_boundary mark_one_prominence true minNumSelected=1 maxNumSelected=1
+
+text_page keyboard_shortcuts
+boundary_and_prominence apples apples -1 -1 keyboard_shortcuts_boundary keyboard_shortcuts_prominence true bindPlayKeyID=p bindSubmitID=enter
+media_choice one_play_two_response audio 0.5 1 -1 [[water apples]] [same different] bindPlayKeyIDList=p bindResponseKeyIDList=[z m]
+media_choice two_play_two_response audio 0.5 1 2 [[water] [apples]] [same different] bindPlayKeyIDList=[q p] bindResponseKeyIDList=[z m]
+
 text_page boundary_and_prominence_alternatives
 media_choice prominence_point_instr audio 0.5 1 -1 [[water]]  [vnonprom nonprominent neutral prominent vprom] transcriptList=[water_word]
 media_slider prominence_scale_instr audio 1 -1 water water_word 0 100 leftRangeLabel=nonprominent rightRangeLabel=prominent

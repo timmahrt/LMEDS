@@ -23,6 +23,14 @@ text_page,[boundary_and_prominence_constrained_instructions],None,None,0:1.3,18;
 boundary,[apples,apples,2,2,nonspecific_boundary_instr,true],2,None,0:12.2,19;,1,0,0,0,0,0,0,0
 prominence,[apples,apples,2,2,nonspecific_prominence_instr,true],2,None,0:15.0,20;,0,0,0,0,0,0,0,1
 syllable_marking,[syllables,syllables,1,-1,nonspecific_syllables,true,syllableDemarcator=.],1,None,0:9.0,21;,1,0,0,0,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0
+text_page,[boundary_and_prominence_with_limits],None,None,0:2.7,1;,[]
+prominence,[apples,apples,-1,-1,prominence_at_least_two,true,minNumSelected=2],1,None,0:7.4,2;,1,0,0,1,0,0,0,0
+boundary,[apples,apples,-1,-1,boundary_at_most_one,true,maxNumSelected=1],1,None,0:6.1,3;,0,0,0,1,0,0,0,0
+boundary_and_prominence,[apples,apples,-1,-1,mark_one_boundary,mark_one_prominence,true,minNumSelected=1,maxNumSelected=1],1,1,0:6.2,4;,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
+text_page,[keyboard_shortcuts],None,None,0:9.1,5;,[]
+boundary_and_prominence,[apples,apples,-1,-1,keyboard_shortcuts_boundary,keyboard_shortcuts_prominence,true,bindPlayKeyID=p,bindSubmitID=enter],1,0,0:9.3,6;,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+media_choice,[one_play_two_response,audio,0.5,1,-1,[[water,apples]],[same,different],bindPlayKeyIDList=p,bindResponseKeyIDList=,[z,m]],1,None,0:8.1,7;,1,0
+media_choice,[two_play_two_response,audio,0.5,1,2,[[water],[apples]],[same,different],bindPlayKeyIDList=,[q,p],bindResponseKeyIDList=,[z,m]],1,1,0:9.9,8;,1,0
 text_page,[boundary_and_prominence_alternatives],None,None,0:3.1,22;,[]
 media_choice,[prominence_point_instr,audio,0.5,1,-1,[[water]],[vnonprom,nonprominent,neutral,prominent,vprom],transcriptList=,[water_word]],1,None,0:4.7,23;,1,0,0,0,0
 media_slider,[prominence_scale_instr,audio,1,-1,water,water_word,0,100,leftRangeLabel=nonprominent,rightRangeLabel=prominent],1,None,0:6.5,24;,31
