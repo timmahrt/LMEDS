@@ -1,0 +1,5 @@
+stimulusID,arg1,arg2,arg3,arg4,arg5,arg6,arg7,james.media_choice,jennifer.media_choice,mark.media_choice,james.media_choice.seq,jennifer.media_choice.seq,mark.media_choice.seq
+stimulusID,arg1,arg2,arg3,arg4,arg5,arg6,arg7,t1.media_choice,t2.media_choice,t3.media_choice,t1.media_choice.seq,t2.media_choice.seq,t3.media_choice.seq
+s0,same_different_instr,audio,0.0,-1,-1,[[water apples]],[same different],1,1,0,4,4,5
+s1,same_different_instr,audio,0.0,-1,-1,[[water water]],[same different],0,1,0,3,5,3
+s2,same_different_instr,audio,0.0,-1,-1,[[apples apples]],[same different],1,0,1,5,3,4

@@ -81,6 +81,16 @@ In the <b>second task</b>, mark words that you hear as prominent in this way. <b
 There are <b>sixteen audio excerpts</b>.  Please use the second playback to review your work.  You will <b>not</b> be able to listen to the audio more than twice.
 
 ====================
+boundary_and_prominence_randomized_instructions
+====================
+
+On the next few pages are randomized boundary and prominence pages.
+<br /><br />
+Mark the boundaries you hear based on pauses in the speech (there aren't
+really any pauses in these short recordings though) and mark the prominences
+based on the words you think stand out.
+
+====================
 fill_in_the_blank_instructions
 ====================
 
@@ -130,6 +140,15 @@ from actual demographics surveys conducted over LMEDS.<br /><br />
 Note that you may skip as many items as you want.
 
 ====================
+randomized_demo_introduction
+====================
+
+This is a short LMEDS sample experiment meant to demonstrate the randomization feature.
+<br /><br />
+Please read the user manual for more information about how to randomize the presentation
+order of stimuli to users.
+
+====================
 remote_experiment_notice
 ====================
 
@@ -163,6 +182,12 @@ same_different_instructions
 
 On the next page, you will hear two audio files.  Please press the appropriate button
 to indicate whether they are the same or different.
+
+====================
+same_different_randomized_instructions
+====================
+
+On the next few pages are a few same-different questions.  The order of the test items is randomized.
 
 ====================
 sliders_in_surveys

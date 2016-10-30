@@ -1,0 +1,17 @@
+StimulusID,Word,sum.bn,sum.pn,james.bn,jennifer.bn,mark.bn,james.pn,jennifer.pn,mark.pn,james.bpn.seq,jennifer.bpn.seq,mark.bpn.seq
+StimulusID,Word,sum.bn,sum.pn,t1.bn,t2.bn,t3.bn,t1.pn,t2.pn,t3.pn,t1.bpn.seq,t2.bpn.seq,t3.bpn.seq
+apples,today,0.333,0.333,0,0,1,0,1,0,11,9,10
+apples,is,0.000,0.000,0,0,0,0,0,0,11,9,10
+apples,a,0.000,0.000,0,0,0,0,0,0,11,9,10
+apples,good,1.000,0.333,1,1,1,0,0,1,11,9,10
+apples,day,0.000,0.000,0,0,0,0,0,0,11,9,10
+apples,to,0.000,0.000,0,0,0,0,0,0,11,9,10
+apples,buy,0.333,0.000,0,1,0,0,0,0,11,9,10
+apples,apples,0.000,0.667,0,0,0,1,0,1,11,9,10
+water,the,1.000,0.333,1,1,1,0,1,0,9,7,12
+water,water,0.000,0.333,0,0,0,0,0,1,9,7,12
+water,in,0.000,0.000,0,0,0,0,0,0,9,7,12
+water,the,0.000,0.000,0,0,0,0,0,0,9,7,12
+water,park,0.333,0.000,0,0,1,0,0,0,9,7,12
+water,is,0.000,0.000,0,0,0,0,0,0,9,7,12
+water,cold,0.333,0.333,0,1,0,1,0,0,9,7,12
