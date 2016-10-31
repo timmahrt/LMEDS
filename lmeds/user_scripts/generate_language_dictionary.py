@@ -136,6 +136,11 @@ def generateLanguageDictionary(mode, testName, sequenceFN, outputFN):
     invKeyDict = {}
     for txtString in txtKeyDict.keys():
         pageTuple = tuple(_removeDuplicates(txtKeyDict[txtString]))
+        if len(pageTuple) > 1 and loader.NULL_SECTION in pageTuple:
+            pageTuple = list(pageTuple)
+            pageTuple.pop(pageTuple.index(loader.NULL_SECTION))
+            pageTuple = tuple(pageTuple)
+        
         txtKeyDict[txtString] = pageTuple
         invKeyDict.setdefault(pageTuple, [])
         invKeyDict[pageTuple].append(txtString)
@@ -146,6 +151,12 @@ def generateLanguageDictionary(mode, testName, sequenceFN, outputFN):
                   if len(pageTuple) > 1]
     outputPageNameList = singlePages + comboPages
     
+    # Special case -- entries with no section
+    nullSectionTuple = (loader.NULL_SECTION,)
+    if nullSectionTuple in outputPageNameList:
+        outputPageNameList.pop(outputPageNameList.index(nullSectionTuple))
+        outputPageNameList.insert(0, nullSectionTuple)
+    
     # Build output
     outputTxt = "\n\n"
     for pageTuple in outputPageNameList:
@@ -155,14 +166,16 @@ def generateLanguageDictionary(mode, testName, sequenceFN, outputFN):
         keyStringList = invKeyDict[pageTuple]
         keyStringList.sort()
         
-        outputTxt += sectionTemplate % ",".join(pageTuple)
+        if pageTuple != nullSectionTuple:
+            outputTxt += sectionTemplate % ",".join(pageTuple)
+        
         for keyString in keyStringList:
             
             textString = ""
             if keepTextStrings and keyString in oldDictionary.textDict.keys():
                 textString = oldDictionary.textDict[keyString]
             
-            outputTxt += keywordTemplate % (keyString, textString)
+                outputTxt += keywordTemplate % (keyString, textString)
     
     # Exit without doing anything if the old dictionary exists and
     # we're in 'new' mode
@@ -185,7 +198,7 @@ def generateLanguageDictionary(mode, testName, sequenceFN, outputFN):
     
         with io.open(outputFNFullPath, "w", encoding="utf-8") as fd:
             fd.write(outputTxt)
-    
+
 
 if __name__ == "__main__":
     

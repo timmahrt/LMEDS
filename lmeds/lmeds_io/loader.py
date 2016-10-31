@@ -8,7 +8,7 @@ Created on Mar 28, 2013
 
 import io
 
-from lmeds.utilities import utils
+NULL_SECTION = "000_entries_with_no_topic"
 
 
 class BadlyFormattedTextError(Exception):
@@ -132,6 +132,17 @@ class TextDict(object):
         
         with io.open(self.sourceFN, 'r', encoding="utf-8") as fd:
             data = fd.read()
+        
+        # Special case -- no section before the first text entries
+        # insert a dummy section
+        i = data.index('---')
+        j = data.index('===')
+        if j < i:
+            demarc = "-" * 20
+            sectionName = NULL_SECTION
+            newSection = "\n%s\n%s\n%s\n\n" % (demarc, sectionName, demarc)
+            data = newSection + data
+        
         testItemList = data.splitlines()
         
         keyValueList = self._findSections(testItemList, "-")
