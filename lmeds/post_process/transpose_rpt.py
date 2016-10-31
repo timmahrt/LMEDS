@@ -26,14 +26,22 @@ def _transposeRPT(dataListOfLists):
     returnDict = {}
     bCountList = []
     pCountList = []
+    j = -1
     for dataList in dataListOfLists:
+        j += 1
         bCountList.append([])
         pCountList.append([])
         
+        oom = utils.orderOfMagnitude(len(dataList)) + 1
+        stimTemplate = "s_%%0%dd,%%s,%%s" % oom
         tmpAspectListToCount = []
+        i = 0
         for taskName, stimuliArgList, _, dataTxt in dataList:
-            stimuliID = stimuliArgList[0]
+            i += 1
+            word = stimuliArgList[0]
             aspect = stimuliArgList[4]
+            
+            stimuliID = stimTemplate % (i, word, aspect)
             
             tmpAspectListToCount.append(aspect)
             dataList = dataTxt.split(",")
@@ -53,32 +61,33 @@ def _transposeRPT(dataListOfLists):
             pCountList[-1].append(len(pScores))
             bCountList[-1].append(len(bScores))
             
-            idKeyList.append(stimuliID)
-            aspectKeyList.append(aspect)
+            if j == 0:
+                idKeyList.append(stimuliID)
+                aspectKeyList.append(aspect)
             
             returnDict.setdefault(stimuliID, {})
             returnDict[stimuliID].setdefault(aspect, {})
-            returnDict[stimuliID][aspect].setdefault(B, [])
-            returnDict[stimuliID][aspect].setdefault(P, [])
+            returnDict[stimuliID].setdefault(B, [])
+            returnDict[stimuliID].setdefault(P, [])
             
-            returnDict[stimuliID][aspect][B].append(bScores)
-            returnDict[stimuliID][aspect][P].append(pScores)
-            
-    idKeyList = list(set(idKeyList))
-    idKeyList.sort()
-    
-    aspectKeyList = returnDict[list(returnDict.keys())[0]].keys()
+            returnDict[stimuliID][B].append(bScores)
+            returnDict[stimuliID][P].append(pScores)
             
     # Transpose the data
     for sid in idKeyList:
-        for aspect in aspectKeyList:
-            for taskType in [B, P]:
-                zipped = utils.safeZip(returnDict[sid][aspect][taskType],
-                                       enforceLength=True)
-                returnDict[sid][aspect][taskType] = [list(subTuple)
-                                                     for subTuple in zipped]
+        for taskType in [B, P]:
+            try:
+                tmpList = returnDict[sid][taskType]
+            except KeyError:
+                continue
+            if len(tmpList) == 0:
+                continue
+            zipped = utils.safeZip(tmpList,
+                                   enforceLength=True)
+            returnDict[sid][taskType] = [list(subTuple)
+                                         for subTuple in zipped]
         
-    return returnDict, idKeyList, aspectKeyList
+    return returnDict, idKeyList
 
 
 def _getScores(userData, scoreType):
@@ -90,8 +99,6 @@ def _getScores(userData, scoreType):
     
     sumList = ["%.03f" % (sum([float(val) for val in subList]) / len(subList))
                for subList in scoreList]
-#     scoreList = [lst + ["%.03f" % sumVal, ]
-#                  for lst, sumVal in zip(scoreList, sumList)]
     
     return scoreList, sumList
 
@@ -111,7 +118,7 @@ def _outputScores(featPath, aspect, stimulusID, returnDict,
     fn = join(scorePath, "%s.csv" % stimulusID)
     with io.open(fn, "w", encoding="utf-8") as fd:
         fd.write("\n".join([",".join(val) for val in
-                            returnDict[stimulusID][aspect][scoreType]]))
+                            returnDict[stimulusID][scoreType]]))
 
 
 def _getSmallestPrefix(keywordList):
@@ -131,17 +138,17 @@ def _getSmallestPrefix(keywordList):
     return wordPrefixDict
 
 
-def _buildHeader(fnList, aspectKeyList, pageName, doSequenceOrder):
+def _buildHeader(fnList, pageName, doSequenceOrder):
     # Build the name lists, which will take up the first two rows in the
     # spreadsheet.  One is normal, and one is anonymized
     oom = utils.orderOfMagnitude(len(fnList))
-    userNameTemplate = "t%%0%dd" % (oom + 1) + ".%s%%s"
+    userNameTemplate = "t%%0%dd" % (oom + 1) + ".%s"
     
-    bNameList = [os.path.splitext(name)[0] + ".b%s" for name in fnList]
+    bNameList = [os.path.splitext(name)[0] + ".b" for name in fnList]
     anonBNameList = [userNameTemplate % (i + 1, 'b')
                      for i in range(len(fnList))]
     
-    pNameList = [os.path.splitext(name)[0] + ".p%s" for name in fnList]
+    pNameList = [os.path.splitext(name)[0] + ".p" for name in fnList]
     anonPNameList = [userNameTemplate % (i + 1, 'p')
                      for i in range(len(fnList))]
     headerDict = {"boundary": (bNameList, anonBNameList),
@@ -150,10 +157,8 @@ def _buildHeader(fnList, aspectKeyList, pageName, doSequenceOrder):
                   "boundary_and_prominence": (bNameList + pNameList,
                                               anonBNameList + anonPNameList)}
     
-    aspectInitialsDict = _getSmallestPrefix(aspectKeyList)
-    
-    bTxt = "sum.b%(aspect)s"
-    pTxt = "sum.p%(aspect)s"
+    bTxt = "sum.b"
+    pTxt = "sum.p"
     
     txtPrefixDict = {"boundary": (bTxt),
                      "prominence": (pTxt),
@@ -166,30 +171,28 @@ def _buildHeader(fnList, aspectKeyList, pageName, doSequenceOrder):
     sumHeaderList = []
     headerList = []
     anonHeaderList = []
-    for aspect in aspectKeyList:
-        aspectInitial = aspectInitialsDict[aspect]
-        sumHeaderList.append(header2Prefix % {'aspect': aspectInitial})
-        headerList.extend([name % aspectInitial
-                           for name in nameList])
-        anonHeaderList.extend([name % aspectInitial
-                               for name in anonNameList])
+    sumHeaderList.append(header2Prefix)
+    headerList.extend([name
+                       for name in nameList])
+    anonHeaderList.extend([name
+                           for name in anonNameList])
     
     sumTxt = ",".join(sumHeaderList)
     headerStr = ",".join(headerList)
     anonHeaderStr = ",".join(anonHeaderList)
     
-    rowTemplate = "StimulusID,Word,%s,%s"
+    rowTemplate = "StimulusID,txtKey,instructKey,Word,%s,%s"
 
     headerRow = rowTemplate % (sumTxt, headerStr)
     anonHeaderRow = rowTemplate % (sumTxt, anonHeaderStr)
     
     # Add the sequence order if needed
     if doSequenceOrder:
-        txtPrefixDict2 = {"boundary": "b%(aspect)s",
-                          "prominence": "p%(aspect)s",
-                          "syllable_marking": "p%(aspect)s",
-                          "boundary_and_prominence": "bp%(aspect)s"}
-        sequencePageCode = txtPrefixDict2[pageName] % {'aspect': aspectInitial}
+        txtPrefixDict2 = {"boundary": "b",
+                          "prominence": "p",
+                          "syllable_marking": "p",
+                          "boundary_and_prominence": "bp"}
+        sequencePageCode = txtPrefixDict2[pageName]
         tmpTuple = transpose_utils.getUserSeqHeader(fnList,
                                                     sequencePageCode,
                                                     oom)
@@ -269,10 +272,10 @@ def transposeRPT(path, txtPath, pageName, outputPath):
             txtDict[name] = [syllable for word in txt.split(",") if word != ""
                              for syllable in word.split(demarcator)]
     
-    returnDict, idKeyList, aspectKeyList = _transposeRPT(responseDataList)
+    returnDict, idKeyList = _transposeRPT(responseDataList)
     
     doUserSeqHeader = len(orderListOfLists) > 0
-    headerRow, anonHeaderRow = _buildHeader(fnList, aspectKeyList, pageName,
+    headerRow, anonHeaderRow = _buildHeader(fnList, pageName,
                                             doUserSeqHeader)
     
     # Format the output rpt scores
@@ -280,33 +283,39 @@ def transposeRPT(path, txtPath, pageName, outputPath):
     for i in range(len(idKeyList)):
         
         stimulusID = idKeyList[i]
-        
-        wordList = txtDict[stimulusID]
+
+        wordList = txtDict[stimulusID.split(",")[1]]
         stimulusIDList = [stimulusID for _ in wordList]
         aspectSumList = [stimulusIDList, wordList, ]
         aspectList = []
-        for aspect in aspectKeyList:
-            bScoreList, bSumList = _getScores(returnDict[stimulusID][aspect],
+
+        try:
+            bScoreList, bSumList = _getScores(returnDict[stimulusID],
                                               B)
-            pScoreList, pSumList = _getScores(returnDict[stimulusID][aspect],
+        except KeyError:
+            pass
+        try:
+            pScoreList, pSumList = _getScores(returnDict[stimulusID],
                                               P)
-            
-            if pageName == "boundary":
-                aspectSumList.extend([bSumList, ])
-                aspectList.extend([bScoreList, ])
-            elif pageName in ["prominence", "syllable_marking"]:
-                aspectSumList.extend([pSumList, ])
-                aspectList.extend([pScoreList, ])
-            elif pageName == "boundary_and_prominence":
-                aspectSumList.extend([bSumList, pSumList, ])
-                aspectList.extend([bScoreList, pScoreList, ])
+        except KeyError:
+            pass
         
-            # Extend header with sequence order information
-            if doUserSeqHeader:
-                orderStr = orderList[i]
-                numAnnotators = range(max([len(bSumList), len(pSumList)]))
-                tmpOrderList = [orderStr for _ in numAnnotators]
-                aspectList.extend([tmpOrderList, ])
+        if pageName == "boundary":
+            aspectSumList.extend([bSumList, ])
+            aspectList.extend([bScoreList, ])
+        elif pageName in ["prominence", "syllable_marking"]:
+            aspectSumList.extend([pSumList, ])
+            aspectList.extend([pScoreList, ])
+        elif pageName == "boundary_and_prominence":
+            aspectSumList.extend([bSumList, pSumList, ])
+            aspectList.extend([bScoreList, pScoreList, ])
+    
+        # Extend header with sequence order information
+        if doUserSeqHeader:
+            orderStr = orderList[i]
+            numAnnotators = range(max([len(bSumList), len(pSumList)]))
+            tmpOrderList = [orderStr for _ in numAnnotators]
+            aspectList.extend([tmpOrderList, ])
             
         dataList = aspectSumList + aspectList
         combinedList = [_unifyRow(row) for row in

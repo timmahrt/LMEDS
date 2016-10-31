@@ -264,7 +264,7 @@ def postProcessResults(testName, sequenceFN, removeDuplicatesFlag,
             transpose_choice.transposeChoice(join(pathToData, pageName),
                                              pageName,
                                              outputPath)
-    
+
 
 if __name__ == "__main__":
 
