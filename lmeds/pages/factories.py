@@ -33,7 +33,6 @@ def loadPage(webSurvey, pageName, args=None, kargs=None):
     pageClassList = [assorted_experiment_pages.MediaChoicePage,
                      assorted_experiment_pages.MediaSliderPage,
                      assorted_experiment_pages.MediaListPage,
-                     assorted_experiment_pages.FillInTheBlankPage,
                      assorted_experiment_pages.SurveyPage,
                      core_pages.LoginPage,
                      core_pages.LoginErrorPage,
