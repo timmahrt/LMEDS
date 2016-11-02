@@ -284,10 +284,14 @@ class MediaChoicePage(abstract_pages.AbstractPage):
     def _getHTMLTxt(self):
         radioButton = ('<p>\n'
                        '<input type="radio" name="media_choice"'
-                       'value="%(id)s" id="%(id)s" disabled />\n'
+                       'value="%(id)s" id="%(id)s" %(disabled)s />\n'
                        '<label for="%(id)s">.</label>\n'
                        '</p>\n'
                        )
+        
+        disabledTxt = ""
+        if self._doPlayMedia():
+            disabledTxt = "disabled"
         
         htmlTxt = ('<br /><br />%%s<br /><br />\n'
                    '<table class="center">\n'
@@ -299,10 +303,10 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         labelRow = ""
         buttonRow = ""
         for i in range(len(self.responseButtonList)):
+            radioButtonTxt = radioButton % {'id': i, "disabled": disabledTxt}
             text = self.textDict[self.responseButtonList[i]]
             labelRow += "<td class='responses'>%s</td>" % text
-            buttonRow += "<td class='responses'>%s</td>" % (radioButton %
-                                                            {'id': i})
+            buttonRow += "<td class='responses'>%s</td>" % radioButtonTxt
         
         return htmlTxt % (labelRow,
                           buttonRow)
@@ -341,6 +345,10 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         template = "<td class='buttons'>%s</td>"
         for i in range(len(self.mediaList)):
             
+            # Don't generate an audio button if the list is empty
+            if len(self.mediaList[i]) == 0:
+                continue
+            
             mediaButtonHTML = audio.generateAudioButton(self.mediaList[i], i,
                                                         self.pauseDuration,
                                                         False)
@@ -376,14 +384,16 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         
         mediaNames = [mediaName for mediaSubList in self.mediaList
                       for mediaName in mediaSubList]
-        if self.audioOrVideo == "video":
-            extList = self.webSurvey.videoExtList
-        else:
-            extList = self.webSurvey.audioExtList
-        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
-                                                 list(set(mediaNames)),
-                                                 extList,
-                                                 self.audioOrVideo)
+        if self._doPlayMedia():
+            if self.audioOrVideo == "video":
+                extList = self.webSurvey.videoExtList
+            else:
+                extList = self.webSurvey.audioExtList
+            embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
+                                                     list(set(mediaNames)),
+                                                     extList,
+                                                     self.audioOrVideo)
+        
         embedTxt += "\n\n" + availableFunctions
         embedTxt += self._getKeyPressEmbed()
         
@@ -393,6 +403,11 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         htmlText %= (playBtnSnippet + "<br />")
     
         return htmlText, pageTemplate, {'embed': embedTxt}
+    
+    def _doPlayMedia(self):
+        mediaNames = [mediaName for mediaSubList in self.mediaList
+                      for mediaName in mediaSubList]
+        return len(mediaNames) > 0
 
 
 def _buttonLabelCheck(audioListOfLists, buttonLabelList):
