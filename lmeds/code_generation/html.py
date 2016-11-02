@@ -103,9 +103,21 @@ submitButtonHTML = ('<input name="submitButton" id="submitButton" '
 
 def keyboardletterToChar(letter):
     
+    specialCodes = {"alt": 18,
+                    "backspace": 8,
+                    "capslock": 20,
+                    "ctrl": 17,
+                    "enter": 13,
+                    "escape": 27,
+                    "shift": 16,
+                    "space": 32,
+                    "tab": 9,
+                    }
+    
     # Exceptional cases
-    if letter.lower() == "enter":
-        retVal = 13
+    lowerCaseLetter = letter.lower()
+    if lowerCaseLetter in specialCodes.keys():
+        retVal = specialCodes[lowerCaseLetter]
     
     # Normal case (ascii char)
     else:
