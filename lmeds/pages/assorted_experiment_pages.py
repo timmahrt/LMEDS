@@ -194,6 +194,7 @@ class MediaChoicePage(abstract_pages.AbstractPage):
                  minPlays, maxPlays, mediaListOfLists, responseButtonList,
                  mediaButtonLabelList=None, transcriptList=None,
                  bindPlayKeyIDList=None, bindResponseKeyIDList=None,
+                 timeout=None,
                  *args, **kargs):
         super(MediaChoicePage, self).__init__(*args, **kargs)
         
@@ -220,6 +221,7 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         self.responseButtonList = responseButtonList
         self.bindPlayKeyIDList = bindPlayKeyIDList
         self.bindResponseKeyIDList = bindResponseKeyIDList
+        self.timeout = None
         
         if bindPlayKeyIDList is not None:
             assert(len(mediaListOfLists) == len(bindPlayKeyIDList))
@@ -240,6 +242,9 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         self.submitProcessButtonFlag = False
         self.nonstandardSubmitProcessList = [('widget',
                                               'media_choice')]
+        
+        if timeout is not None:
+            self.nonstandardSubmitProcessList.append(('timeout', timeout))
         
         # Strings used in this page
         txtKeyList = [instructionText, ]
@@ -306,6 +311,19 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         template = ""
         
         return template
+    
+    def getOutput(self, form):
+        
+        try:
+            value = super(MediaChoicePage, self).getOutput(form)
+            if not self._doPlayMedia():
+                value += ",0"
+        except abstract_pages.KeyNotInFormError:  # User timeed-out
+            value = ",".join(['0'] * self.getNumOutputs()) + ",1"
+        
+        
+        
+        return value
     
     def getNumOutputs(self):
         return len(self.responseButtonList)
