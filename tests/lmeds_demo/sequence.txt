@@ -26,6 +26,7 @@ media_choice prominence_video_instr video 0.5 1 -1 [[syllables_video]] [vnonprom
 
 text_page fill_in_the_blank_instructions
 fill_in_the_blank water_blank 10.0 polluted cold not_drinkable
+media_choice fill_in_the_blank_instruct audio 0.5 -1 -1 [[]] [polluted cold not_drinkable] transcriptList=[water_blank] timeout=10
 
 text_page boundary_and_prominence_mechanics_instructions
 text_page boundary_and_prominence_nonspecific_instructions

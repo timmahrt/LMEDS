@@ -1,4 +1,21 @@
 
+=============
+polluted
+=============
+
+polluted
+
+=============
+cold
+=============
+
+cold
+
+=============
+not_drinkable
+=============
+
+not drinkable
 
 ------------------------------
 lmeds_interface

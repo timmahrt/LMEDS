@@ -15,7 +15,7 @@ media_choice,[same_different_instr,audio,0.5,1,2,[[water],[apples]],[same,differ
 text_page,[video_ok],None,None,0:5.5,13;,[]
 media_choice,[prominence_video_instr,video,0.5,1,-1,[[syllables_video]],[vnonprom,nonprominent,neutral,prominent,vprom]],1,None,0:12.8,14;,1,0,0,0,0
 text_page,[fill_in_the_blank_instructions],None,None,0:1.6,13;,[]
-fill_in_the_blank,[water_blank,10.0,polluted,cold,not_drinkable],None,None,0:3.7,14;,0,0,1,0
+media_choice,[fill_in_the_blank_instruct,audio,0.5,-1,-1,[[]],[polluted,cold,not_drinkable],transcriptList=,[water_blank],timeout=5],0,None,0:5.0,1;,0,0,0,1
 text_page,[boundary_and_prominence_mechanics_instructions],None,None,0:2.2,15;,[]
 text_page,[boundary_and_prominence_nonspecific_instructions],None,None,0:1.0,16;,[]
 boundary_and_prominence,[apples,apples,-1,-1,nonspecific_boundary_instr,nonspecific_prominence_instr,true],2,2,0:18.7,17;,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
