@@ -192,7 +192,7 @@ class MediaChoicePage(abstract_pages.AbstractPage):
     
     def __init__(self, instructionText, audioOrVideo, pauseDuration,
                  minPlays, maxPlays, mediaListOfLists, responseButtonList,
-                 buttonLabelList=None, transcriptList=None,
+                 mediaButtonLabelList=None, transcriptList=None,
                  bindPlayKeyIDList=None, bindResponseKeyIDList=None,
                  *args, **kargs):
         super(MediaChoicePage, self).__init__(*args, **kargs)
@@ -229,7 +229,7 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         
         assert(audioOrVideo in ["audio", "video"])
         self.audioOrVideo = audioOrVideo
-        self.buttonLabelList = buttonLabelList
+        self.buttonLabelList = mediaButtonLabelList
         self.transcriptList = transcriptList
         if transcriptList is not None:
             assert(len(mediaListOfLists) == len(transcriptList))
@@ -244,7 +244,7 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         # Strings used in this page
         txtKeyList = [instructionText, ]
         txtKeyList += responseButtonList
-        txtKeyList += _buttonLabelCheck(mediaListOfLists, buttonLabelList)
+        txtKeyList += _buttonLabelCheck(mediaListOfLists, mediaButtonLabelList)
         
         txtKeyList.extend(abstract_pages.audioTextKeys)
         self.textDict.update(loader.batchGetText(txtKeyList))
