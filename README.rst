@@ -24,6 +24,25 @@ different types of perceptual experiments (memory tasks, AXB-type tasks, etc.).
 Major revisions
 ================
 
+Ver 2.4 (Nov 02, 2016)
+
+- stimulus presentation can now be automatically randomized for each user
+
+    - post-processing scripts unscramble the individual output orders
+      while marking the order users did the task in
+      
+- task timeout and media-less support (i.e. reading tasks) added to
+  media_choice pages
+
+- limits can be set on the minimum and maximum number of prominences
+  and boundaries that can be made on a text in prominence- and boundary-
+  marking- pages.
+  
+- keyboard keys can be bound to buttons on a page (e.g. the 'p' button can
+  be used to play audio or 'enter' can be pressed to submit a response)
+  
+- numerous bugfixes and code cleanup
+
 Ver 2.3 (May 17, 2016)
 
 - Video now supported with the same controls and functionality as audio
