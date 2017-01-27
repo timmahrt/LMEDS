@@ -24,6 +24,7 @@ setup(name='lmeds',
       license='LICENSE',
       test_suite='nose.collector',
       tests_require=['nose'],
+      description="A web platform for collecting text annotation and experiment data online",
       long_description=io.open('README.rst', 'r', encoding="utf-8").read(),
 #       install_requires=[], # No requirements! # requires 'from setuptools import setup'
       )
