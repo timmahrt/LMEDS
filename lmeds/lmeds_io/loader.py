@@ -156,7 +156,7 @@ class TextDict(object):
             sectionsDict[key] = subKeyValueDict.keys()
              
         for key, textList in parsedTextDict.items():
-            parsedTextDict[key] = "\n".join(textList).strip()
+            parsedTextDict[key] = " ".join(textList).strip()
             
         return parsedTextDict, sectionsDict
     
