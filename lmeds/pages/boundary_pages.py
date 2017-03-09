@@ -285,7 +285,7 @@ $(document).ready(function(){
                          boundaryMarkingCode_showHide}
 
 
-def _getKeyPressEmbed(playID, submitID):
+def _getKeyPressEmbed(playID, submitID, doBoundariesAndProminences=False):
     
     bindKeyTxt = ""
     
@@ -297,8 +297,11 @@ def _getKeyPressEmbed(playID, submitID):
         
     # Bind key press to submit event?
     if submitID is not None:
-        bindKeyTxt += ("\n" +
-                       html.bindToSubmitButtonJS % submitID)
+        if doBoundariesAndProminences is True:
+            js = bindToSubmitButtonBoundaryAndProminenceJS
+        else:
+            js = html.bindToSubmitButtonJS
+        bindKeyTxt += ("\n" + js % submitID)
     
     returnJS = ""
     if bindKeyTxt != "":
@@ -306,6 +309,14 @@ def _getKeyPressEmbed(playID, submitID):
     
     return returnJS
 
+bindToSubmitButtonBoundaryAndProminenceJS = """
+if (e.which == %s) {
+    if (didShowHide == false)
+        {document.getElementById("halfwaySubmitButton").click();}
+    else
+        {document.getElementById("submitButton").click();}
+}
+"""
 
 _verifySelectedWithinRangeJS = """
 function getHowManyMarked(startI, endI, widgetName) {
@@ -770,7 +781,8 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
                                         "audio")
             embedTxt += "\n\n" + embed
             embedTxt += "\n\n" + _getKeyPressEmbed(self.bindPlayKeyID,
-                                                   self.bindSubmitID)
+                                                   self.bindSubmitID,
+                                                   True)
                 
         else:
             embedTxt = ""
