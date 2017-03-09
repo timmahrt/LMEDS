@@ -473,7 +473,7 @@ boundary_and_prominence
 keyboard_shortcuts_boundary
 ====================
 
-<front color="red">Boundary task.</font>  Press [p] to play the audio file and [enter] to continue
+<font color="red">Boundary task.</font>  Press [p] to play the audio file and [enter] to continue
 
 ====================
 keyboard_shortcuts_prominence
