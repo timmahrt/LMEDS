@@ -7,6 +7,7 @@ Created on Aug 11, 2015
 import os
 from os.path import join
 import io
+import copy
 
 from lmeds.lmeds_io import loader
 from lmeds.lmeds_io import user_response
@@ -20,7 +21,6 @@ B = "b"
 def _transposeRPT(dataListOfLists):
 
     idKeyList = []
-    aspectKeyList = []
     
     # Load the data
     returnDict = {}
@@ -33,17 +33,29 @@ def _transposeRPT(dataListOfLists):
         pCountList.append([])
         
         oom = utils.orderOfMagnitude(len(dataList)) + 1
-        stimTemplate = "s_%%0%dd,%%s,%%s" % oom
-        tmpAspectListToCount = []
+        stimTemplate = "s_%%0%dd," % oom
         i = 0
         for taskName, stimuliArgList, _, dataTxt in dataList:
             i += 1
-            word = stimuliArgList[0]
-            aspect = stimuliArgList[4]
             
-            stimuliID = stimTemplate % (i, word, aspect)
+            # Remove the sequence order variables from the stimuli arg list
+            omitList = []
+            for stimuliI, arg in enumerate(stimuliArgList):
+                if 'orderSI=' in arg:
+                    omitList.append(stimuliI)
+                    continue
+                if 'orderAI=' in arg:
+                    omitList.append(stimuliI)
+                    continue
+            omitList.reverse()
             
-            tmpAspectListToCount.append(aspect)
+            cutStimuliArgList = copy.deepcopy(stimuliArgList)
+            for argI in omitList:
+                cutStimuliArgList.pop(argI)
+            
+            stimuliID = stimTemplate % i + ','.join(cutStimuliArgList)
+            
+#             tmpAspectListToCount.append(aspect)
             dataList = dataTxt.split(",")
             
             if taskName == 'boundary_and_prominence':
@@ -57,16 +69,17 @@ def _transposeRPT(dataListOfLists):
             elif taskName in ["prominence", "syllable_marking"]:
                 bScores = []
                 pScores = dataList
+            else:
+                bScores = None
+                pScores = None
             
             pCountList[-1].append(len(pScores))
             bCountList[-1].append(len(bScores))
             
             if j == 0:
                 idKeyList.append(stimuliID)
-                aspectKeyList.append(aspect)
             
             returnDict.setdefault(stimuliID, {})
-            returnDict[stimuliID].setdefault(aspect, {})
             returnDict[stimuliID].setdefault(B, [])
             returnDict[stimuliID].setdefault(P, [])
             
@@ -138,7 +151,7 @@ def _getSmallestPrefix(keywordList):
     return wordPrefixDict
 
 
-def _buildHeader(fnList, pageName, doSequenceOrder):
+def _buildHeader(fnList, pageName, doSequenceOrder, sampleHeader):
     # Build the name lists, which will take up the first two rows in the
     # spreadsheet.  One is normal, and one is anonymized
     oom = utils.orderOfMagnitude(len(fnList))
@@ -181,7 +194,8 @@ def _buildHeader(fnList, pageName, doSequenceOrder):
     headerStr = ",".join(headerList)
     anonHeaderStr = ",".join(anonHeaderList)
     
-    rowTemplate = "StimulusID,txtKey,instructKey,Word,%s,%s"
+    commaStr = "," * (sampleHeader.count(",") - 1)
+    rowTemplate = "StimulusID," + commaStr + ",Word,%s,%s"
 
     headerRow = rowTemplate % (sumTxt, headerStr)
     anonHeaderRow = rowTemplate % (sumTxt, anonHeaderStr)
@@ -276,7 +290,8 @@ def transposeRPT(path, txtPath, pageName, outputPath):
     
     doUserSeqHeader = len(orderListOfLists) > 0
     headerRow, anonHeaderRow = _buildHeader(fnList, pageName,
-                                            doUserSeqHeader)
+                                            doUserSeqHeader,
+                                            idKeyList[0])
     
     # Format the output rpt scores
     aggrOutputList = [headerRow, anonHeaderRow]
@@ -284,7 +299,7 @@ def transposeRPT(path, txtPath, pageName, outputPath):
         
         stimulusID = idKeyList[i]
 
-        wordList = txtDict[stimulusID.split(",")[1]]
+        wordList = txtDict[stimulusID.split(",")[2]]
         stimulusIDList = [stimulusID for _ in wordList]
         aspectSumList = [stimulusIDList, wordList, ]
         aspectList = []
