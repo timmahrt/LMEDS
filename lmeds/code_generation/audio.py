@@ -14,20 +14,20 @@ from lmeds.utilities import utils
 
 _tmpButton = ('<input type="button" id="button%%d" '
               'value="%(button_label)s" '
-              '''onClick="LmedsAudio.evalSound(this, true, '%%d', %%f, '%%s')">'''
+              '''onClick="audioLoader.evalSound(this, true, '%%d', %%f, '%%s', %%s)">'''
               )
 
 buttonTemplate = _tmpButton
 
 _tmpButton = ('<input type="button" id="button%%d" '
               'value="%s" '
-              '''onClick="LmedsAudio.evalSound(this, false, '%%d', %%f, '%%s')">'''
+              '''onClick="audioLoader.evalSound(this, false, '%%d', %%f, '%%s', %%s)">'''
               )
 
 buttonTemplateExample = _tmpButton % 'false'
 
 playAudioFileJS = '''
-    <script>
+// Various page-specific parameters
 var silenceFlag = %(silenceFlag)s;
 var numSoundFiles = %(numSoundFiles)d;
 var numUniqueSoundFiles = $("audio").length;
@@ -35,13 +35,11 @@ var numSoundFilesLoaded = 0;
 var finishedLoading = false;
 var doingPandBPage = false;
 var listenPartial = %(listenPartialFlag)s;
-
 var countDict = {
 %(countDictTxt)s
 };
 var myTxt = "";
 
-    </script>
 '''
 
 
@@ -125,9 +123,10 @@ class FileNotFound(Exception):
     
     
 loadAudioSnippet_no_progress_bar = """
-if (typeof(LmedsAudio.load_audio) == "function") {
-    LmedsAudio.load_audio();
-    }
+// Load the audio
+if (typeof(audioLoader.load_audio) == "function") {
+    audioLoader.load_audio();
+    }\n
 """
 
 # loading_progress_show() waits for the audio file(s) to be loaded before
@@ -137,11 +136,11 @@ if (typeof(LmedsAudio.load_audio) == "function") {
 # though because I thought it was working when I first wrote it).
 # loadAudioSnippet_old_and_broken_on_firefox = """
 loadAudioSnippet = """
-if (typeof(LmedsAudio.load_audio) == "function") {
-    LmedsAudio.loading_progress_show();
-    LmedsAudio.mediaPath = "../tests/lmeds_demo/audio_and_video"
-    LmedsAudio.load_audio();
-    }
+// Load the audio
+if (typeof(audioLoader.load_audio) == "function") {
+    audioLoader.loading_progress_show();
+    audioLoader.load_audio();
+    }\n
 """
 
     
@@ -165,12 +164,12 @@ def generateEmbed(wavDir, nameList, extList, audioOrVideo):
     extTxtList = "[%s]" % (','.join(extList))
     
     embedTxt = '''
-<script>
-LmedsAudio.media_type = "%(mediaType)s";
-LmedsAudio.media_path = "%(path)s";
-LmedsAudio.extensionList = %(extensionList)s;
-LmedsAudio.audioList = %(nameList)s;
-</script>
+// Set the parameters for working with media files
+audioLoader = new LmedsAudio();
+audioLoader.media_type = "%(mediaType)s";
+audioLoader.media_path = "%(path)s";
+audioLoader.extensionList = %(extensionList)s;
+audioLoader.audioList = %(nameList)s;\n
 ''' % {'extensionList': extTxtList,
        'nameList': nameTxtList,
        'path': wavDir.replace("\\", "/"),  # We use '/' regardless of OS
@@ -180,7 +179,8 @@ LmedsAudio.audioList = %(nameList)s;
     return embedTxt
 
     
-def generateAudioButton(name, idNum, pauseDurationSec=0, example=False):
+def generateAudioButton(name, idNum, pauseDurationSec=0, example=False,
+                        autoSubmit=False):
     
     # Accept 'name' to be a list, but if it is, convert it into a string
     
@@ -193,10 +193,15 @@ def generateAudioButton(name, idNum, pauseDurationSec=0, example=False):
         template = buttonTemplateExample
     else:
         template = buttonTemplate
+        
+    if autoSubmit is False:
+        autoSubmit = "false"
+    elif autoSubmit is True:
+        autoSubmit = "true"
 
     template = template % {'button_label': loader.getText('play_button')}
 
-    return template % (idNum, idNum, float(pauseDurationSec), name)
+    return template % (idNum, idNum, float(pauseDurationSec), name, autoSubmit)
 
 
 def getSoundFileDuration(fn):

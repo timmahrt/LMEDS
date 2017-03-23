@@ -217,7 +217,7 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         self.textDict.update(loader.batchGetText(txtKeyList))
         
         self.numAudioButtons = len(mediaListOfLists)
-        self.processSubmitList = ["LmedsAudio.verifyAudioPlayed()", ]
+        self.processSubmitList = ["audioLoader.verifyAudioPlayed()", ]
         
     def _getHTMLTxt(self):
         radioButton = ('<p>\n'
@@ -249,6 +249,19 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         template = ""
         
         return template
+    
+    def getOutput(self, form):
+        
+        try:
+            value = super(MediaChoicePage, self).getOutput(form)
+            if not self._doPlayMedia():
+                value += ",0"
+        except abstract_pages.KeyNotInFormError:  # User timeed-out
+            value = ",".join(['0'] * self.getNumOutputs()) + ",1"
+        
+        
+        
+        return value
     
     def getNumOutputs(self):
         return len(self.responseButtonList)
@@ -349,14 +362,12 @@ def getToggleButtonsJS(numItems, idFormat=None):
         enabledSnippet += (enabledJS % idStr)
         disabledSnippet += (disabledJS % idStr)
     
-    jsCode = ('<script>\n'
-              'function enable_checkboxes() {\n'
+    jsCode = ('function enable_checkboxes() {\n'
               '%s'
               '}\n'
               'function disable_checkboxes() {\n'
               '%s'
               '}\n'
-              '</script>\n'
               ) % (enabledSnippet, disabledSnippet)
     
     return jsCode
@@ -405,7 +416,7 @@ class MediaSliderPage(abstract_pages.AbstractPage):
         self.textDict.update(loader.batchGetText(txtKeyList))
         
         self.numAudioButtons = 1
-        self.processSubmitList = ["LmedsAudio.verifyAudioPlayed()", ]
+        self.processSubmitList = ["audioLoader.verifyAudioPlayed()", ]
         
     def _getHTMLTxt(self):
         
@@ -521,7 +532,7 @@ class MediaListPage(abstract_pages.AbstractPage):
         
         # Although there are many files, there is just one button
         self.numAudioButtons = 1
-        self.processSubmitList = ["LmedsAudio.verifyAudioPlayed()", ]
+        self.processSubmitList = ["audioLoader.verifyAudioPlayed()", ]
     
     def _getHTMLTxt(self):
         return "%s<br /><br />"
@@ -540,7 +551,7 @@ class MediaListPage(abstract_pages.AbstractPage):
         htmlText %= audio.generateAudioButton(self.mediaList,
                                               0,
                                               self.pauseDuration,
-                                              False) + "<br />"
+                                              False, True) + "<br />"
         
         embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays, self.minPlays,
                                        autosubmit=True)

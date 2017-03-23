@@ -217,8 +217,8 @@ class WebSurvey(object):
         validateText = validationTemplate % page.getValidation()
         
         # Defaults
-        embedTxt = jqueryCode + audio.generateEmbed(self.wavDir, [], self.audioExtList,
-                                       "audio")
+        jsHeader = jqueryCode
+        embedTxt = jsHeader
         
         # Estimate our current progress (this doesn't work well if the user
         #    can jump around)
@@ -251,22 +251,52 @@ class WebSurvey(object):
         
         submitWidgetList.extend(page.nonstandardSubmitProcessList)
 
+        # Javascript to run once the page has loaded
         runOnLoad = ""
         submitAssociation = html.constructSubmitAssociation(submitWidgetList)
         runOnLoad += submitAssociation
         
-        if page.autoSubmit is True:
-            runOnLoad += "\nLmedsAudio.autosubmit = true;\n"
-    
         if page.getNumAudioButtons() > 0:
+#             audioLoadingJSCmd = audio.generateEmbed(self.wavDir, [],
+#                                                     self.audioExtList,
+#                                                     "audio")
+#             runOnLoad += audioLoadingJSCmd
             runOnLoad += audio.loadAudioSnippet
-        processSubmitHTML += html.taskDurationCode % runOnLoad
-#         processSubmitHTML =  processSubmitHTML
-            
+        
+        processSubmitHTML += html.runOnPageLoad % runOnLoad
+        processSubmitHTML += validateText
+        
+        scriptFmt = '<script type="text/javascript">\n%s\n</script>'
         if 'embed' in updateDict.keys():
-            updateDict['embed'] = jqueryCode + processSubmitHTML + updateDict['embed']
+            
+            # Add page-specific constraints on audio playback if
+            # this page has audio
+            if "audioLoader" in updateDict["embed"]:
+                minMaxTxt = ""
+                try:
+                    minMaxTxt += ("audioLoader.minNumPlays = %s;\n" %
+                                  page.minPlays)
+                except AttributeError:
+                    pass
+                try:
+                    minMaxTxt += ("audioLoader.maxNumPlays = %s;\n" %
+                                  page.maxPlays)
+                except AttributeError:
+                    pass
+                try:
+                    minMaxTxt += ("audioLoader.numAudioButtons = %s;\n" %
+                                  page.numAudioButtons)
+                except AttributeError:
+                    pass
+
+                minMaxTxt += ("audioLoader.numUniqueSoundFiles = "
+                              "countUnique(audioLoader.audioList);\n")
+                updateDict['embed'] += minMaxTxt
+            
+            tmpEmbed = scriptFmt % (processSubmitHTML + updateDict['embed'])
+            updateDict['embed'] = jqueryCode + tmpEmbed
         else:
-            embedTxt += processSubmitHTML
+            embedTxt += scriptFmt % processSubmitHTML
             
         progressBarDict = {'percentComplete': percentComplete,
                            'percentUnfinished': 100 - percentComplete, }

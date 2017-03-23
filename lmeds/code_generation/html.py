@@ -119,10 +119,11 @@ def getWidgetSubmit(widgetName):
     '''
     Associates all widgets with a provided name (%s) with the submit function
     '''
-    widgetSubmit = ('var radios = document.getElementsByName("%s");\n'
+    widgetSubmit = ('// Set the radio buttons to submit the page on click\n'
+                    'var radios = document.getElementsByName("%s");\n'
                     'for (var i = [0]; i < radios.length; i++) {\n'
                     'radios[i].onclick=processSubmit;\n'
-                    '}\n')
+                    '}\n\n')
     widgetSubmit %= widgetName
     
     return widgetSubmit
@@ -335,24 +336,6 @@ def printCGIHeader(pageNum, disableRefreshFlag):
     print("\n\n")
 
 
-def checkForAudioTag():
-    txt = '''
-    <script type="text/javascript">
-    
-function isSupportedBrowser() {
-
-if(!!document.createElement('audio').canPlayType == false) {
-    document.getElementById("submit").disabled = true;
-    document.getElementById("unsupported_warning").style.display='block';
-}
-
-    }
-    </script>
-    '''
-
-    return txt
-
-
 def makeNoWrap(htmlTxt):
     return '<div id="noTextWrapArea">\n\n%s\n\n</div>' % htmlTxt
 
@@ -362,22 +345,19 @@ def makeWrap(htmlTxt):
 
 
 processSubmitHTML = """
-<script  type="text/javascript">
+// The code that gets run when the page is submitted
 function processSubmit()
 {
-calcDuration();
-var returnValue = true;
-
-%s
-
-
-if (returnValue == true) {
-document.languageSurvey.submit()
-}
-
-return returnValue;
-}
-</script>
+    timer.calcDuration();
+    var returnValue = true;
+    
+    %s
+    
+    if (returnValue == true) {
+        document.languageSurvey.submit()
+    }
+    return returnValue;
+}\n
 """
 
 if __name__ == "__main__":

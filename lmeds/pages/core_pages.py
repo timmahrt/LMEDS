@@ -84,7 +84,7 @@ class LoginPage(abstract_pages.NonRecordingPage):
         htmlText = self._getHTMLTxt()
         pageTemplate = join(constants.htmlDir, "blankPageWValidation.html")
     
-        embedTxt = html.checkForAudioTag()
+        embedTxt = "isSupportedBrowser()\n\n"
     
         return htmlText, pageTemplate, {'embed': embedTxt}
 
@@ -332,8 +332,10 @@ class MediaTestPage(abstract_pages.NonRecordingPage):
     
         # Variables that all pages need to define
         self.numAudioButtons = 1
+        self.minPlays = 1
+        self.maxPlays = -1
         self.processSubmitList = ["validateForm()",
-                                  "LmedsAudio.verifyAudioPlayed()"]
+                                  "audioLoader.verifyAudioPlayed()"]
     
     def _getHTMLTxt(self):
         
