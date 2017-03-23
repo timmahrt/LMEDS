@@ -95,8 +95,12 @@ def _transposeRPT(dataListOfLists):
                 continue
             if len(tmpList) == 0:
                 continue
-            zipped = utils.safeZip(tmpList,
-                                   enforceLength=True)
+            try:
+                zipped = utils.safeZip(tmpList,
+                                       enforceLength=True)
+            except:
+                print("Problem with score type: %s, SID: %s" % (taskType, sid))
+                raise
             returnDict[sid][taskType] = [list(subTuple)
                                          for subTuple in zipped]
         
