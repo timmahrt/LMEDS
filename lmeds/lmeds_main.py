@@ -35,7 +35,10 @@ jqueryCode = ('''<script type="text/javascript" src='''
               '''\n}\n'''
               '''</script>\n'''
               '''<script type="text/javascript" src='''
-              '''"../html/lmeds-audio.js"></script>\n''')
+              '''"../html/lmeds-audio.js"></script>\n'''
+              '''<script type="text/javascript" src='''
+              '''"../html/lmeds-forms.js"></script>\n'''
+              )
 
 
 class WebSurvey(object):
@@ -206,8 +209,10 @@ class WebSurvey(object):
         self._testSequenceOverride(userName)
             
         html.printCGIHeader(cookieTracker, self.disableRefreshFlag)
-
-        validateText = page.getValidation()
+        
+        validationTemplate = ('// Validate page form before submitting\n'
+                              'function validateForm()\n{\n%s\n}\n\n')
+        validateText = validationTemplate % page.getValidation()
         
         # Defaults
         embedTxt = jqueryCode + audio.generateEmbed(self.wavDir, [], self.audioExtList,
@@ -276,7 +281,6 @@ class WebSurvey(object):
                     'cookieTracker': cookieTracker,
                     'page': page,
                     'user_name': userName,
-                    'validate': validateText,
                     'embed': embedTxt,
                     'metadata_description': metaDescription,
                     'websiteRootURL': constants.rootURL,

@@ -76,16 +76,7 @@ class SurveyPage(abstract_pages.NonValidatingPage):
         
         surveyHTML = "<br /><br />\n".join(itemHTMLList)
         
-        javascript = """document.getElementById("%d").selectedIndex = -1;"""
-        javascriptList = [javascript % i for i in choiceBoxIndexList]
-        
-        embedTxt = ('\n<script type="text/javascript">\n'
-                    'function setchoiceboxes() {\n'
-                    '%s\n'
-                    '}\n'
-                    'window.addEventListener("load", setchoiceboxes);\n'
-                    '</script>\n')
-        embedTxt %= "\n".join(javascriptList)
+        embedTxt = 'window.addEventListener("load", setchoiceboxes);\n'
         
         htmlTxt = "<div id='longText'>%s</div>" % surveyHTML
         return htmlTxt, embedTxt
