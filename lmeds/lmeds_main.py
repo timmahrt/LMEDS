@@ -37,6 +37,8 @@ jqueryCode = ('''<script type="text/javascript" src='''
               '''<script type="text/javascript" src='''
               '''"../html/lmeds-audio.js"></script>\n'''
               '''<script type="text/javascript" src='''
+              '''"../html/lmeds-utils.js"></script>\n'''
+              '''<script type="text/javascript" src='''
               '''"../html/lmeds-forms.js"></script>\n'''
               )
 

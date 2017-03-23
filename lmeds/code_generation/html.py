@@ -145,32 +145,14 @@ def constructSubmitAssociation(tupleList):
 
 
 # Associates a submit button with
-taskDurationCode = """
-<script type="text/javascript">
-
-var start = new Date().getTime();
-
+runOnPageLoad = """
+// The code that runs when the page is finished loading
 window.onload=function() {
+timer = new Timer()
 
 %s
-
-
 }
 
-function calcDuration() {
-    var time = new Date().getTime() - start;
-
-    var seconds = Math.floor(time / 100) / 10;
-    var minutes = Math.floor(seconds / 60);
-    seconds = seconds - (minutes * 60);
-    if(Math.round(seconds) == seconds) {
-        seconds += '.0';
-    }
-    var param1 = minutes.toString();
-    var param2 = Number(seconds).toFixed(1);
-    document.getElementById("task_duration").value = param1 + ":" + param2;
-}
-</script>
 """
 
 audioPlayTrackingTemplate = ('<input TYPE="hidden" '
