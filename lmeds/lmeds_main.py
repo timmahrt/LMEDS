@@ -173,7 +173,8 @@ class WebSurvey(object):
         # Otherwise, the user name, should be stored in the form
         elif "user_name" in form:
             userName = utils.decodeUnicode(form["user_name"].value)
-            self._testSequenceOverride(userName)
+        
+        self._testSequenceOverride(userName)
         
         # Get last page info
         lastPage = self.testSequence.getPage(lastPageNum)
