@@ -262,6 +262,7 @@ class WebSurvey(object):
 #                                                     "audio")
 #             runOnLoad += audioLoadingJSCmd
             runOnLoad += audio.loadAudioSnippet
+            runOnLoad += "audioLoader.minPlayFuncList.push(enable_checkboxes)"
         
         processSubmitHTML += html.runOnPageLoad % runOnLoad
         processSubmitHTML += validateText

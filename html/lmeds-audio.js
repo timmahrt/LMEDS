@@ -19,6 +19,8 @@ var LmedsAudio = function () {
     this.media_path = "";
     this.media_type = "";
     this.extensionList = [];
+    
+    this.minPlayFuncList = [];
 
     this.media_type = this.media_type_dict.AUDIO;
     this.audioList = []; // Audio file names
@@ -145,15 +147,20 @@ LmedsAudio.prototype.audio_buttons_enable = function(e = null) {
           }
         
           if (allGreater == true) {
-              if (document.getElementById("submitButton") !== null) {
-                document.getElementById("submitButton").disabled=false;
-              }
+        	  
+              for (var i=0;i<this.minPlayFuncList.length;i++) {
+                  this.minPlayFuncList[i]();
+                }
+
               //%(audioMinThresholdEvent)s
           }
         }
       }
       else
       {
+          for (var i=0;i<this.minPlayFuncList.length;i++) {
+              this.minPlayFuncList[i]();
+            }
       //%(audioMinThresholdEvent)s
       }
     }

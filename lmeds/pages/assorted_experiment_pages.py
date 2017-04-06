@@ -256,10 +256,8 @@ class MediaChoicePage(abstract_pages.AbstractPage):
             value = super(MediaChoicePage, self).getOutput(form)
             if not self._doPlayMedia():
                 value += ",0"
-        except abstract_pages.KeyNotInFormError:  # User timeed-out
+        except abstract_pages.KeyNotInFormError:  # User timed-out
             value = ",".join(['0'] * self.getNumOutputs()) + ",1"
-        
-        
         
         return value
     
@@ -330,6 +328,11 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         htmlText %= (playBtnSnippet + "<br />")
     
         return htmlText, pageTemplate, {'embed': embedTxt}
+
+    def _doPlayMedia(self):
+        mediaNames = [mediaName for mediaSubList in self.mediaList
+                      for mediaName in mediaSubList]
+        return len(mediaNames) > 0
 
 
 def _buttonLabelCheck(audioListOfLists, buttonLabelList):
