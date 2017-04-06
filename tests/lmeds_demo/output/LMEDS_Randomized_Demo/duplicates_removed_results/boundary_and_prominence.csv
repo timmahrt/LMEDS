@@ -1,0 +1,17 @@
+StimulusID,txtKey,instructKey,Word,sum.b,sum.p,james.b,jennifer.b,mark.b,james.p,jennifer.p,mark.p,james.bp.seq,jennifer.bp.seq,mark.bp.seq
+StimulusID,txtKey,instructKey,Word,sum.b,sum.p,t1.b,t2.b,t3.b,t1.p,t2.p,t3.p,t1.bp.seq,t2.bp.seq,t3.bp.seq
+s_1,apples,nonspecific_boundary_instr,today,0.333,0.333,0,0,1,0,1,0,11,9,10
+s_1,apples,nonspecific_boundary_instr,is,0.000,0.000,0,0,0,0,0,0,11,9,10
+s_1,apples,nonspecific_boundary_instr,a,0.000,0.000,0,0,0,0,0,0,11,9,10
+s_1,apples,nonspecific_boundary_instr,good,1.000,0.333,1,1,1,0,0,1,11,9,10
+s_1,apples,nonspecific_boundary_instr,day,0.000,0.000,0,0,0,0,0,0,11,9,10
+s_1,apples,nonspecific_boundary_instr,to,0.000,0.000,0,0,0,0,0,0,11,9,10
+s_1,apples,nonspecific_boundary_instr,buy,0.333,0.000,0,1,0,0,0,0,11,9,10
+s_1,apples,nonspecific_boundary_instr,apples,0.000,0.667,0,0,0,1,0,1,11,9,10
+s_2,water,nonspecific_boundary_instr,the,1.000,0.333,1,1,1,0,1,0,9,7,12
+s_2,water,nonspecific_boundary_instr,water,0.000,0.333,0,0,0,0,0,1,9,7,12
+s_2,water,nonspecific_boundary_instr,in,0.000,0.000,0,0,0,0,0,0,9,7,12
+s_2,water,nonspecific_boundary_instr,the,0.000,0.000,0,0,0,0,0,0,9,7,12
+s_2,water,nonspecific_boundary_instr,park,0.333,0.000,0,0,1,0,0,0,9,7,12
+s_2,water,nonspecific_boundary_instr,is,0.000,0.000,0,0,0,0,0,0,9,7,12
+s_2,water,nonspecific_boundary_instr,cold,0.333,0.333,0,1,0,1,0,0,9,7,12

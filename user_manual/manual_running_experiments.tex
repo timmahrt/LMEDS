@@ -11,6 +11,9 @@ Before you run your experiment, it is recommended that you run the user script s
 \paragraph{}
 Regardless of whether you will run your experiments remotely or locally, before you run your experiment, you must create the output directory.  Suppose your experiment folder is called \textbf{my\_experiment}.  Then you should have the directory \textbf{/tests/my\_experiment}.  The first line of your sequence file is the name of the specific experiment, such as \textbf{experiment\_b}.  You will then need to create the folder \textbf{/tests/my\_experiment/output/experiment\_b}.  This is where LMEDS will store the user responses.
 
+\paragraph{}
+If you are using the randomization function, you will also need to create the directory \textbf{/tests/my\_experiment/individual\_sequences/experiment\_b}
+
 
 \subsection{Running experiments remotely}
 
@@ -28,7 +31,7 @@ If you are installing a server from scratch, you'll need to make sure it comes w
 
 \paragraph{}
 \begin{tcolorbox}[breakable,colback=white,colframe=green,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm,enlarge right by=6mm]
-Before you run experiments you must change the public permissions of the cgi file to execute (665 for the permission octals).  The output directory then needs to have full write and execute permissions (777 for the permission octals).
+Before you run experiments you must change the public permissions of the cgi file to execute (665 for the permission octals).  The output directory (/tests/your-test-name/output/first-line-in-sequence-file/) then needs to have full write and execute permissions (777 for the permission octals).  If you are using the randomization feature then the folder /tests/your-test-name/individual\_sequences/first-line-in-sequence-file/) also needs to have full write and execute permissions.
 \end{tcolorbox}
 
 \subsection{Running experiments locally} 

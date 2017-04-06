@@ -32,7 +32,7 @@ def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textNameStr,
     instrMsg = ("%s<br /><br />\n\n" % textNameStr)
     htmlTxt += html.makeWrap(instrMsg)
     
-    if presentAudioFlag.lower() == 'true':
+    if presentAudioFlag is True:
         htmlTxt += audio.generateAudioButton(name, audioNum, False)
         htmlTxt += "<br /><br />\n\n"
     else:
@@ -285,7 +285,7 @@ $(document).ready(function(){
                          boundaryMarkingCode_showHide}
 
 
-def _getKeyPressEmbed(playID, submitID):
+def _getKeyPressEmbed(playID, submitID, doBoundariesAndProminences=False):
     
     bindKeyTxt = ""
     
@@ -297,8 +297,11 @@ def _getKeyPressEmbed(playID, submitID):
         
     # Bind key press to submit event?
     if submitID is not None:
-        bindKeyTxt += ("\n" +
-                       html.bindToSubmitButtonJS % submitID)
+        if doBoundariesAndProminences is True:
+            js = bindToSubmitButtonBoundaryAndProminenceJS
+        else:
+            js = html.bindToSubmitButtonJS
+        bindKeyTxt += ("\n" + js % submitID)
     
     returnJS = ""
     if bindKeyTxt != "":
@@ -306,6 +309,14 @@ def _getKeyPressEmbed(playID, submitID):
     
     return returnJS
 
+bindToSubmitButtonBoundaryAndProminenceJS = """
+if (e.which == %s) {
+    if (didShowHide == false)
+        {document.getElementById("halfwaySubmitButton").click();}
+    else
+        {document.getElementById("submitButton").click();}
+}
+"""
 
 _verifySelectedWithinRangeJS = """
 function getHowManyMarked(startI, endI, widgetName) {
@@ -406,6 +417,7 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
             bindPlayKeyID = html.keyboardletterToChar(bindPlayKeyID)
         if bindSubmitID is not None:
             bindSubmitID = html.keyboardletterToChar(bindSubmitID)
+        presentAudio = presentAudio.lower() == "true"
         
         minNumSelected = int(minNumSelected)
         maxNumSelected = int(maxNumSelected)
@@ -444,12 +456,12 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         self.textDict.update(loader.batchGetText(txtKeyList))
         
         # Variables that all pages need to define
-        if presentAudio == "true":
+        if presentAudio is True:
             self.numAudioButtons = 1
         else:
             self.numAudioButtons = 0
         
-        if self.doProminence:
+        if self.doProminence is True:
             taskStr = "prominence"
         else:
             taskStr = "boundary"
@@ -469,10 +481,12 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
     def checkArgs(self):
         
         # Make sure all audio files exist
-        audioFNList = [self.name + ext for ext in self.webSurvey.audioExtList]
-        if any([not os.path.exists(join(self.wavDir, fn))
-                for fn in audioFNList]):
-            raise utils.FilesDoNotExist(self.wavDir, audioFNList, True)
+        if self.presentAudio is True:
+            audioFNList = [self.name + ext
+                           for ext in self.webSurvey.audioExtList]
+            if any([not os.path.exists(join(self.wavDir, fn))
+                    for fn in audioFNList]):
+                raise utils.FilesDoNotExist(self.wavDir, audioFNList, True)
         
         # Make sure all text files exist
         if not os.path.exists(join(self.txtDir, self.transcriptName + ".txt")):
@@ -532,7 +546,7 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
                                         self.boundaryToken,
                                         self.syllableDemarcator)[0]
     
-        if self.presentAudio:
+        if self.presentAudio is True:
             embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays,
                                            self.minPlays)
             embed = audio.generateEmbed(self.wavDir,
@@ -625,6 +639,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
             bindPlayKeyID = html.keyboardletterToChar(bindPlayKeyID)
         if bindSubmitID is not None:
             bindSubmitID = html.keyboardletterToChar(bindSubmitID)
+        presentAudio = presentAudio.lower() == "true"
         
         minNumSelected = int(minNumSelected)
         maxNumSelected = int(maxNumSelected)
@@ -663,7 +678,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         self.textDict.update(loader.batchGetText(txtKeyList))
         
         # Variables that all pages need to define
-        if presentAudio == "true":
+        if presentAudio is True:
             # Only show one at a time, plays the same audio
             self.numAudioButtons = 2
         else:
@@ -755,7 +770,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         htmlTxt += "</div>"
                     
         # Add the javascript and style sheets here
-        if self.presentAudio:
+        if self.presentAudio is True:
             embedTxt = audio.getPlaybackJS(True, 2, self.maxPlays,
                                            self.minPlays)
             embed = audio.generateEmbed(self.wavDir,
@@ -764,7 +779,8 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
                                         "audio")
             embedTxt += "\n\n" + embed
             embedTxt += "\n\n" + _getKeyPressEmbed(self.bindPlayKeyID,
-                                                   self.bindSubmitID)
+                                                   self.bindSubmitID,
+                                                   True)
                 
         else:
             embedTxt = ""

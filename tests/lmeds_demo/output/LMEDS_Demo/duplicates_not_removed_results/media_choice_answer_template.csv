@@ -1,0 +1,7 @@
+s0,same_different_instr,audio,0.5,1,-1,[[water apples]],[same different]
+s1,same_different_instr,audio,0.5,1,2,[[water] [apples]],[same different]
+s2,prominence_video_instr,video,0.5,1,-1,[[syllables_video]],[vnonprom nonprominent neutral prominent vprom]
+s3,fill_in_the_blank_instruct,audio,0.5,-1,-1,[[]],[polluted cold not_drinkable],transcriptList=,[water_blank],timeout=5
+s4,one_play_two_response,audio,0.5,1,-1,[[water apples]],[same different],bindPlayKeyIDList=p,bindResponseKeyIDList=,[z m]
+s5,two_play_two_response,audio,0.5,1,2,[[water] [apples]],[same different],bindPlayKeyIDList=,[q p],bindResponseKeyIDList=,[z m]
+s6,prominence_point_instr,audio,0.5,1,-1,[[water]],[vnonprom nonprominent neutral prominent vprom],transcriptList=,[water_word]

@@ -183,9 +183,26 @@ class MediaChoicePage(abstract_pages.AbstractPage):
     
     def __init__(self, instructionText, audioOrVideo, pauseDuration,
                  minPlays, maxPlays, mediaListOfLists, responseButtonList,
-                 buttonLabelList=None, transcriptList=None,
+                 mediaButtonLabelList=None, transcriptList=None,
+                 bindPlayKeyIDList=None, bindResponseKeyIDList=None,
+                 timeout=None,
                  *args, **kargs):
         super(MediaChoicePage, self).__init__(*args, **kargs)
+        
+        # Normalize variables
+        if bindPlayKeyIDList is not None:
+            tmpKeyIDList = []
+            for keyID in bindPlayKeyIDList:
+                keyID = html.keyboardletterToChar(keyID)
+                tmpKeyIDList.append(keyID)
+            bindPlayKeyIDList = tmpKeyIDList
+        
+        if bindResponseKeyIDList is not None:
+            tmpKeyIDList = []
+            for keyID in bindResponseKeyIDList:
+                keyID = html.keyboardletterToChar(keyID)
+                tmpKeyIDList.append(keyID)
+            bindResponseKeyIDList = tmpKeyIDList
         
         self.instructionText = instructionText
         self.pauseDuration = pauseDuration
@@ -193,10 +210,19 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         self.minPlays = minPlays
         self.maxPlays = maxPlays
         self.responseButtonList = responseButtonList
+        self.bindPlayKeyIDList = bindPlayKeyIDList
+        self.bindResponseKeyIDList = bindResponseKeyIDList
+        self.timeout = None
+        
+        if bindPlayKeyIDList is not None:
+            assert(len(mediaListOfLists) == len(bindPlayKeyIDList))
+        
+        if bindResponseKeyIDList is not None:
+            assert(len(responseButtonList) == len(bindResponseKeyIDList))
         
         assert(audioOrVideo in ["audio", "video"])
         self.audioOrVideo = audioOrVideo
-        self.buttonLabelList = buttonLabelList
+        self.buttonLabelList = mediaButtonLabelList
         self.transcriptList = transcriptList
         if transcriptList is not None:
             assert(len(mediaListOfLists) == len(transcriptList))
@@ -208,24 +234,55 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         self.nonstandardSubmitProcessList = [('widget',
                                               'media_choice')]
         
+        if timeout is not None:
+            self.nonstandardSubmitProcessList.append(('timeout', timeout))
+        
         # Strings used in this page
         txtKeyList = [instructionText, ]
         txtKeyList += responseButtonList
-        txtKeyList += _buttonLabelCheck(mediaListOfLists, buttonLabelList)
+        txtKeyList += _buttonLabelCheck(mediaListOfLists, mediaButtonLabelList)
         
         txtKeyList.extend(abstract_pages.audioTextKeys)
         self.textDict.update(loader.batchGetText(txtKeyList))
         
         self.numAudioButtons = len(mediaListOfLists)
         self.processSubmitList = ["audioLoader.verifyAudioPlayed()", ]
+
+    def _getKeyPressEmbed(self):
         
+        bindKeyTxt = ""
+
+        # Bind key press to play button?
+        if self.bindPlayKeyIDList is not None:
+            for i, keyID in enumerate(self.bindPlayKeyIDList):
+                clickJS = 'document.getElementById("button%d").click();' % i
+                bindTuple = (keyID, clickJS)
+                bindKeyTxt += ("\n" + html.bindKeySubSnippetJS % bindTuple)
+            
+        # Bind key press to submit event?
+        if self.bindResponseKeyIDList is not None:
+            for i, keyID in enumerate(self.bindResponseKeyIDList):
+                clickJS = 'document.getElementById("%d").click();' % i
+                bindTuple = (keyID, clickJS)
+                bindKeyTxt += ("\n" + html.bindKeySubSnippetJS % bindTuple)
+        
+        returnJS = ""
+        if bindKeyTxt != "":
+            returnJS = html.bindKeyJSTemplate % bindKeyTxt
+        
+        return returnJS
+
     def _getHTMLTxt(self):
         radioButton = ('<p>\n'
                        '<input type="radio" name="media_choice"'
-                       'value="%(id)s" id="%(id)s" disabled />\n'
+                       'value="%(id)s" id="%(id)s" %(disabled)s />\n'
                        '<label for="%(id)s">.</label>\n'
                        '</p>\n'
                        )
+        
+        disabledTxt = ""
+        if self._doPlayMedia():
+            disabledTxt = "disabled"
         
         htmlTxt = ('<br /><br />%%s<br /><br />\n'
                    '<table class="center">\n'
@@ -237,10 +294,10 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         labelRow = ""
         buttonRow = ""
         for i in range(len(self.responseButtonList)):
+            radioButtonTxt = radioButton % {'id': i, "disabled": disabledTxt}
             text = self.textDict[self.responseButtonList[i]]
             labelRow += "<td class='responses'>%s</td>" % text
-            buttonRow += "<td class='responses'>%s</td>" % (radioButton %
-                                                            {'id': i})
+            buttonRow += "<td class='responses'>%s</td>" % radioButtonTxt
         
         return htmlTxt % (labelRow,
                           buttonRow)
@@ -256,9 +313,10 @@ class MediaChoicePage(abstract_pages.AbstractPage):
             value = super(MediaChoicePage, self).getOutput(form)
             if not self._doPlayMedia():
                 value += ",0"
+
         except abstract_pages.KeyNotInFormError:  # User timed-out
             value = ",".join(['0'] * self.getNumOutputs()) + ",1"
-        
+
         return value
     
     def getNumOutputs(self):
@@ -276,6 +334,10 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         playBtnSnippet = ''
         template = "<td class='buttons'>%s</td>"
         for i in range(len(self.mediaList)):
+            
+            # Don't generate an audio button if the list is empty
+            if len(self.mediaList[i]) == 0:
+                continue
             
             mediaButtonHTML = audio.generateAudioButton(self.mediaList[i], i,
                                                         self.pauseDuration,
@@ -312,15 +374,18 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         
         mediaNames = [mediaName for mediaSubList in self.mediaList
                       for mediaName in mediaSubList]
-        if self.audioOrVideo == "video":
-            extList = self.webSurvey.videoExtList
-        else:
-            extList = self.webSurvey.audioExtList
-        embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
-                                                 list(set(mediaNames)),
-                                                 extList,
-                                                 self.audioOrVideo)
+        if self._doPlayMedia():
+            if self.audioOrVideo == "video":
+                extList = self.webSurvey.videoExtList
+            else:
+                extList = self.webSurvey.audioExtList
+            embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
+                                                     list(set(mediaNames)),
+                                                     extList,
+                                                     self.audioOrVideo)
+        
         embedTxt += "\n\n" + availableFunctions
+        embedTxt += self._getKeyPressEmbed()
         
         description = self.textDict[self.instructionText]
 
@@ -328,7 +393,7 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         htmlText %= (playBtnSnippet + "<br />")
     
         return htmlText, pageTemplate, {'embed': embedTxt}
-
+    
     def _doPlayMedia(self):
         mediaNames = [mediaName for mediaSubList in self.mediaList
                       for mediaName in mediaSubList]
@@ -569,103 +634,3 @@ class MediaListPage(abstract_pages.AbstractPage):
                                                  self.audioOrVideo)
         
         return htmlText, pageTemplate, {'embed': embedTxt}
-    
-
-class FillInTheBlankPage(abstract_pages.AbstractPage):
-    
-    pageName = "fill_in_the_blank"
-    
-    def __init__(self, name, timeout, answer1, answer2, answer3,
-                 *args, **kargs):
-        super(FillInTheBlankPage, self).__init__(*args, **kargs)
-        
-        self.name = name
-        
-        self.answer1 = answer1.replace("_", " ")
-        self.answer2 = answer2.replace("_", " ")
-        self.answer3 = answer3.replace("_", " ")
-        
-        self.txtDir = self.webSurvey.txtDir
-        
-        self.submitProcessButtonFlag = False
-        self.nonstandardSubmitProcessList = [('timeout', timeout),
-                                             ('widget', "fill_in_the_blank")]
-        
-        # Strings used in this page
-        txtKeyList = ["three_option_validation", "fill_in_the_blank_instruct"]
-        self.textDict.update(loader.batchGetText(txtKeyList))
-        
-        # Variables that all pages need to define
-        self.processSubmitList = []
-        self.numAudioButtons = 0
-
-    def _getHTMLTxt(self):
-        
-        radioButton = ('<p><input type="radio" name="fill_in_the_blank" '
-                       'value="%(id)s" id="%(id)s" />\n'
-                       '<label for="%(id)s">.</label>\n'
-                       '</p>\n'
-                       )
-        
-        htmlTxt = ('<table class="center">\n'
-                   '<tr><td>%%s</td><td>%%s</td><td>%%s</td></tr>\n'
-                   '<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n'
-                   '</table>\n'
-                   )
-        
-        return htmlTxt % (radioButton % {'id': '0'},
-                          radioButton % {'id': '1'},
-                          radioButton % {'id': '2'})
-    
-    def getValidation(self):
-        validation = ('var y=document.forms["languageSurvey"];\n'
-                      'if (checkBoxValidate(y["fill_in_the_blank"])==true)\n'
-                      '{\n'
-                      'alert("%s");\n'
-                      'return false;\n'
-                      '}\n'
-                      'return true;\n'
-                      )
-        
-        #  'Error.  Select one of the three options'
-        retPage = validation % self.textDict['three_option_validation']
-        
-        return retPage
-    
-    def getNumOutputs(self):
-        return 3
-
-    def getOutput(self, form):
-        value = form.getvalue("fill_in_the_blank")
-        responseList = ["0", "0", "0", "0"]
-        if value is None:
-            value = 3
-        else:
-            value = int(value)
-        responseList[value] = "1"
-        return ",".join(responseList)
-    
-    def getHTML(self):
-        '''
-        Listeners hear one file and decide if its one of three options
-        
-        The three options are: "textA", "textB" or "None"
-        '''
-        pageTemplate = join(constants.htmlDir, "axbTemplate.html")
-        
-        description = self.textDict["fill_in_the_blank_instruct"]
-        
-        a = self.answer1
-        b = self.answer2
-        c = self.answer3
-        
-        txtFN = join(self.txtDir, self.name + ".txt")
-        
-        sentenceList = loader.loadTxtFile(txtFN)
-        sentenceTxt = "\n".join(sentenceList)
-        
-        htmlText = "<i>" + description + "</i><br /><br />" + sentenceTxt
-        htmlText += "<br /><br />" + self._getHTMLTxt()
-        htmlText %= (a, b, c)
-        
-        return htmlText, pageTemplate, {'embed': ""}

@@ -2,7 +2,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%
 \section{User scripts}
-\label{users_scripts}
+\label{sec:users_scripts}
 %%%%%%%%%%%%%%%%%%%%%
 
 \paragraph{}
@@ -32,6 +32,8 @@ python sequence_check.py -h
 \paragraph{}
 \textbf{Third}, user scripts can be run from within a python development environment, such as IDLE, which is bundled with every version of python.  If you open IDLE, choose \texttt{File >> Open} and open the desired script.  The script will open in a new window.  Select \texttt{Run >> Run Module}.  The application will launch.  It will ask if you want to go into interactive mode.  Type ``yes".  The script will then ask question-by-question for all of the information it needs to run.
 
+
+%%%%%%%%%%%%%%%%
 \subsection{Generating the language dictionary}
 
 \paragraph{}
@@ -66,7 +68,7 @@ http://127.0.0.1:8123/cgi-bin/lmeds_demo.py?crop_dictionary
 \end{lstlisting}
 
 
-
+%%%%%%%%%%%%%%%%
 \subsection{Verifying experiment integrity}
 
 \paragraph{}
@@ -83,7 +85,7 @@ http://127.0.0.1:8123/cgi-bin/lmeds_demo.py?sequence_check
 \end{lstlisting}
 
 
-
+%%%%%%%%%%%%%%%%
 \subsection{Getting test duration}
 
 \paragraph{}
@@ -100,8 +102,9 @@ http://127.0.0.1:8123/cgi-bin/lmeds_demo.py?get_test_duration
 \end{lstlisting}
 
 
-
+%%%%%%%%%%%%%%%%
 \subsection{Post-processing the results}
+\label{postprocessresults}
 
 \paragraph{}
 Each user will have their data stored in a separate file.  For doing many kinds of analysis, this is not convenient.  Furthermore, the questions are removed from the responses and the responses are mixed with different kinds of questions.
@@ -113,17 +116,29 @@ This script was made to remedy some of these issues.  First, items are separated
 Currently, LMEDS may experience duplicate data entries--in particular when the \textbf{lmeds\_main.py}'s \textit{disableRefreshFlag} is set to False and the user hits back or refresh.  The code will warn when it detects multiple items and prevent the user from continuing but there is also the option to remove duplicate entries when they appear (printing the found instances).  This happens before anything else in the script.
 
 \paragraph{}
-The script can also remove from consideration any test items used in the experiment.
+\begin{tcolorbox}[colback=white,colframe=red,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm,enlarge right by=6mm]
+The code to remove duplicate entries is a little naive.  If there is a situation where two identical lines could appear adjacent in your sequence file, LMEDS will assume in the output that the two lines are duplicates of each other and automatically remove the second one if \textit{removeDuplicatesFlag} is set to True.  If set to False, it makes no assumptions about the relationships between lines.  True is the convenient option, False is the safe option--if you are concerned.
+\end{tcolorbox}
+
+\paragraph{}
+The script can also remove any items used in the experiment that the user does not want to include in the output--for example test items or items that are removed from the study before data collection concludes.  By default the post processing user script doesn't remove any data.
+
+\paragraph{}
+\textbf{An important note on randomized sequences}, if a sequence is flagged as `randomized' in it's cgi file, the order each participant did the stimuli in will be randomized.  The post-processing code will recognize this automatically arrange all user responses in the order specified in the main sequence file.  However, the post processing script will also output the order that each item was presented in.  This can be seen in the example output files included in the following folder with LMEDS
+
+/LMEDS/tests/lmeds\_demo/output/LMEDS\_Randomized\_Demo/duplicates\_removed\_results/
 
 \paragraph{}
 Output data can be found in subfolders created in the output folder of the experiment.
 
 \begin{lstlisting}
+python post_process_results.py testName sequenceFN
+	removeDuplicatesFlag removeItemList=[]
 python post_process_results.py lmeds_demo sequence.txt false
 \end{lstlisting}
 
 \paragraph{}
-To run this from a web browser:
+To run this from a web browser (assumes \textit{removeDuplicatesFlag} is True):
 \begin{lstlisting}
 http://127.0.0.1:8123/cgi-bin/lmeds_demo.py?post_process_results
 \end{lstlisting}

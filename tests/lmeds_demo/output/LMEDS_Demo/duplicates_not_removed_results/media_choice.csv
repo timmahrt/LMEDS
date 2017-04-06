@@ -1,0 +1,9 @@
+stimulusID,arg1,arg2,arg3,arg4,arg5,arg6,arg7,bob.media_choice,mary.media_choice,sarah.media_choice
+stimulusID,arg1,arg2,arg3,arg4,arg5,arg6,arg7,t1.media_choice,t2.media_choice,t3.media_choice
+s0,same_different_instr,audio,0.5,1,-1,[[water apples]],[same different],0,0,1
+s1,same_different_instr,audio,0.5,1,2,[[water] [apples]],[same different],1,1,1
+s2,prominence_video_instr,video,0.5,1,-1,[[syllables_video]],[vnonprom nonprominent neutral prominent vprom],0,0,0
+s3,fill_in_the_blank_instruct,audio,0.5,-1,-1,[[]],[polluted cold not_drinkable],transcriptList=,[water_blank],timeout=5,0,3,0
+s4,one_play_two_response,audio,0.5,1,-1,[[water apples]],[same different],bindPlayKeyIDList=p,bindResponseKeyIDList=,[z m],1,1,0
+s5,two_play_two_response,audio,0.5,1,2,[[water] [apples]],[same different],bindPlayKeyIDList=,[q p],bindResponseKeyIDList=,[z m],0,1,0
+s6,prominence_point_instr,audio,0.5,1,-1,[[water]],[vnonprom nonprominent neutral prominent vprom],transcriptList=,[water_word],0,1,0

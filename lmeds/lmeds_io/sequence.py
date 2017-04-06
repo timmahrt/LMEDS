@@ -165,7 +165,6 @@ class TestSequence(object):
     
         self.webSurvey = webSurvey  # Needed to instantiate pages
         self.sequenceTitle, self.testItemList = parseSequence(sequenceFN)
-        print(sequenceFN)
     
     def getNumPages(self):
         return len(self.testItemList)

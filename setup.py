@@ -8,7 +8,7 @@ Created on Apr 29, 2016
 from distutils.core import setup
 import io
 setup(name='lmeds',
-      version='2.2.0',
+      version='2.4.3',
       author='Tim Mahrt',
       author_email='timmahrt@gmail.com',
       package_dir={'lmeds':'lmeds'},
@@ -24,6 +24,7 @@ setup(name='lmeds',
       license='LICENSE',
       test_suite='nose.collector',
       tests_require=['nose'],
+      description="A web platform for collecting text annotation and experiment data online",
       long_description=io.open('README.rst', 'r', encoding="utf-8").read(),
 #       install_requires=[], # No requirements! # requires 'from setuptools import setup'
       )

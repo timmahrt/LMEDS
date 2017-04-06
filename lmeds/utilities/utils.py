@@ -18,6 +18,21 @@ import functools
 import math
 
 
+class UnbalancedListsError(Exception):
+    
+    def __init__(self, listOfLists):
+        super(UnbalancedListsError, self).__init__()
+        
+        self.listOfLists = listOfLists
+        
+    def __str__(self):
+        retStr = "All sublists must be the same length.\n"
+        for subList in self.listOfLists:
+            retStr += "Length:%04d,List:%s\n" % (len(subList), subList)
+        
+        return retStr
+
+
 def decodeUnicode(inputStr):
     
     # Python 2-to-3 compatibility hack
@@ -127,7 +142,8 @@ def safeZip(listOfLists, enforceLength):
     
     if enforceLength is True:
         length = len(listOfLists[0])
-        assert(all([length == len(subList) for subList in listOfLists]))
+        if not all([length == len(subList) for subList in listOfLists]):
+            raise UnbalancedListsError(listOfLists)
     
     return zip_longest(*listOfLists)
 

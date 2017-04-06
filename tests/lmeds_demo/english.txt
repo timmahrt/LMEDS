@@ -1,4 +1,21 @@
 
+=============
+polluted
+=============
+
+polluted
+
+=============
+cold
+=============
+
+cold
+
+=============
+not_drinkable
+=============
+
+not drinkable
 
 ------------------------------
 lmeds_interface
@@ -81,6 +98,24 @@ In the <b>second task</b>, mark words that you hear as prominent in this way. <b
 There are <b>sixteen audio excerpts</b>.  Please use the second playback to review your work.  You will <b>not</b> be able to listen to the audio more than twice.
 
 ====================
+boundary_and_prominence_randomized_instructions
+====================
+
+On the next few pages are randomized boundary and prominence pages.
+<br /><br />
+Mark the boundaries you hear based on pauses in the speech (there aren't
+really any pauses in these short recordings though) and mark the prominences
+based on the words you think stand out.
+
+====================
+boundary_and_prominence_with_limits
+====================
+
+The next few pages contain more prominence and boundary pages.  However,
+on these pages, you'll be limited in the number of items you can select.
+Specific instructions will be given for each page.
+
+====================
 fill_in_the_blank_instructions
 ====================
 
@@ -103,6 +138,15 @@ contain information we give to subjects participating from remote places.  Then 
 is a consent form, and a demographics survey.<br /><br />
 
 This demo should only take about 5 minutes to complete.
+
+====================
+keyboard_shortcuts
+====================
+
+On the next page there is a boundary and prominence page followed by 
+a media choice page, as you have seen before.  However,
+these pages have been configured to allow interaction via a keyboard.
+Specific instructions will be given for each page.
 
 ====================
 multingual_support
@@ -128,6 +172,15 @@ On the next page you'll fill out a demographics page.  These questions are deriv
 from actual demographics surveys conducted over LMEDS.<br /><br />
 
 Note that you may skip as many items as you want.
+
+====================
+randomized_demo_introduction
+====================
+
+This is a short LMEDS sample experiment meant to demonstrate the randomization feature.
+<br /><br />
+Please read the user manual for more information about how to randomize the presentation
+order of stimuli to users.
 
 ====================
 remote_experiment_notice
@@ -163,6 +216,12 @@ same_different_instructions
 
 On the next page, you will hear two audio files.  Please press the appropriate button
 to indicate whether they are the same or different.
+
+====================
+same_different_randomized_instructions
+====================
+
+On the next few pages are a few same-different questions.  The order of the test items is randomized.
 
 ====================
 sliders_in_surveys
@@ -340,6 +399,13 @@ neutral
 Neither
 
 ====================
+one_play_two_response
+====================
+
+Same or different?<br />
+Press 'p' to play the audio; 'z' for the left response and 'm' for the right response.
+
+====================
 prominence_point_instr
 ====================
 
@@ -362,6 +428,14 @@ same_different_instr
 ====================
 
 Are the two audio files the same or different?
+
+====================
+two_play_two_response
+====================
+
+Same or different?<br />
+Press 'q' for the left audio and 'p' for the right audio.\n<br />
+Press 'z' for the left response and 'm' for the right response.
 
 ====================
 vnonprom
@@ -396,10 +470,60 @@ boundary_and_prominence
 ------------------------------
 
 ====================
-nonspecific_prominence_instr
+keyboard_shortcuts_boundary
 ====================
 
-Mark the words that the speaker <font color="blue">highlighted for the listener, to make them stand out</font>.
+<font color="red">Boundary task.</font>  Press [p] to play the audio file and [enter] to continue
+
+====================
+keyboard_shortcuts_prominence
+====================
+
+<font color="blue">Prominence task.</font>  Press [p] to play the audio file and [enter] to continue
+
+====================
+mark_one_boundary
+====================
+
+Mark exactly one boundary.
+
+====================
+mark_one_prominence
+====================
+
+Mark exactly one prominence.
+
+====================
+pbMinMaxSelectedErrorMsg
+====================
+
+Error.  You must select at least %d word(s) but not more than %d word(s).
+
+====================
+true
+====================
+
+
+
+------------------------------
+boundary
+------------------------------
+
+====================
+boundary_at_most_one
+====================
+
+Mark at most one boundary.
+
+------------------------------
+prominence
+------------------------------
+
+====================
+prominence_at_least_two
+====================
+
+Mark at least two prominences.
 
 ------------------------------
 syllable_marking
@@ -470,28 +594,6 @@ You have chosen not to participate in this study. Thank you for your time.
 <br /><br />
 
 ------------------------------
-media_test,media_list,media_choice,boundary_and_prominence,boundary,prominence,syllable_marking,media_slider
-------------------------------
-
-====================
-error_must_play_audio
-====================
-
-You must listen to each of the audio files at least %d time(s).
-
-====================
-error_must_play_audio_at_least
-====================
-
-You must listen to each of the audio files at least %d time(s).
-
-====================
-play_button
-====================
-
-Play
-
-------------------------------
 boundary_and_prominence,boundary,prominence
 ------------------------------
 
@@ -500,6 +602,16 @@ nonspecific_boundary_instr
 ====================
 
 Mark a boundary between words <font color="red">that belong to different chunks</font>.
+
+------------------------------
+lmeds_interface,login,login_bad_user_name
+------------------------------
+
+====================
+back_button_warning
+====================
+
+<font color="red">Please note that pressing 'back' or 'refresh' will invalidate this experiment session.</font>
 
 ------------------------------
 login,text_page,consent,login_bad_user_name
@@ -528,14 +640,24 @@ prominent
 Prominent
 
 ------------------------------
-lmeds_interface,login,login_bad_user_name
+boundary_and_prominence,prominence,boundary
 ------------------------------
 
 ====================
-back_button_warning
+nonspecific_prominence_instr
 ====================
 
-<font color="red">Please note that pressing 'back' or 'refresh' will invalidate this experiment session.</font>
+Mark the words that the speaker <font color="blue">highlighted for the listener, to make them stand out</font>.
+
+------------------------------
+prominence,boundary_and_prominence
+------------------------------
+
+====================
+pbMinSelectedErrorMsg
+====================
+
+Error.  You must select at least %d word(s).
 
 ------------------------------
 login,login_bad_user_name
@@ -560,6 +682,28 @@ user_name_text
 Please enter a unique user id.  No spaces please.  (e.g. k123l or john_doe_22)
 
 ------------------------------
+media_test,media_list,media_choice,boundary_and_prominence,boundary,prominence,syllable_marking,media_slider
+------------------------------
+
+====================
+error_must_play_audio
+====================
+
+You must listen to each of the audio files at least %d time(s).
+
+====================
+error_must_play_audio_at_least
+====================
+
+You must listen to each of the audio files at least %d time(s).
+
+====================
+play_button
+====================
+
+Play
+
+------------------------------
 lmeds_interface,boundary_and_prominence
 ------------------------------
 
@@ -568,4 +712,14 @@ continue_button
 ====================
 
 Continue
+
+------------------------------
+boundary,boundary_and_prominence
+------------------------------
+
+====================
+pbMaxSelectedErrorMsg
+====================
+
+Error. You must not select more than %d word(s).
 

@@ -1,0 +1,23 @@
+*LMEDS_Randomized_Demo
+login
+
+text_page randomized_demo_introduction
+
+text_page same_different_randomized_instructions
+<randomize>
+media_choice same_different_instr audio 0.0 -1 -1 [[water apples]] [same different]
+media_choice same_different_instr audio 0.0 -1 -1 [[water water]] [same different]
+media_choice same_different_instr audio 0.0 -1 -1 [[apples apples]] [same different]
+</randomize>
+
+text_page boundary_and_prominence_randomized_instructions
+<randomize>
+boundary apples apples -1 -1 nonspecific_boundary_instr true
+prominence apples apples -1 -1 nonspecific_prominence_instr true
+boundary water water -1 -1 nonspecific_boundary_instr true
+prominence water water -1 -1 nonspecific_prominence_instr true
+boundary_and_prominence apples apples -1 -1 nonspecific_boundary_instr nonspecific_prominence_instr true
+boundary_and_prominence water water -1 -1 nonspecific_boundary_instr nonspecific_prominence_instr true
+</randomize>
+
+end

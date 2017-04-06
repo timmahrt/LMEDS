@@ -1,0 +1,13 @@
+login,[],None,None,0,0;,[]
+text_page,[randomized_demo_introduction,orderSI=1,orderAI=1],None,None,0:1.2,1;,[]
+text_page,[same_different_randomized_instructions,orderSI=2,orderAI=2],None,None,0:1.2,2;,[]
+media_choice,[same_different_instr,audio,0.0,-1,-1,[[water,water]],[same,different],orderSI=4,orderAI=3],1,None,0:1.3,3;,1,0
+media_choice,[same_different_instr,audio,0.0,-1,-1,[[apples,apples]],[same,different],orderSI=5,orderAI=4],1,None,0:1.2,4;,0,1
+media_choice,[same_different_instr,audio,0.0,-1,-1,[[water,apples]],[same,different],orderSI=3,orderAI=5],1,None,0:1.1,5;,1,0
+text_page,[boundary_and_prominence_randomized_instructions,orderSI=6,orderAI=6],None,None,0:1.1,6;,[]
+prominence,[water,water,-1,-1,nonspecific_prominence_instr,true,orderSI=10,orderAI=7],1,None,0:2.1,7;,1,0,0,0,0,0,0
+prominence,[apples,apples,-1,-1,nonspecific_prominence_instr,true,orderSI=8,orderAI=8],1,None,0:2.8,8;,0,0,0,0,0,1,0,1
+boundary,[water,water,-1,-1,nonspecific_boundary_instr,true,orderSI=9,orderAI=9],1,None,0:2.6,9;,0,0,0,1,1,0,0
+boundary_and_prominence,[apples,apples,-1,-1,nonspecific_boundary_instr,nonspecific_prominence_instr,true,orderSI=11,orderAI=10],1,1,0:6.1,10;,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1
+boundary,[apples,apples,-1,-1,nonspecific_boundary_instr,true,orderSI=7,orderAI=11],1,None,0:1.5,11;,0,0,0,1,0,0,0,0
+boundary_and_prominence,[water,water,-1,-1,nonspecific_boundary_instr,nonspecific_prominence_instr,true,orderSI=12,orderAI=12],1,1,0:5.2,12;,1,0,0,0,1,0,0,0,1,0,0,0,0,0

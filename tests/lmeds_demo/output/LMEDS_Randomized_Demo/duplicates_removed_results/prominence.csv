@@ -1,0 +1,17 @@
+StimulusID,txtKey,instructKey,Word,sum.p,james.p,jennifer.p,mark.p,james.p.seq,jennifer.p.seq,mark.p.seq
+StimulusID,txtKey,instructKey,Word,sum.p,t1.p,t2.p,t3.p,t1.p.seq,t2.p.seq,t3.p.seq
+s_1,apples,nonspecific_prominence_instr,today,0.333,0,1,0,8,10,8
+s_1,apples,nonspecific_prominence_instr,is,0.000,0,0,0,8,10,8
+s_1,apples,nonspecific_prominence_instr,a,0.000,0,0,0,8,10,8
+s_1,apples,nonspecific_prominence_instr,good,0.000,0,0,0,8,10,8
+s_1,apples,nonspecific_prominence_instr,day,0.333,1,0,0,8,10,8
+s_1,apples,nonspecific_prominence_instr,to,0.333,0,0,1,8,10,8
+s_1,apples,nonspecific_prominence_instr,buy,0.000,0,0,0,8,10,8
+s_1,apples,nonspecific_prominence_instr,apples,0.333,0,0,1,8,10,8
+s_2,water,nonspecific_prominence_instr,the,0.333,0,0,1,10,11,7
+s_2,water,nonspecific_prominence_instr,water,0.000,0,0,0,10,11,7
+s_2,water,nonspecific_prominence_instr,in,0.000,0,0,0,10,11,7
+s_2,water,nonspecific_prominence_instr,the,0.000,0,0,0,10,11,7
+s_2,water,nonspecific_prominence_instr,park,0.667,1,1,0,10,11,7
+s_2,water,nonspecific_prominence_instr,is,0.000,0,0,0,10,11,7
+s_2,water,nonspecific_prominence_instr,cold,0.000,0,0,0,10,11,7

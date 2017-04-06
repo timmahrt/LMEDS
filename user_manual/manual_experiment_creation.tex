@@ -10,6 +10,8 @@
 
 An LMEDS test has the following components
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{Audio and video files}
 
 \paragraph{}
@@ -36,6 +38,8 @@ sox input_file_name -r 16000 output_file_name rate -v 96k
 
 \url{http://sox.sourceforge.net/}
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{Transcription files}
 
 \paragraph{}
@@ -44,6 +48,8 @@ Only raw txt files with the extension .txt are accepted.  Each transcription fil
 \paragraph{}
 For long excerpts, you should specify the line breaks explicitly by chunking the text into pieces over the span of several lines.  For a long excerpt, if all of the text lies on one line, the text will run off the page in LMEDS.
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{Sequence file (see section \ref{sec:sequenceSpec})}
 
 \paragraph{}
@@ -52,11 +58,15 @@ The file that specifies the control flow of a test.  It specifies what instructi
 \paragraph{}
 Multiple sequence files can exist for a set of audio and transcription files (e.g. one could have a sequence with the stimuli in a certain order and another sequence with the stimuli in a different order or with different instructions, etc.).
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{Dictionary file(s) (see section \ref{sec:dictionarySpec})}
 
 \paragraph{}
 The file that contains all text that will be seen by users in your experiment.  This file is independent of a sequence file so one could write a sequence and present it in both English and Russian, for example.
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{Survey file(s) (see section \ref{sec:surveySpec})}
 
 \paragraph{}
@@ -68,6 +78,8 @@ Each survey requires its own survey file (e.g. presurvey.txt, postsurvey.txt).
 \paragraph{}
 Most pages have a static layout (defined in the python code) that is filled in with the same type of content.  A survey is different because the amount of content and inputs vary with each survey page, whereas all AXB pages, for example, share the same number of inputs and outputs.  For this reason, each survey requires its own specification file while other types of pages do not.
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{.CGI file}
 
 \paragraph{}
@@ -75,6 +87,7 @@ The file that defines a single experiment--via a sequence file and a language fi
 
 \paragraph{}
 A template of a typical .cgi file can be found in section \ref{sec:cgitemplate}.  An example file is also distributed in the /cgi folder included with LMEDS.
+
 
 %%%%%%%%%%%%%%%%%%%%%
 \subsection{Dictionary file specification}
@@ -93,6 +106,8 @@ You might find it useful to create a new dictionary by using another one--either
 \paragraph{}
 A dictionary files has the following components (a very small, but complete dictionary file follows these, alternatively, you can look at the included dictionary file for a real example: \textbf{/tests/lmeds\_demo/english.txt}):
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{Sections}
 
 \paragraph{}
@@ -101,11 +116,15 @@ A section is denoted with ``-'' characters on the line above and below the secti
 \paragraph{}
 Sections are actually ignored in the code.  Their only purpose is to help structure dictionaries, perhaps most naturally by page type.  Keys shared by multiple pages are kept in their own sections.
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{Keys}
 
 \paragraph{}
 A key is denoted in the same way with ``='' characters.  Keys must be the same, regardless of the language. 
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{Texts}
 
 \paragraph{}
@@ -114,6 +133,8 @@ A ``text'' appears after a key and before another key or section.  Unlike sectio
 \paragraph{}
 Text is rendered in HTML.  This means HTML markup is allowed.  It also means that whitespace other than a single space is ignored, although you may use extra whitespace to make it easier to read the text in the dictionary.  If you want a line break, for example, you will need to insert one used \texttt{<br />}
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{Dictionary example file}
 
 \paragraph{}
@@ -149,6 +170,7 @@ Please feel free to rest for a minute before continuing.
 \paragraph{}
 The section denotes that these keys are used in the text pages, which tend to be used for giving instructions.  Whenever LMEDS needs to display the title, it will look at the text for the key ``title'' in this case ``Perception of Spoken Discourse''.
 
+
 %%%%%%%%%%%%%%%%%%%%%
 \subsection{Survey file specification}
 \label{sec:surveySpec}
@@ -169,6 +191,8 @@ Choice English, Arabic, Other
 \paragraph{}
 Here is the list of data entry fields available:
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{None}
 
 \paragraph{}
@@ -181,6 +205,8 @@ Please answer the questions below.
 None
 \end{lstlisting}
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{Choice}
 
 \paragraph{}
@@ -193,6 +219,8 @@ Sex:
 Choice Male, Female
 \end{lstlisting}
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{Item\_List}
 
 \paragraph{}
@@ -205,6 +233,8 @@ Indicate the language(s) that you are familiar with.
 Item_List English, French, Spanish, Italian, German
 \end{lstlisting}
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{Choicebox}
 
 \paragraph{}
@@ -217,6 +247,8 @@ Level of education completed:
 Choicebox High School, Some College, Bachelor's Degree
 \end{lstlisting}
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{Sliding\_Scale}
 
 \paragraph{}
@@ -229,6 +261,8 @@ How satisfied were you with this experiment?
 Sliding_Scale 0, 100, Very Unsatisfied, Very Satisfied
 \end{lstlisting}
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{Textbox}
 
 \paragraph{}
@@ -241,6 +275,8 @@ Occupation
 Textbox
 \end{lstlisting}
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{Multiline\_Textbox}
 
 \paragraph{}
@@ -253,6 +289,8 @@ What did you think of this test?  Please provide any feedback.
 Multiline_Textbox 50, 7
 \end{lstlisting}
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{Sublists}
 
 \paragraph{}
@@ -268,6 +306,8 @@ Textbox
 </sublist>
 \end{lstlisting}
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{Survey file example}
 
 \paragraph{}
@@ -306,6 +346,7 @@ Textbox
 \paragraph{}
 Thus we have a survey with (ignoring the first item, which doesn't take user input) 5 items in total (2 being subitems).  The third item shows how multiple data entry fields can be placed on a single question (if the user selects ``other'' for the first question they are expected to specify what they meant in the Textbox).
 
+
 %%%%%%%%%%%%%%%%%%%%%
 \subsection{Sequence file specification}
 \label{sec:sequenceSpec}
@@ -326,6 +367,7 @@ Prominence water water 1 3 true
 The above example is the entry for the prominence page.  It comes with 5 arguments.  Sections \ref{sec:sequenceSpecBasic} and \ref{sec:sequenceSpecSpecific} include information on how to understand the individual arguments to a page.  A full example sequence file can be found in section \ref{sec:sequenceFileExample}.
 
 
+%%%%%%%%%%%%%%%%
 \subsubsection{A Note on Default Values}
 
 \paragraph{}
@@ -366,13 +408,36 @@ Prominence water 1 3 true
 \end{lstlisting}
 
 
+\subsubsection{Valid Keyboard Keys}
+\label{sec:validKeys}
+
+
+\paragraph{}
+Some pages allow interaction with the keyboard (such pages will direct you to this section).  For those pages, experimenters can specify any letter or number on their keyboard, like so
+
+\begin{lstlisting}
+somePage playAudioKey=p
+\end{lstlisting}
+
+\paragraph{}
+If we suppose that `playAudioKey' specifies the button that plays an audio recording, pressing the `p' button on the keyboard would play audio.
+
+\paragraph{}
+What about something like the `enter' key?  The following codes can be entered to have their associated button registered as the key:  \textbf{alt, backspace, capslock, ctrl, enter, escape, shift, space, and tab}.  And they can be used like
+
+\begin{lstlisting}
+somePage playAudioKey=enter
+\end{lstlisting}
+
+
+%%%%%%%%%%%%%%%%
 \subsubsection{Sequence file example}
 \label{sec:sequenceFileExample}
 
 \paragraph{}
 Unlike the below example, in a sequence file each page description should fit on one line.  In this example, for the purposes of space, some pages span several lines.  A proper example sequence file is also distributed with the lmeds source:
 
-\textbf{/tests/lmeds\_demo/sequence.txt}
+\textbf{/LMEDS/tests/lmeds\_demo/sequence.txt}
 
 \paragraph{}
 
@@ -397,6 +462,78 @@ end
 \end{lstlisting}
 \end{tcolorbox}
 
+
+%%%%%%%%%%%%%%%%%%%%%
+\subsection{Sequence file specification - randomizing stimulus order}
+\label{sec:sequenceSpecRandom}
+%%%%%%%%%%%%%%%%%%%%%
+
+\paragraph{}
+A short but important section.  The sequence file presents the order that all participants will encounter the stimuli.  For many experiments however, it is necessary that the stimuli be presented in a different order for each experiment participant--to account for affects of stimulus order for example. 
+
+\paragraph{}
+\textbf{Technical details} Here is a brief explanation of how randomization is performed by LMEDS.  LMEDS presents materials based on the order presented in a sequence file.  In order to present each user with the stimuli presented in a random order, each user must get their own sequence file.  When instructed to do randomization, LMEDS reads in the sequence file created by the experimenter, randomizes the order of the stimuli, and then creates a new sequence file.  It then reloads that file and begins the experiment.
+
+\paragraph{}
+The following instructions show how sequence randomization can be implemented in a sequence file.
+
+\begin{enumerate}
+\item Indiciate to LMEDS that you want to randomize a sequence:
+
+In the .cgi file, in the function 'runExperiment' include the line \textbf{individualSequences=True}
+
+\item Specify which portions should be randomized
+
+In the sequence file, surround the section to be randomized with the following two lines\\
+	\textbf{<randomize>} \\
+	\textbf{</randomize>}
+
+\item Create a folder where the user-specific sequence files will be placed by LMEDS.
+/LMEDS/tests/<test root folder name>/individual\_sequences/<first line in sequence file>/
+\end{enumerate}
+
+\paragraph{}
+So, for a short concrete example, here is how the above three would look in practice
+
+
+\begin{lstlisting}
+experiment_runner.runExperiment(`lmeds_demo',
+                                `sequence_randomized.txt',
+                                `english.txt',
+                                individualSequences=True)
+\end{lstlisting}
+
+\paragraph{}
+and 
+
+\begin{lstlisting}
+*LMEDS_Simple_Randomized_Demo
+login
+text_page same_different_randomized_instructions
+<randomize>
+media_choice choice_instr audio 0.0 -1 -1 [[water]] [a b]
+media_choice choice_instr audio 0.0 -1 -1 [[books]] [a b]
+media_choice choice_instr audio 0.0 -1 -1 [[apples]] [a b]
+</randomize>
+\end{lstlisting}
+
+\paragraph{}
+and
+
+/LMEDS/tests/lmeds\_demo/individual\_sequences/LMEDS\_Simple\_Randomized\_Demo
+
+\paragraph{}
+In the above example, although the sequence file specifies the stimuli in a particular order, these three items would be presented in a randomized order for each participant.  Each participant would get their own customized sequence file that would be placed in /LMEDS/tests/lmeds\_demo/individual\_sequences/LMEDS\_Simple\_Randomized\_Demo.
+
+\paragraph{}
+For a fuller example, please see in the example demo files provided with the lmeds distribution: \\
+/LMEDS/cgi/lmeds\_randomized\_demo.py \\
+/LMEDS/tests/lmeds\_demo/sequence\_randomized.txt
+
+\paragraph{}
+For more details on post-processing the results of a randomized sequence, please see the post-processing section, Section \ref{postprocessresults}.
+
+
 %%%%%%%%%%%%%%%%%%%%%
 \subsection{Sequence file specification - common pages}
 \label{sec:sequenceSpecBasic}
@@ -405,6 +542,8 @@ end
 \paragraph{}
 The following page types may be useful, regardless of the kind of experiment you're running.
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{login}
 
 \paragraph{}
@@ -413,6 +552,8 @@ This is the first page that users see.  They enter their name here.  Names must 
 \paragraph{}
 ``login'' takes no arguments.
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{media\_test}
 
 \paragraph{}
@@ -435,6 +576,8 @@ audio_test audio example_audio_file
 \paragraph{}
 I recommend using a file that is similar to the stimuli they will experience in the experiment.  If the stimuli are long, a short test file might not represent the kind of load the user's computer might encounter while doing the experiment.
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{consent}
 
 \paragraph{}
@@ -452,6 +595,8 @@ e.g.
 consent main_consent
 \end{lstlisting}
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{text\_page}
 
 \paragraph{}
@@ -468,6 +613,8 @@ e.g.
 text_page first_block_instructions
 \end{lstlisting}
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{survey}
 
 \paragraph{}
@@ -488,6 +635,8 @@ survey presurvey
 \paragraph{}
 This would load the survey stored in the file called ``presurvey.txt''
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{end}
 
 \paragraph{}
@@ -496,6 +645,7 @@ The final page of the test.
 \paragraph{}
 ``end'' takes no arguments.
 
+
 %%%%%%%%%%%%%%%%%%%%%
 \subsection{Sequence file specification - experiment-specific pages}
 \label{sec:sequenceSpecSpecific}
@@ -503,6 +653,8 @@ The final page of the test.
 
 Here is a list of page types involving stimuli presentation.  
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{prominence}
 
 \paragraph{}
@@ -514,19 +666,26 @@ Users are presented with an audio file and the associated transcript.  They can 
 \begin{itemize}
 \item name - the name of the audio file
 \item transcriptName - the name of the text file
-\item minPlays - the minimum number of times the audio file has to be played before the user can continue.
-\item maxPlays - the maximum number of times the audio file can be played before the audio button is disabled. 
-\item instructions - on the page users will encounter short (~one line) instructions reminding them of the task.  With this argument, you can present different stimuli with different short instructions (e.g. meaning, acoustics, vague). 
-\item presentAudio - either ``true'' or ``false'', specifies whether the audio is hidden or presented.  If ``false'' the values for ``minPlays'' and ``maxPlays'' are ignored. \textbf{Default}: True
+\item minPlays - the minimum number of times the audio file has to be played before the user can continue. A value of -1 indicates no minimum.
+\item maxPlays - the maximum number of times the audio file can be played before the audio button is disabled. A value of -1 indicates no maximum.
+\item instructions - on the page users will encounter short (approx. one line) instructions reminding them of the task.  With this argument, you can present different stimuli with different short instructions (e.g. meaning, acoustics, vague). 
+\item presentAudio - either ``true'' or ``false'', specifies whether the audio is hidden or presented.  If ``false'' the values for ``minPlays'' and ``maxPlays'' are ignored. \textbf{Default}: \textit{true}
+\item bindPlayKeyID - the keyboard button that will activate the audio 'play' button on the page.  \textbf{Default}: \textit{None} (i.e. no keyboard key)  See section \ref{sec:validKeys} for acceptable values.
+\item bindSubmitID - the keyboard button that will activate the 'submit' button on the page.  \textbf{Default}: \textit{None} (i.e. no keyboard key)  See section \ref{sec:validKeys} for acceptable values.
+\item minNumSelected - the minimum number of words that the user must select before continuing.  \textbf{Default}: \textit{-1} (i.e. no minimum)
+\item maxNumSelected - the maximum number of words that the user can select in order to continue.  \textbf{Default}: \textit{-1} (i.e. no maximum)
 \end{itemize}
-
 e.g.
 
 \begin{lstlisting}
 prominence water water 1 3 prominence_acoustics true
 prominence apples apples 1 1 prominence_meaning
+prominence apples apples -1 -1 choose_two true minNumSelected=2
+prominence apples apples 1 1 prominence_meaning bindPlayKeyID=p 
 \end{lstlisting}
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{syllable\_marking}
 
 \paragraph{}
@@ -545,6 +704,8 @@ syllable_marking syllables syllables 1 -1
 	nonspecific_syllables true syllableDemarcator=.
 \end{lstlisting}
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{boundary}
 
 \paragraph{}
@@ -565,6 +726,7 @@ boundary apples apples 1 2 boundary_meaning
 \end{lstlisting}
 
 
+%%%%%%%%%%%%%%%%
 \subsubsection{boundary\_and\_prominence}
 
 \paragraph{}
@@ -578,6 +740,8 @@ e.g.
 boundary_and_prominence water water 0 3 b_instr p_instr true &
 \end{lstlisting}
 
+
+%%%%%%%%%%%%%%%%
 \subsubsection{media\_list}
 
 \paragraph{}
@@ -589,8 +753,8 @@ media\_list takes the following arguments:
 \begin{itemize}
 \item \texttt{audio} if the page will present audio files.  \texttt{video} if the page will present video files.
 \item the length of pause in seconds between each file
-\item the minimum number of times the audio series can be played
-\item the maximum number of times the audio series can be played
+\item the minimum number of times the media series can be played
+\item the maximum number of times the media series can be played
 \item the list of media files to play, enclosed by \texttt{[ ]}
 \end{itemize}
 
@@ -599,6 +763,38 @@ e.g.
 media_list audio 1 1 1 [water apples water]
 \end{lstlisting}
 
+
+%%%%%%%%%%%%%%%%
+\subsubsection{media\_slider}
+
+\paragraph{}
+The user is presented with a single button, a text transcript, and a slider.  On the press of the button the media file is played.  The user can then input their response through the slider.  The text description and the transcript can be used to help guide their decision. 
+
+\paragraph{}
+media\_slider takes the following arguments:
+
+\begin{itemize}
+\item instructionText - the dictionary key to the instructions to be presented.
+\item audioOrVideo - \texttt{audio} if the page will present audio files.  \texttt{video} if the page will present video files.
+\item minPlays - the mininum number of times the media can be played.
+\item maxPlays - the maximum number of times the media can be played.
+\item mediaName - the name of the media file to play.
+\item transcriptName - the name of the text file to display below the audio.
+\item sliderMin - the smallest numerical value on the slider (this is not shown to the user).
+\item sliderMax - the largest numerical value on the slider (this is not shown to the user).
+\item sliderLabel - the label to put under the slider.  \textbf{Default}: \textit{None} (i.e. no label).
+\item leftRangeLabel - the label to put on the left edge of the slider. \textbf{Default}: \textit{None} (i.e. no label).
+\item rightRangeLabel - the label to put on the right edge of the slider. \textbf{Default}: \textit{None} (i.e. no label).
+\end{itemize}
+
+e.g.
+\begin{lstlisting}
+media_slider prominence_scale_instr audio 1 -1 water water_word 
+	0 100 leftRangeLabel=nonprominent rightRangeLabel=prominent
+\end{lstlisting}
+
+
+%%%%%%%%%%%%%%%%
 \subsubsection{media\_choice}
 
 \paragraph{}
@@ -618,12 +814,16 @@ media\_choice takes the following arguments:
 \item the maximum number of times the audio series can be played
 \item a list of lists of audio files (see discussion below)
 \item a list of the labels for the response options
-\item a list of names for labels for the audio files (should match the length of the audio files) \textbf{Default}: None (No labels are placed above the audio files--see discussion below)
+\item mediaButtonLabelList - a list of names for labels for the audio files (must match the length of the media buttons) \textbf{Default}: \textit{None} (No labels are placed above the audio files--see discussion below)
+\item transcriptList - a list of transcripts for the buttons (must match the number of media buttons).  Transcripts are placed below the the buttons.  \textbf{Default}: \textit{None}
+\item bindPlayKeyIDList -  a list of keyboard buttons that will activate the associated media buttons on the page (must match the length of the media buttons).  \textbf{Default}: \textit{None} (i.e. no keyboard keys)  See section \ref{sec:validKeys} for acceptable values.
+\item bindResponseKeyIDList - a list of keyboard buttons that will activate the associated media buttons on the page (must match the length of the media buttons).  \textbf{Default}: \textit{None} (i.e. no keyboard key)  See section \ref{sec:validKeys} for acceptable values.
+\item timeout - the time in seconds after which the page will automatically transition to the next page and the user's inaction will be marked in the output.  \textbf{Default}: \textit{None} (i.e. no timeout)
 \end{itemize}
 
 e.g.
 \begin{lstlisting}
-audio_choice same_different_instr 0.5 1 -1 [[water apples]]
+media_choice same_different_instr audio 0.5 1 -1 [[water apples]]
 		[same different] [left_choice right_choice]
 \end{lstlisting}
 
@@ -631,7 +831,7 @@ audio_choice same_different_instr 0.5 1 -1 [[water apples]]
 compare that example with the next one:
 
 \begin{lstlisting}
-audio_choice same_different_instr 0.5 1 -1 [[water] [apples]]
+media_choice same_different_instr audio 0.5 1 -1 [[water] [apples]]
 		[same different] [left_choice right_choice]
 \end{lstlisting}
 
@@ -639,8 +839,8 @@ audio_choice same_different_instr 0.5 1 -1 [[water] [apples]]
 In the first example, with [[water apples]], there is one button that plays two audio files with a half second delay between each.  In the second example, with [[water] [apples]], there are two audio buttons and each is played only once.  Note that [water apples] will produce an error.  \textbf{The argument must be a list of lists}: [[water apples]] or [[water] [apples]].  Similarly with three arguments: [[water apples candy]] or [[water] [apples] [candy]] for the cases with either 1 button or 3 buttons, respectively.  In a minimal case, with only one audio file, you would write: [[audio\_name]], as in 
 
 \begin{lstlisting}
-audio_choice same_different_instr 0.5 1 -1 [audio_name]
-		[p b] [audio_file]
+media_choice same_different_instr audio 0.5 1 -1 [audio_name]
+	[p b] [audio_button_text] [p_button_text b_button_text]
 \end{lstlisting}
 
 \paragraph{}
@@ -649,10 +849,42 @@ Here the user would hear a single audio file and select option ``p'' or option `
 \paragraph{}
 If you feel the response options are obvious--because there are two audio buttons and two corresponding response options--you could remove the last option like so:
 \begin{lstlisting}
-audio_choice same_different_instr 0.5 1 -1 [[water] [apples]]
-		[same different]
+media_choice same_different_instr audio 0.5 1 -1
+		 [[water] [apples]] [same different]
 \end{lstlisting}
 
+\paragraph{}
+Here are some examples of using keyboard keys to activate the buttons on the page.  The important thing here is to use the same number of keys and buttons.  As with other lists used in sequence file, the value still needs to be enclosed in [ ] even if there is only one value
+
+\paragraph{} This example specifies one audio button with three response buttons.  Pressing `p' will play the two audio files `water' and `apples' in sequence.  Pressing `z' will register the \textit{dislike} response, the spacebar \textit{indifferent}, and `m' \textit{like}.
+\begin{lstlisting}
+media_choice three_point_scale_instr audio 0.5 1 -1 [water apples]
+		[dislike indifferent like] bindPlayKeyIDList=[p]
+		bindResponseKeyIDList=[z space m]
+\end{lstlisting}
+
+\paragraph{} This example specifies two audio buttons with two response buttons.  Pressing the `w' key will play the left audio button for the audio file `water' while pressing the `p' key will play the right audio button for the audio file `apples'.  Pressing `z' will register the \textit{same} response while pressing `m' will register the \textit{different} response.
+\begin{lstlisting}
+media_choice same_different_instr audio 0.5 1 -1 [[water] [apples]]
+		[same different] bindPlayKeyIDList=[w p]
+		bindResponseKeyIDList=[z m]
+\end{lstlisting}
+
+\paragraph{}
+Normally, the result is output as a series of 0s separated by commas with a 1 indicating the position of the marked item.  The number of digits reflects the number of response buttons.  All of the examples above use either two or three.  \textbf{If the timeout feature is being used} an extra digit is added.  The value is 0 if the user selected any output but the value is 1 if the timeout was triggered before the user selected a response.  Here is an example entry in the sequence file for a media\_choice with timeout
+
+\begin{lstlisting}
+media_choice same_different_instr audio 0.5 1 -1 
+		[[water] [apples]] [same different] timeout=10
+\end{lstlisting}
+
+\paragraph{}
+It is also possible to have \textbf{media-less media choice pages}.  One might want to have a media task or a memory recall task where the audio was played on a previous page.  To do this, one simple needs to make an empty audio list of lists like so: [[ ]]  Here is an example used in the demo for a fill-in-the-blank type presentation which may have been part of a memory task.
+
+\begin{lstlisting}
+media_choice fill_in_the_blank_instruct audio 0.5 -1 -1 [[ ]]
+	[polluted cold not_drinkable] transcriptList=[water_blank]
+\end{lstlisting}
 
 %%%%%%%%%%%%%%%%%%%%%
 \subsection{Parsing the LMEDS output}
@@ -715,7 +947,8 @@ media_choice;,1,0
 \end{lstlisting}
 
 \paragraph{}
-LMEDS offers some useful post-processing that can help prep data for analysis (see \ref{users_scripts}.  Otherwise, with the above information, you should have everything you need to do your own analysis.
+LMEDS offers some useful post-processing that can help prep data for analysis (see \ref{sec:users_scripts}.  Otherwise, with the above information, you should have everything you need to do your own analysis.
+
 
 %%%%%%%%%%%%%%%%%%%%%
 \subsection{CGI File (experiment-wide configuration)}
@@ -738,7 +971,7 @@ runExperiment() has the following arguments
 \item disableRefresh: if `True' and users try to refresh a page or click back, they will be unable to progress.  Set to `True' if you suspect your subjects might try to revisit completed pages.  Otherwise, in my experience, let them use back and refresh--they're only going to use it if their browser freezes up.
 \item audioExtList: the list of audio extentions to use in an experiment.  The default value is [`.ogg', `.mp3']
 \item videoExtList: the list of video extensions to use in an experiment.  The default value is [`.ogg', `.mp4']
-\item allowUtilityScripts: if `True', users can run utility scripts from the browser.  Could be `True' for a local LMEDS install used for testing but should be `False' for the online version.  See section \ref{users_scripts} for more information on the utility user scripts.
+\item allowUtilityScripts: if `True', users can run utility scripts from the browser.  Could be `True' for a local LMEDS install used for testing but should be `False' for the online version.  See section \ref{sec:users_scripts} for more information on the utility user scripts.
 \item allowUsersToRelogin: if `True', users can use their login name to resume their progress if the are stopped midway through an experiment (loss of internet, audio fails to load, etc).  Otherwise, if `False', users will have to restart from the beginning.
 \end{itemize}
 
