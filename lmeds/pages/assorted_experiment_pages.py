@@ -214,6 +214,8 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         self.bindResponseKeyIDList = bindResponseKeyIDList
         self.timeout = None
         
+        self.playOnMinList = ['enable_checkboxes', ]
+        
         if bindPlayKeyIDList is not None:
             assert(len(mediaListOfLists) == len(bindPlayKeyIDList))
         
@@ -246,7 +248,12 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         self.textDict.update(loader.batchGetText(txtKeyList))
         
         self.numAudioButtons = len(mediaListOfLists)
-        self.processSubmitList = ["audioLoader.verifyAudioPlayed()", ]
+        if all([len(subList) == 0 for subList in mediaListOfLists]):
+            self.numAudioButtons = 0
+        
+        self.processSubmitList = []
+        if self.numAudioButtons > 0:
+            self.processSubmitList.append("audioLoader.verifyAudioPlayed()")
 
     def _getKeyPressEmbed(self):
         

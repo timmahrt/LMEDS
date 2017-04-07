@@ -14,14 +14,14 @@ from lmeds.utilities import utils
 
 _tmpButton = ('<input type="button" id="button%%d" '
               'value="%(button_label)s" '
-              '''onClick="audioLoader.evalSound(this, true, '%%d', %%f, '%%s', %%s)">'''
+              '''onClick="audioLoader.evalSound(this, '%%d', %%f, '%%s', %%s)">'''
               )
 
 buttonTemplate = _tmpButton
 
 _tmpButton = ('<input type="button" id="button%%d" '
               'value="%s" '
-              '''onClick="audioLoader.evalSound(this, false, '%%d', %%f, '%%s', %%s)">'''
+              '''onClick="audioLoader.evalSound(this, '%%d', %%f, '%%s', %%s)">'''
               )
 
 buttonTemplateExample = _tmpButton % 'false'

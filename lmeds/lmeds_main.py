@@ -263,7 +263,16 @@ class WebSurvey(object):
 #                                                     "audio")
 #             runOnLoad += audioLoadingJSCmd
             runOnLoad += audio.loadAudioSnippet
-            runOnLoad += "audioLoader.minPlayFuncList.push(enable_checkboxes)"
+            pushTemplate = "audioLoader.minPlayFuncList.push(%s)\n"
+            try:
+                funcList = page.playOnMinList
+            except AttributeError:
+                pass
+            else:
+                for func in funcList:
+                    runOnLoad += pushTemplate % func
+            runOnLoad += "this.silenceFlag = false;"
+#             runOnLoad += 
         
         processSubmitHTML += html.runOnPageLoad % runOnLoad
         processSubmitHTML += validateText

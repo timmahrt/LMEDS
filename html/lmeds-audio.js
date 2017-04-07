@@ -14,6 +14,10 @@ var LmedsAudio = function () {
     this.numUniqueSoundFiles = 0;
     this.numAudioButtons = 0;
     this.finishedLoading = false;
+    this.silenceFlag = true;
+    this.listenPartial = false;
+    
+    this.doingBAndPPage = false;
     
     // lmeds.audio public variables
     this.media_path = "";
@@ -104,6 +108,16 @@ LmedsAudio.prototype.catchFailedAudioLoad = function(e) {
    alert(errorMsg + "\\n\\n" + specErrorMsg);
 }
 
+LmedsAudio.prototype.minButtonPressSatisfied = function() {
+    var allGreater = true;
+    for (var i=0;i<this.numAudioButtons;i++) {
+        if (this.minNumPlays > this.countDict[i]) {
+          allGreater = false;
+        }
+      }
+    return allGreater;
+}
+
 LmedsAudio.prototype.audio_buttons_enable = function(e = null) {
   // if audio_buttons_enable is a handler for an event listener, once it is
   // called, it should remove itself as a handler until it is told to listen
@@ -112,7 +126,7 @@ LmedsAudio.prototype.audio_buttons_enable = function(e = null) {
     e.target.removeEventListener('ended', this.audio_buttons_enable);
   }
 
-  var silence = silenceFlag == false;
+  var silence = this.silenceFlag == false;
     for (var i=0; i < this.numAudioButtons;i++)
     {
         if (silence || this.maxNumPlays < 0 || this.countDict[i] < this.maxNumPlays) {
@@ -121,38 +135,25 @@ LmedsAudio.prototype.audio_buttons_enable = function(e = null) {
         else {
           document.getElementById("button"+i.toString()).disabled=true;
         }
-        }
+    }
         
       // Enable the submit button if at least the minimum number of plays is
       // completed for all audio files
-     
-     {
-      var allGreater = true;
-      if (silenceFlag == true && this.minNumPlays > 0)
+      if (this.silenceFlag == true && this.minNumPlays > 0)
       {
-        if (doingPandBPage == true) {
-          if (this.minNumPlays <= this.countDict[0]) {
-            if (document.getElementById("submitButton") !== null) {
-                document.getElementById("halfwaySubmitButton").disabled=false;
-                doingPandBPage = false;
+
+        if (this.doingBAndPPage == true) {
+            if (this.minNumPlays <= this.countDict[0]) {
+              document.getElementById("halfwaySubmitButton").disabled=false;
+              this.doingBAndPPage = false;
             }
           }
-        }
         else {
-        
-          for (var i=0;i<this.numAudioButtons;i++) {
-            if (this.minNumPlays > this.countDict[i]) {
-              allGreater = false;
-            }
-          }
-        
+          var allGreater = this.minButtonPressSatisfied();
           if (allGreater == true) {
-        	  
               for (var i=0;i<this.minPlayFuncList.length;i++) {
                   this.minPlayFuncList[i]();
-                }
-
-              //%(audioMinThresholdEvent)s
+              }
           }
         }
       }
@@ -161,9 +162,7 @@ LmedsAudio.prototype.audio_buttons_enable = function(e = null) {
           for (var i=0;i<this.minPlayFuncList.length;i++) {
               this.minPlayFuncList[i]();
             }
-      //%(audioMinThresholdEvent)s
       }
-    }
     
 }
 
@@ -180,7 +179,7 @@ LmedsAudio.prototype.increment_audio_loaded_count = function(e) {
     }
 }
 
-LmedsAudio.prototype.evalSound = function(button, silenceFlag, id, pauseDurationMS, audioListTxt, autoSubmit) {
+LmedsAudio.prototype.evalSound = function(button, id, pauseDurationMS, audioListTxt, autoSubmit) {
   
   //var button = arguments[0];
   //var silenceFlag = arguments[1];
@@ -198,39 +197,56 @@ LmedsAudio.prototype.evalSound = function(button, silenceFlag, id, pauseDuration
   document.getElementById(tmpId).value = numTimesPlayed + 1;
   this.countDict[id] += 1;
   
-  // Enable the submit button if listeners only need to listen to a portion
-  // of the audio (e.g. in an audio test)
-  if (document.getElementById("submitButton") !== null)
-  {
-    if (listenPartial == true)
-    {
-      // Enable the submit button if at least the minimum number of plays is
-      // completed for all audio files
-      var allGreater = true;
-      if (silenceFlag == true && this.minNumPlays > 0)
-      {
-        if (doingPandBPage == true) {
-          if (this.minNumPlays <= this.countDict[0]) {
-            document.getElementById("halfwaySubmitButton").disabled=false;
-            doingPandBPage = false;
-          }
-        }
-        else {
-        
-          for (var i=0;i<this.numAudioButtons;i++) {
-            if (this.minNumPlays > this.countDict[i]) {
-              allGreater = false;
-            }
-          }
-        
-          if (allGreater == true) {
-            document.getElementById("submitButton").disabled=false;
-          }
-        }
-      }
-    }
-  }
+  enableSubmitButton(this, true);
+
   return false;
+}
+
+enableSubmitButton = function(audioLoader, isCompleted) {
+
+    var enableHalfwaysubmit = false;
+    var enableSubmit = false;
+
+    // If any of the following conditions are true, we need to check
+    // that the buttons have been pressed the appropriate 
+
+    // Does the page present audio?
+    var audioOptional = audioLoader.silenceFlag == false; // There is no audio
+    audioOptional |= audioLoader.listenPartial == true; // Or there is audio, but it's not required to listen to it
+    audioOptional |= audioLoader.minNumPlays == -1; // Or there is audio, but listeners can listen to it any number of times
+    
+    var minPlaysDone = audioLoader.minNumPlays > 0; // Is a minimum num plays required?
+    minPlaysDone &= isCompleted == true; // And are we ready to continue to the next page?
+
+    if (document.getElementById("submitButton") !== null) {
+
+        // There are no audio buttons,  and the submit button should just
+        // be enabled
+        if (audioOptional == true && audioLoader.doingBAndPPage == true) {
+            enableHalfwaysubmit = true;
+        } else if (audioOptional == true && audioLoader.doingBAndPPage == false) {
+            enableSubmit = true;
+        }
+        // There are audio buttons.  Enable the submit button if there
+        else if (minPlaysDone == true && audioLoader.doingBAndPPage == true) {
+            if (audioLoader.minNumPlays <= audioLoader.countDict[0]) {
+                enableHalfwaysubmit = true;
+            }
+        } else if (minPlaysDone == true && audioLoader.doingBAndPPage == false) {
+            var allGreater = audioLoader.minButtonPressSatisfied();
+            if (allGreater == true) {
+                enableSubmit = true;
+            }
+        }
+    }
+
+    // Here is where we enable the appropriate button
+    if (enableHalfwaysubmit == true) {
+        document.getElementById("halfwaySubmitButton").disabled = false;
+        audioLoader.doingBAndPPage = false;
+    } else if (enableSubmit == true) {
+        document.getElementById("submitButton").disabled = false;
+    }
 }
 
 LmedsAudio.prototype.updateProgress = function(percentComplete) {
@@ -283,7 +299,7 @@ LmedsAudio.prototype.loading_progress_hide = function()
         if (document.getElementById("halfwaySubmitButton") !== null)
         {
           document.getElementById("halfwaySubmitButton").disabled=true;
-          doingPandBPage = true;
+          this.doingBAndPPage = true;
         }
       }
     }
