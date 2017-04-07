@@ -170,13 +170,13 @@ LmedsAudio.prototype.audio_buttons_enable = function(e = null) {
 LmedsAudio.prototype.increment_audio_loaded_count = function(e) {
     this.numSoundFilesLoaded += 1;
     this.updateProgress(100*(this.numSoundFilesLoaded / this.numUniqueSoundFiles));
+    
+    e.target.removeEventListener('canplay', this.increment_audio_loaded_count);
+    e.target.removeEventListener('error', this.loadErrorHandler);
     if (this.numSoundFilesLoaded >= this.numUniqueSoundFiles) {
         this.loading_progress_hide();
         this.audio_buttons_enable();
         this.finishedLoading = true;
-        e.target.removeEventListener('canplay', this.increment_audio_loaded_count);
-        //e.target.removeEventListener('canplay', arguments.callee);
-        removeEventListener('error', this.loadErrorHandler);
     }
 }
 
