@@ -81,71 +81,6 @@ def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textNameStr,
     return htmlTxt, wordIDNum
 
 
-def _getProminenceOrBoundaryWordEmbed(isProminence):
-    
-    boundaryEmbed = """
-    $(this).closest("label").css({
-        borderRight: this.checked ? "3px solid #000000":"0px solid #FFFFFF"
-    });
-    $(this).closest("label").css({ paddingRight: this.checked ? "0px":"3px"});
-    """
-    
-    prominenceEmbed = """
-    $(this).closest("label").css({ color: this.checked ? "red":"black"});
-    """
-    
-    javascript = """
-<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js">
-</script>
-<script>if (!window.jQuery) { document.write(
-'<script src="../html/jquery-1.11.0.min.js"><\/script>'); }
-</script>
-    
-<style type="text/css">
-           /* Style the label so it looks like a button */
-           .rptWordPadding {
-                padding-right: 3px;
-                padding-left: 3px;
-           }
-           label.syllable {
-                border-right: 0px solid #FFFFFF;
-                position: relative;
-                z-index: 3;
-                padding-right: 0px;
-                padding-left: 0px;
-           }
-           label.word {
-                border-right: 0px solid #FFFFFF;
-                position: relative;
-                z-index: 3;
-                padding-right: 3px;
-                padding-left: 3px;
-           }
-           /* CSS to make the checkbox disappear (but remain functional) */
-           label input {
-                position: absolute;
-                visibility: hidden;
-           }
-</style>
-    
-    
-<script>
-$(document).ready(function(){
-  $('input[type=checkbox]').click(function(){
-%s
-  });
-});
-</script>
-"""
-    
-    if isProminence:
-        javascript %= prominenceEmbed
-    else:
-        javascript %= boundaryEmbed
-
-    return javascript
-
-
 def _makeTogglableWord(testType, word, idNum, boundaryToken, labelClass):
     
     tokenTxt = ""
@@ -170,119 +105,10 @@ def _getTogglableWordEmbed(numWords, boundaryMarking, minV, maxV):
     
     doMinMaxClickedCheck = ""
     if minV != -1 and maxV != -1:
-        doMinMaxClickedCheck = "didPlay &= verifySelectedWithinRange(%d,%d,'%s');"
+        doMinMaxClickedCheck = "didPlay &= verifySelectedWithinRange(%d,%d,'%s', 'a', 'b', 'c');"
         doMinMaxClickedCheck %= (minV, maxV, "boundary_and_prominence")
-    
-    boundaryMarkingCode_showHide = """
-        $("#"+x).closest("label").css({
-        borderRight: "3px solid #000000"
-        });
-        $("#"+x).closest("label").css({ paddingRight: "0px"});
-        """
-    
-    boundaryMarkingCode_toggle = """
-        $(this).closest("label").css({
-        borderRight: this.checked ? "3px solid #000000":"0px solid #FFFFFF"
-        });
-        $(this).closest("label").css({
-        paddingRight: this.checked ? "0px":"3px"
-        });"""
-    
-    if boundaryMarking is not None:
-        boundaryMarkingCode_toggle = """
-            $(this).next("span").css({
-                visibility: this.checked ? "visible":"hidden"
-            });"""
-        boundaryMarkingCode_showHide = """
-            $("#"+x).next("span").css({ visibility: "visible"});
-            """
-    
-    javascript = """
-<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js">
-</script>
-<script>if (!window.jQuery) { document.write(
-'<script src="../html/jquery-1.11.0.min.js"><\/script>'); }
-</script>
 
-<script>
-var didShowHide = false;
-function ShowHide()
-{
-var didPlay = verifyFirstAudioPlayed();
-%(verifyMinMaxClicked)s
-
-if(didPlay == true) {
-    didShowHide = true;
-    document.getElementById("ShownDiv").style.display='none';
-    document.getElementById("HiddenDiv").style.display='block';
-    document.getElementById("HiddenForm").style.display='block';
-    for (e=0;e<%(numWords)d;e++) {
-        var x = e+%(numWords)d;
-
-        if (document.getElementById(e).checked==true) {
-%(boundaryMarkingCode_showHide)s
-            }
-        }
-    }
-
-    $('html, body').animate({ scrollTop: 0 }, 'fast');
-}
-</script>
-    
-<style type="text/css">
-           /* Style the label so it looks like a button */
-           rptWordPadding {
-                padding-right: 3px;
-                padding-left: 3px;
-           }
-           label.syllable {
-                border-right: 0px solid #FFFFFF;
-                position: relative;
-                z-index: 3;
-                padding-right: 0px;
-                padding-left: 0px;
-           }
-           label.word {
-                border-right: 0px solid #FFFFFF;
-                position: relative;
-                z-index: 3;
-                padding-right: 3px;
-                padding-left: 3px;
-           }
-           /* CSS to make the checkbox disappear (but remain functional) */
-           label input {
-                position: absolute;
-                visibility: hidden;
-           }
-</style>
-    
-    
-<script>
-$(document).ready(function(){
-  $('input[type=checkbox]').click(function(){
-    
-    if (this.value < %(numWords)d)
-    {
-    /* Boundary marking */
-%(boundaryMarkingCode_toggle)s
-    }
-    else
-    {
-    /* Prominence marking */
-    $(this).closest("label").css({ color: this.checked ? "red":"black"});
-    }
-  });
-});
-</script>"""
-
-    return javascript % {"numWords":
-                         numWords,
-                         "verifyMinMaxClicked":
-                         doMinMaxClickedCheck,
-                         "boundaryMarkingCode_toggle":
-                         boundaryMarkingCode_toggle,
-                         "boundaryMarkingCode_showHide":
-                         boundaryMarkingCode_showHide}
+    return doMinMaxClickedCheck
 
 
 def _getKeyPressEmbed(playID, submitID, doBoundariesAndProminences=False):
@@ -298,7 +124,7 @@ def _getKeyPressEmbed(playID, submitID, doBoundariesAndProminences=False):
     # Bind key press to submit event?
     if submitID is not None:
         if doBoundariesAndProminences is True:
-            js = bindToSubmitButtonBoundaryAndProminenceJS
+            js = "bpProcessMouseClick(e,%d)"
         else:
             js = html.bindToSubmitButtonJS
         bindKeyTxt += ("\n" + js % submitID)
@@ -308,97 +134,6 @@ def _getKeyPressEmbed(playID, submitID, doBoundariesAndProminences=False):
         returnJS = html.bindKeyJSTemplate % bindKeyTxt
     
     return returnJS
-
-bindToSubmitButtonBoundaryAndProminenceJS = """
-if (e.which == %s) {
-    if (didShowHide == false)
-        {document.getElementById("halfwaySubmitButton").click();}
-    else
-        {document.getElementById("submitButton").click();}
-}
-"""
-
-_verifySelectedWithinRangeJS = """
-function getHowManyMarked(startI, endI, widgetName) {
-  var numMarked = 0;
-  var chboxList = document.getElementsByName(widgetName);
-  for(var i=startI; i<endI; i++) {
-    if(chboxList[i].checked == true) {
-        numMarked++;
-    }
-  }
-  return numMarked;
-}
-function isPBMarkingTask() {
-  var markingTaskArray = [false, false];
-  if (document.getElementById("submitButton") !== null)
-    {
-      if (document.getElementById("halfwaySubmitButton") !== null)
-      {
-        markingTaskArray[0] = true;
-        if (didShowHide == true)
-        {
-          markingTaskArray[1] = true;
-        }
-      }
-    }
-
-  return markingTaskArray;
-}
-function verifySelectedWithinRange(min_to_mark, max_to_mark, widgetName) {
-    
-    var returnValue = true;
-    var min = 0;
-    var max = document.getElementsByName(widgetName).length;
-    
-    // If doing both b and p marking, we need to divide the max value by two.
-    // If doing the 2nd half (p marking) we need to shift the min and max value
-    var shiftArray = isPBMarkingTask();
-    var isPBTask = shiftArray[0];
-    var doShift = shiftArray[1];
-    
-    if (isPBTask == true) {
-        max = max / 2;
-    }
-    if (doShift == true) {
-        min = max;
-        max = (2 * max);
-    }
-    
-    var numMarked = getHowManyMarked(min, max, widgetName);
-    var alertMsg = "";
-
-    if (min_to_mark > 0 && numMarked < min_to_mark)
-    {
-        returnValue = false;
-        if (max_to_mark == -1)
-        {
-            alertMsg = "%(pbMinSelectedErrorMsg)s";
-        }
-        else
-        {
-            alertMsg = "%(pbMinMaxSelectedErrorMsg)s";
-        }
-    }
-    else if (max_to_mark > 0 && numMarked > max_to_mark)
-    {
-        returnValue = false;
-        if (min_to_mark == -1) {
-            alertMsg = "%(pbMaxSelectedErrorMsg)s";
-        }
-        else
-        {
-            alertMsg = "%(pbMinMaxSelectedErrorMsg)s";
-        }
-    }
-        
-    if (alertMsg != "") {
-        alert(alertMsg);
-    }
-    
-    return returnValue;
-}
-"""
 
 
 class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
@@ -469,7 +204,7 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         self.processSubmitList = ["audioLoader.verifyAudioPlayed()"]
         
         if minNumSelected != -1 or maxNumSelected != -1:
-            verifyNumSelected = 'verifySelectedWithinRange(%d, %d, "%s")'
+            verifyNumSelected = 'verifySelectedWithinRange(%d, %d, "%s", "a", "b", "c")'
             verifyNumSelected %= (minNumSelected, maxNumSelected, taskStr)
             self.processSubmitList.append(verifyNumSelected)
         
@@ -559,7 +294,6 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         else:
             embedTxt = ""
         embedTxt += "\n\n"
-        embedTxt += _getProminenceOrBoundaryWordEmbed(self.doProminence)
         
         # Add javascript that checks user markings
         if self.minNumSelected != -1 or self.maxNumSelected != -1:
@@ -581,9 +315,7 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
                                 'pbMinMaxSelectedErrorMsg': minMaxErrMsg,
                                 }
             
-            embedTxt += "\n<script>\n"
-            embedTxt += _verifySelectedWithinRangeJS % verificationDict
-            embedTxt += "\n</script>"
+#             embedTxt += "verifySelectedWithinRange();"
         
         htmlTxt = html.makeNoWrap(htmlTxt)
         
@@ -686,7 +418,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
             
         self.processSubmitList = ["audioLoader.verifyAudioPlayed()", ]
         if minNumSelected != -1 or maxNumSelected != -1:
-            verifyNumSelected = "verifySelectedWithinRange(%d, %d, '%s')"
+            verifyNumSelected = "verifySelectedWithinRange(%d, %d, '%s', 'a', 'b', 'c')"
             verifyNumSelected %= (minNumSelected, maxNumSelected,
                                   "boundary_and_prominence")
             self.processSubmitList.append(verifyNumSelected)
@@ -755,7 +487,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         continueButtonTxt = self.textDict['continue_button']
         htmlTxt += '''<br /><br /><input type="button" value="%s"
                     id="halfwaySubmitButton"
-                    onclick="ShowHide()"></button>''' % continueButtonTxt
+                    onclick="ShowHide(audioLoader.verifyFirstAudioPlayed())"></button>''' % continueButtonTxt
         htmlTxt += '</div>\n\n<div id="HiddenDiv" style="DISPLAY: none">\n\n'
         
         # HTML prominence
@@ -785,10 +517,10 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         else:
             embedTxt = ""
         
-        embedTxt += "\n\n" + _getTogglableWordEmbed(numWords,
-                                                    self.boundaryToken,
-                                                    self.minNumSelected,
-                                                    self.maxNumSelected)
+#         embedTxt += "\n\n" + _getTogglableWordEmbed(numWords,
+#                                                     self.boundaryToken,
+#                                                     self.minNumSelected,
+#                                                     self.maxNumSelected)
         
         # Add javascript that checks user markings
         if self.minNumSelected != -1 or self.maxNumSelected != -1:
@@ -810,9 +542,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
                                 'pbMinMaxSelectedErrorMsg': minMaxErrMsg,
                                 }
             
-            embedTxt += "\n<script>\n"
-            embedTxt += _verifySelectedWithinRangeJS % verificationDict
-            embedTxt += "\n</script>"
+#             embedTxt += "verifySelectedWithinRange();"
         
         htmlTxt = html.makeNoWrap(htmlTxt)
         

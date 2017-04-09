@@ -81,19 +81,17 @@ formTemplate2 = """
 # Otherwise, there are lots of imcompatibilities.  See
 # http://unixpapa.com/js/key.html
 bindKeyJSTemplate = ("""
-<script>
 $(document).on('keypress', function(e) {
     var tag = e.target.tagName.toLowerCase();
     if (tag != 'input' && tag != 'textarea') {
     %s
     }
-});
-</script>""")
+});""")
 
-bindKeySubSnippetJS = """if (e.which == %s) {%s}"""
+bindKeySubSnippetJS = """if (e.which == %d) {%s}"""
 
 bindToSubmitButtonJS = """
-if (e.which == %s) {document.getElementById("submitButton").click();}
+if (e.which == %d) {document.getElementById("submitButton").click();}
 """
 
 submitButtonHTML = ('<input name="submitButton" id="submitButton" '

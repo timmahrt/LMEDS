@@ -40,6 +40,8 @@ jqueryCode = ('''<script type="text/javascript" src='''
               '''"../html/lmeds-utils.js"></script>\n'''
               '''<script type="text/javascript" src='''
               '''"../html/lmeds-forms.js"></script>\n'''
+              '''<script type="text/javascript" src='''
+              '''"../html/b-p-scores.js"></script>\n'''
               )
 
 

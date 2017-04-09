@@ -469,6 +469,8 @@ class MediaSliderPage(abstract_pages.AbstractPage):
         self.leftRangeLabel = leftRangeLabel
         self.rightRangeLabel = rightRangeLabel
         
+        self.playOnMinList = ['enable_checkboxes', ]
+        
         if sliderLabel is None:
             sliderLabel = ""
         self.sliderLabel = sliderLabel
