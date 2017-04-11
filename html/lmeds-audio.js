@@ -154,6 +154,7 @@ LmedsAudio.prototype.audio_buttons_enable = function(e = null) {
               for (var i=0;i<this.minPlayFuncList.length;i++) {
                   this.minPlayFuncList[i]();
               }
+              enableSubmitButton(this, true);
           }
         }
       }
@@ -162,8 +163,8 @@ LmedsAudio.prototype.audio_buttons_enable = function(e = null) {
           for (var i=0;i<this.minPlayFuncList.length;i++) {
               this.minPlayFuncList[i]();
             }
+          enableSubmitButton(this, true);
       }
-    
 }
 
 LmedsAudio.prototype.increment_audio_loaded_count = function(e) {
@@ -197,7 +198,7 @@ LmedsAudio.prototype.evalSound = function(button, id, pauseDurationMS, audioList
   document.getElementById(tmpId).value = numTimesPlayed + 1;
   this.countDict[id] += 1;
   
-  enableSubmitButton(this, true);
+	  enableSubmitButton(this, false);
 
   return false;
 }
@@ -220,8 +221,9 @@ enableSubmitButton = function(audioLoader, isCompleted) {
 
     if (document.getElementById("submitButton") !== null) {
 
-        // There are no audio buttons,  and the submit button should just
-        // be enabled
+        // There are no audio buttons (or the audio buttons are optional)
+    	// (or the audio doesn't need to play all the way through)
+    	// then the submit button should just be enabled
         if (audioOptional == true && audioLoader.doingBAndPPage == true) {
             enableHalfwaysubmit = true;
         } else if (audioOptional == true && audioLoader.doingBAndPPage == false) {

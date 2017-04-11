@@ -1,5 +1,5 @@
 
-clickCheckbox = function() {
+makeWordsVisibleCheckboxes = function(isProminence) {
     $('input[type=checkbox]').click(function() {
         if (isProminence == true) {
             $(this).closest("label").css({
@@ -14,6 +14,10 @@ clickCheckbox = function() {
             });
         }
     });
+}
+
+removeCheckboxHandler = function() {
+	$('input[type=checkbox]').off();
 }
 
 //ShowHide = function() {
@@ -47,20 +51,28 @@ blah2 = function() {
 }
 
 var didShowHide = false;
-ShowHide = function(numWords, didAudioPlay) {
-	didAudioPlay = true;
-    if (didAudioPlay == true) {
+ShowHide = function(didAudioPlay, isWithinRange) {
+	var didPlay = didAudioPlay;
+	didPlay &= isWithinRange;
+    if (didPlay == true) {
         didShowHide = true;
         document.getElementById("ShownDiv").style.display = 'none';
         document.getElementById("HiddenDiv").style.display = 'block';
         document.getElementById("HiddenForm").style.display = 'block';
-        for (e = 0; e < numWords; e++) {
-            //        var x = e+%(numWords)d;
+        for (e=0;e<8;e++) {
+            var x = e+8;
 
-            if (document.getElementById(e).checked == true) {
-                //%(boundaryMarkingCode_showHide)s
+            if (document.getElementById(e).checked==true) {
+
+            $("#"+x).closest("label").css({
+            borderRight: "3px solid #000000"
+            });
+            $("#"+x).closest("label").css({ paddingRight: "0px"});
+            
+                }
             }
-        }
+        removeCheckboxHandler();
+        makeWordsVisibleCheckboxes(true);
     }
 
     $('html, body').animate({
@@ -140,7 +152,7 @@ verifySelectedWithinRange = function(min_to_mark, max_to_mark, widgetName, minEr
     return returnValue;
 }
 
-bpProcessMouseClick = function(e,keyID) {
+bpProcessKeyboardPress = function(e,keyID) {
     if (e.which == keyID) {
         if (didShowHide == false) {
             document.getElementById("halfwaySubmitButton").click();

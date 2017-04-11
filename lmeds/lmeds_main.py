@@ -273,8 +273,20 @@ class WebSurvey(object):
             else:
                 for func in funcList:
                     runOnLoad += pushTemplate % func
-            runOnLoad += "this.silenceFlag = false;"
-#             runOnLoad += 
+            
+            for flagName in ["silenceFlag", "listenPartial"]:
+                try:
+                    boolVal = getattr(page, flagName)
+                except AttributeError:
+                    pass
+                else:
+                    txtVal = "true" if boolVal else "false"
+                    runOnLoad += ("audioLoader.%s = %s;" % (flagName, txtVal))
+        
+        try:
+            runOnLoad += page.runOnLoad
+        except AttributeError:
+            pass
         
         processSubmitHTML += html.runOnPageLoad % runOnLoad
         processSubmitHTML += validateText

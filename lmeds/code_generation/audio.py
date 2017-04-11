@@ -43,65 +43,6 @@ var myTxt = "";
 '''
 
 
-def getPlaybackJS(doSilence, numItems, maxNumPlays, minNumPlays,
-                  autosubmit=False, runOnFinish=None, listenPartial=False,
-                  runOnMinThreshold=None):
-
-    maxNumPlays = int(maxNumPlays)
-    minNumPlays = int(minNumPlays)
-
-    if doSilence:
-        silenceFlag = 'true'
-    else:
-        silenceFlag = 'false'
-        
-    if listenPartial:
-        listenPartial = "true"
-    else:
-        listenPartial = "false"
-    
-    dictionaryTextList = []
-    for i in range(numItems):
-        dictionaryTextList.append('"%s":0,' % (i))
-    countDictionaryText = "\n".join(dictionaryTextList)
-    
-    # Get error message and make sure it is formatted correctly
-    if minNumPlays < maxNumPlays:  # Upper and lower-bound
-        errorKey = "error_must_play_audio_at_least"
-    else:  # No upper-bound
-        errorKey = "error_must_play_audio"
-        
-    errorMsg = loader.getText(errorKey)
-    if "%d" not in errorMsg:
-        # Error message from the developer
-        badFormattedText = ("Please add a '%d', for the minimum number of "
-                            "required audio plays, in the text file"
-                            )
-        raise loader.BadlyFormattedTextError(badFormattedText, errorKey)
-    
-    autoSubmitHTML = ""
-    if autosubmit is True:
-        autoSubmitHTML = "audioFile.addEventListener('ended', auto_submit);"
-    if runOnFinish is not None:
-        autoSubmitHTML += "\n" + runOnFinish
-    if runOnMinThreshold is None:
-        runOnMinThreshold = ""
-    
-    minNumPlaysErrorMsg = errorMsg % int(minNumPlays)
-    
-    jsCode = playAudioFileJS % {"silenceFlag": silenceFlag,
-                                "numSoundFiles": numItems,
-                                "countDictTxt": countDictionaryText,
-                                "minNumPlays": minNumPlays,
-                                "maxNumPlays": maxNumPlays,
-                                "minNumPlaysErrorMsg": minNumPlaysErrorMsg,
-                                "autosubmit_code": autoSubmitHTML,
-                                "listenPartialFlag": listenPartial,
-                                'audioMinThresholdEvent': runOnMinThreshold}
-    
-    return jsCode
-
-
 class PathDoesNotExist(Exception):
     
     def __init__(self, path):

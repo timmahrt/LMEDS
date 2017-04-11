@@ -101,12 +101,29 @@ def _makeTogglableWord(testType, word, idNum, boundaryToken, labelClass):
                       "class": labelClass}
 
 
-def _getTogglableWordEmbed(numWords, boundaryMarking, minV, maxV):
+def _getTogglableWordEmbed(page):
     
-    doMinMaxClickedCheck = ""
-    if minV != -1 and maxV != -1:
-        doMinMaxClickedCheck = "didPlay &= verifySelectedWithinRange(%d,%d,'%s', 'a', 'b', 'c');"
-        doMinMaxClickedCheck %= (minV, maxV, "boundary_and_prominence")
+    # Add javascript that checks user markings
+    minErrMsg = ""
+    maxErrMsg = ""
+    minMaxErrMsg = ""
+    if page.minNumSelected != -1 or page.maxNumSelected != -1:
+        if page.minNumSelected != -1:
+            minErrMsg = page.textDict['pbMinSelectedErrorMsg']
+            minErrMsg %= page.minNumSelected
+        if page.maxNumSelected != -1:
+            maxErrMsg = page.textDict['pbMaxSelectedErrorMsg']
+            maxErrMsg %= page.maxNumSelected
+        if page.minNumSelected != -1 and page.maxNumSelected != -1:
+            minMaxErrMsg = page.textDict['pbMinMaxSelectedErrorMsg']
+            minMaxErrMsg %= (page.minNumSelected, page.maxNumSelected)
+    
+    doMinMaxClickedCheck = ("verifySelectedWithinRange("
+                            "%d,%d,'%s','%s','%s','%s')")
+    doMinMaxClickedCheck %= (page.minNumSelected,
+                             page.maxNumSelected,
+                             page.pageName,
+                             minErrMsg, maxErrMsg, minMaxErrMsg)
 
     return doMinMaxClickedCheck
 
@@ -124,7 +141,7 @@ def _getKeyPressEmbed(playID, submitID, doBoundariesAndProminences=False):
     # Bind key press to submit event?
     if submitID is not None:
         if doBoundariesAndProminences is True:
-            js = "bpProcessMouseClick(e,%d)"
+            js = "bpProcessKeyboardPress(e,%d)"
         else:
             js = html.bindToSubmitButtonJS
         bindKeyTxt += ("\n" + js % submitID)
@@ -203,10 +220,12 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         
         self.processSubmitList = ["audioLoader.verifyAudioPlayed()"]
         
-        if minNumSelected != -1 or maxNumSelected != -1:
-            verifyNumSelected = 'verifySelectedWithinRange(%d, %d, "%s", "a", "b", "c")'
-            verifyNumSelected %= (minNumSelected, maxNumSelected, taskStr)
+        verifyNumSelected = _getTogglableWordEmbed(self)
+        if verifyNumSelected is not None:
             self.processSubmitList.append(verifyNumSelected)
+        
+        prominenceStr = "true" if self.doProminence else "false"
+        self.runOnLoad = "makeWordsVisibleCheckboxes(%s);\n" % prominenceStr
         
         self.checkArgs()
         
@@ -282,8 +301,7 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
                                         self.syllableDemarcator)[0]
     
         if self.presentAudio is True:
-            embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays,
-                                           self.minPlays)
+            embedTxt = ""
             embed = audio.generateEmbed(self.wavDir,
                                         [self.name, ],
                                         self.webSurvey.audioExtList,
@@ -294,28 +312,6 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         else:
             embedTxt = ""
         embedTxt += "\n\n"
-        
-        # Add javascript that checks user markings
-        if self.minNumSelected != -1 or self.maxNumSelected != -1:
-            minErrMsg = ""
-            maxErrMsg = ""
-            minMaxErrMsg = ""
-            if self.minNumSelected != -1:
-                minErrMsg = self.textDict['pbMinSelectedErrorMsg']
-                minErrMsg %= self.minNumSelected
-            if self.maxNumSelected != -1:
-                maxErrMsg = self.textDict['pbMaxSelectedErrorMsg']
-                maxErrMsg %= self.maxNumSelected
-            if self.minNumSelected != -1 and self.maxNumSelected != -1:
-                minMaxErrMsg = self.textDict['pbMinMaxSelectedErrorMsg']
-                minMaxErrMsg %= (self.minNumSelected, self.maxNumSelected)
-            
-            verificationDict = {'pbMinSelectedErrorMsg': minErrMsg,
-                                'pbMaxSelectedErrorMsg': maxErrMsg,
-                                'pbMinMaxSelectedErrorMsg': minMaxErrMsg,
-                                }
-            
-#             embedTxt += "verifySelectedWithinRange();"
         
         htmlTxt = html.makeNoWrap(htmlTxt)
         
@@ -417,11 +413,12 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
             self.numAudioButtons = 0
             
         self.processSubmitList = ["audioLoader.verifyAudioPlayed()", ]
-        if minNumSelected != -1 or maxNumSelected != -1:
-            verifyNumSelected = "verifySelectedWithinRange(%d, %d, '%s', 'a', 'b', 'c')"
-            verifyNumSelected %= (minNumSelected, maxNumSelected,
-                                  "boundary_and_prominence")
+        
+        verifyNumSelected = _getTogglableWordEmbed(self)
+        if verifyNumSelected is not None:
             self.processSubmitList.append(verifyNumSelected)
+        
+        self.runOnLoad = "makeWordsVisibleCheckboxes(false);\n"
     
     def checkResponseCorrect(self, responseList, correctResponse):
         raise abstract_pages.NoCorrectResponseError()
@@ -487,7 +484,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         continueButtonTxt = self.textDict['continue_button']
         htmlTxt += '''<br /><br /><input type="button" value="%s"
                     id="halfwaySubmitButton"
-                    onclick="ShowHide(audioLoader.verifyFirstAudioPlayed())"></button>''' % continueButtonTxt
+                    onclick="ShowHide(audioLoader.verifyFirstAudioPlayed(), %s)"></button>''' % (continueButtonTxt, _getTogglableWordEmbed(self))
         htmlTxt += '</div>\n\n<div id="HiddenDiv" style="DISPLAY: none">\n\n'
         
         # HTML prominence
@@ -503,8 +500,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
                     
         # Add the javascript and style sheets here
         if self.presentAudio is True:
-            embedTxt = audio.getPlaybackJS(True, 2, self.maxPlays,
-                                           self.minPlays)
+            embedTxt = ""
             embed = audio.generateEmbed(self.wavDir,
                                         [self.name, ],
                                         self.webSurvey.audioExtList,
@@ -516,33 +512,6 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
                 
         else:
             embedTxt = ""
-        
-#         embedTxt += "\n\n" + _getTogglableWordEmbed(numWords,
-#                                                     self.boundaryToken,
-#                                                     self.minNumSelected,
-#                                                     self.maxNumSelected)
-        
-        # Add javascript that checks user markings
-        if self.minNumSelected != -1 or self.maxNumSelected != -1:
-            minErrMsg = ""
-            maxErrMsg = ""
-            minMaxErrMsg = ""
-            if self.minNumSelected != -1:
-                minErrMsg = self.textDict['pbMinSelectedErrorMsg']
-                minErrMsg %= self.minNumSelected
-            if self.maxNumSelected != -1:
-                maxErrMsg = self.textDict['pbMaxSelectedErrorMsg']
-                maxErrMsg %= self.maxNumSelected
-            if self.minNumSelected != -1 and self.maxNumSelected != -1:
-                minMaxErrMsg = self.textDict['pbMinMaxSelectedErrorMsg']
-                minMaxErrMsg %= (self.minNumSelected, self.maxNumSelected)
-            
-            verificationDict = {'pbMinSelectedErrorMsg': minErrMsg,
-                                'pbMaxSelectedErrorMsg': maxErrMsg,
-                                'pbMinMaxSelectedErrorMsg': minMaxErrMsg,
-                                }
-            
-#             embedTxt += "verifySelectedWithinRange();"
         
         htmlTxt = html.makeNoWrap(htmlTxt)
         

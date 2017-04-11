@@ -375,9 +375,7 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         playBtnSnippet = ('<table class="center">%s</table>') % playBtnSnippet
         
         runOnMinThresholdJS = "enable_checkboxes();"
-        embedTxt = audio.getPlaybackJS(True, self.numAudioButtons,
-                                       self.maxPlays, self.minPlays,
-                                       runOnMinThreshold=runOnMinThresholdJS)
+        embedTxt = ""
         
         mediaNames = [mediaName for mediaSubList in self.mediaList
                       for mediaName in mediaSubList]
@@ -555,9 +553,7 @@ class MediaSliderPage(abstract_pages.AbstractPage):
                                                    False)
         
         runOnMinThresholdJS = "enable_checkboxes();"
-        embedTxt = audio.getPlaybackJS(True, self.numAudioButtons,
-                                       self.maxPlays, self.minPlays,
-                                       runOnMinThreshold=runOnMinThresholdJS)
+        embedTxt = ""
         
         mediaNames = [self.mediaName, ]
         
@@ -630,8 +626,7 @@ class MediaListPage(abstract_pages.AbstractPage):
                                               self.pauseDuration,
                                               False, True) + "<br />"
         
-        embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays, self.minPlays,
-                                       autosubmit=True)
+        embedTxt = ""
         
         if self.audioOrVideo == "audio":
             extList = self.webSurvey.audioExtList

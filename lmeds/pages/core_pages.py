@@ -302,8 +302,7 @@ class TextAndMediaPage(abstract_pages.NonValidatingPage):
         else:
             extList = self.webSurvey.videoExtList
         
-        embedTxt = audio.getPlaybackJS(True, len(mediaNameList),
-                                       self.maxPlays, self.minPlays)
+        embedTxt = ""
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, mediaNameList,
                                                  extList, self.audioOrVideo)
         
@@ -334,6 +333,7 @@ class MediaTestPage(abstract_pages.NonRecordingPage):
         self.numAudioButtons = 1
         self.minPlays = 1
         self.maxPlays = -1
+        self.listenPartial = True
         self.processSubmitList = ["validateForm()",
                                   "audioLoader.verifyAudioPlayed()"]
     
@@ -378,7 +378,7 @@ class MediaTestPage(abstract_pages.NonRecordingPage):
         else:
             extList = self.webSurvey.videoExtList
         
-        embedTxt = audio.getPlaybackJS(True, 1, -1, 1, listenPartial=True)
+        embedTxt = ""
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
                                                  [self.mediaName, ],
                                                  extList,
