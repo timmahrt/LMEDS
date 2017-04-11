@@ -358,7 +358,7 @@ processSubmitHTML = """
 // The code that gets run when the page is submitted
 function processSubmit()
 {
-    timer.calcDuration();
+    document.getElementById("task_duration").value = document.myTimer.calcDuration();
     var returnValue = true;
     
     %s

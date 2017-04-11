@@ -255,7 +255,7 @@ class WebSurvey(object):
         submitWidgetList.extend(page.nonstandardSubmitProcessList)
 
         # Javascript to run once the page has loaded
-        runOnLoad = ""
+        runOnLoad = "document.myTimer = new Timer();"
         submitAssociation = html.constructSubmitAssociation(submitWidgetList)
         runOnLoad += submitAssociation
         

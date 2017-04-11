@@ -1,7 +1,7 @@
 
 var Timer = function() {
-	start = new Date().getTime();
-	stop = null;
+	this.start = new Date().getTime();
+	this.stop = null;
 }
 
 Timer.prototype.calcDuration = function() {
@@ -16,7 +16,8 @@ Timer.prototype.calcDuration = function() {
     }
     var param1 = minutes.toString();
     var param2 = Number(seconds).toFixed(1);
-    document.getElementById("task_duration").value = param1 + ":" + param2;
+    
+    return param1 + ":" + param2;
 }
 
 function isSupportedBrowser() {
