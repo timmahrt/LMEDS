@@ -17,17 +17,8 @@ makeWordsVisibleCheckboxes = function(isProminence) {
 }
 
 removeCheckboxHandler = function() {
-	$('input[type=checkbox]').off();
+    $('input[type=checkbox]').off();
 }
-
-//ShowHide = function() {
-//    $("#" + x).closest("label").css({
-//        borderRight: "3px solid #000000"
-//    });
-//    $("#" + x).closest("label").css({
-//        paddingRight: "0px"
-//    });
-//}
 
 toggle = function() {
     $(this).closest("label").css({
@@ -52,25 +43,27 @@ blah2 = function() {
 
 var didShowHide = false;
 ShowHide = function(didAudioPlay, isWithinRange) {
-	var didPlay = didAudioPlay;
-	didPlay &= isWithinRange;
+    var didPlay = didAudioPlay;
+    didPlay &= isWithinRange;
     if (didPlay == true) {
         didShowHide = true;
         document.getElementById("ShownDiv").style.display = 'none';
         document.getElementById("HiddenDiv").style.display = 'block';
         document.getElementById("HiddenForm").style.display = 'block';
-        for (e=0;e<8;e++) {
-            var x = e+8;
+        for (e = 0; e < 8; e++) {
+            var x = e + 8;
 
-            if (document.getElementById(e).checked==true) {
+            if (document.getElementById(e).checked == true) {
 
-            $("#"+x).closest("label").css({
-            borderRight: "3px solid #000000"
-            });
-            $("#"+x).closest("label").css({ paddingRight: "0px"});
-            
-                }
+                $("#" + x).closest("label").css({
+                    borderRight: "3px solid #000000"
+                });
+                $("#" + x).closest("label").css({
+                    paddingRight: "0px"
+                });
+
             }
+        }
         removeCheckboxHandler();
         makeWordsVisibleCheckboxes(true);
     }
@@ -152,7 +145,7 @@ verifySelectedWithinRange = function(min_to_mark, max_to_mark, widgetName, minEr
     return returnValue;
 }
 
-bpProcessKeyboardPress = function(e,keyID) {
+bpProcessKeyboardPress = function(e, keyID) {
     if (e.which == keyID) {
         if (didShowHide == false) {
             document.getElementById("halfwaySubmitButton").click();

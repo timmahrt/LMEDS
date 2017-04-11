@@ -1,13 +1,12 @@
 
-
 // Sets the choice box to be a null option so the user is
 // forced to make a selection
 function setchoiceboxes() {
-	selectList = document.getElementsByTagName('select');
-	for(var i=0; i<selectList.length; i++){
-	     selectBox = selectList[i];
-	     selectBox.selectedIndex = -1;
-	}
+    selectList = document.getElementsByTagName('select');
+    for (var i = 0; i < selectList.length; i++) {
+        selectBox = selectList[i];
+        selectBox.selectedIndex = -1;
+    }
 }
 
 
@@ -16,56 +15,48 @@ function setchoiceboxes() {
 // you may copy this function but please keep the copyright notice with it
 function checkBoxValidate(choice) {
     var cnt = -1;
-    for (var i=choice.length-1; i > -1; i--) 
-    {
-        if (choice[i].checked) 
-        	{
-        	cnt = i; 
-        	i = -1;
-        	}
-    
+    for (var i = choice.length - 1; i > -1; i--) {
+        if (choice[i].checked) {
+            cnt = i;
+            i = -1;
+        }
+
     }
-    if (cnt == -1)
-    {
-    return 1;
+    if (cnt == -1) {
+        return 1;
     }
     return 0;
 }
 
-function choiceFilter(choice) {	
-	if (checkBoxValidate(choice)==1)
-	{
-	choice.value = " ";
-	}
+function choiceFilter(choice) {
+    if (checkBoxValidate(choice) == 1) {
+        choice.value = " ";
+    }
 }
 
 function textBoxFilter(box) {
 
-if (box.value==null||box.value=="")
-	{
-	box.value=" ";
-	}
-return 0
+    if (box.value == null || box.value == "") {
+        box.value = " ";
+    }
+    return 0
 }
 
 function textBoxValidate(box) {
-textBoxFilter(box);
-if (box.value==null||box.value==" ")
-	{
-	return 1;
-	}
-	return 0;
+    textBoxFilter(box);
+    if (box.value == null || box.value == " ") {
+        return 1;
+    }
+    return 0;
 }
 
-function validateForm(alertTxt)
-{
+function validateForm(alertTxt) {
 
-var y=document.forms["languageSurvey"];
-if (checkBoxValidate(y["radio"])==true)
-    {
-    alert(alertTxt);
-    return false;
+    var y = document.forms["languageSurvey"];
+    if (checkBoxValidate(y["radio"]) == true) {
+        alert(alertTxt);
+        return false;
     }
-return true;
+    return true;
 
 }
