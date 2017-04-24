@@ -40,7 +40,7 @@ class LoginPage(abstract_pages.NonRecordingPage):
         txtKeyList = ['title', 'back_button_warning',
                       'user_name_text', 'unsupported_warning',
                       'error_blank_name']
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
 
         # Variables that all pages need to define
         self.numAudioButtons = 0
@@ -102,7 +102,7 @@ class LoginErrorPage(LoginPage):
         
         # Strings used in this page
         txtKeyList = ['error_user_name_exists', ]
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
         
     def _getHTMLTxt(self):
 
@@ -116,7 +116,8 @@ class LoginErrorPage(LoginPage):
             # A warning to the developer, not the user
             errorMsg = ("Please add a '%s' for the user name in the text "
                         "associated with this key")
-            raise loader.BadlyFormattedTextError(errorMsg, textKey)
+            raise loader.BadlyFormattedTextError(errorMsg, textKey,
+                                                 self.webSurvey.textDict)
         
         pg0HTML += "<br />" + userNameErrorTxt
     
@@ -148,7 +149,7 @@ class ConsentPage(abstract_pages.NonRecordingPage):
                       self.consentName,
                       "consent_query", "consent", "dissent",
                       'error_consent_or_dissent', ]
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
     
         # Variables that all pages need to define
         self.numAudioButtons = 0
@@ -204,7 +205,7 @@ class ConsentEndPage(abstract_pages.NonValidatingPage):
     
         # Strings used in this page
         txtKeyList = ["consent_opt_out", ]
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
     
         # Variables that all pages need to define
         self.numAudioButtons = 0
@@ -228,7 +229,7 @@ class TextPage(abstract_pages.NonValidatingPage):
     
         # Strings used in this page
         txtKeyList = ['title', self.textName]
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
     
         # Variables that all pages need to define
         self.numAudioButtons = 0
@@ -276,16 +277,18 @@ class TextAndMediaPage(abstract_pages.NonValidatingPage):
         # Strings used in this page
         txtKeyList = [self.textName, 'title']
         txtKeyList.extend(abstract_pages.audioTextKeys)
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
         
         # Variables that all pages need to define
         self.numAudioButtons = len(mediaList)
         self.processSubmitList = []
     
     def getHTML(self):
-    
+        
+        audioLabel = self.textDict['play_button']
         mediaNameList = [name.strip() for name in self.mediaList]
-        audioButtonList = [audio.generateAudioButton(name, i, 0, False)
+        audioButtonList = [audio.generateAudioButton(name, i, audioLabel,
+                                                     0, False)
                            for i, name in enumerate(mediaNameList)]
         
         tmpTxt = self.textDict[self.textName] % tuple(audioButtonList)
@@ -330,7 +333,7 @@ class MediaTestPage(abstract_pages.NonRecordingPage):
         txtKeyList = ["mediaTest_text", "mediaTest_affirm",
                       "mediaTest_reject", 'error_verify_media']
         txtKeyList.extend(abstract_pages.audioTextKeys)
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
     
         # Variables that all pages need to define
         self.numAudioButtons = 1
@@ -374,7 +377,9 @@ class MediaTestPage(abstract_pages.NonRecordingPage):
         pageTemplate = join(self.webSurvey.htmlDir,
                             "blankPageWValidation.html")
         
-        htmlText %= audio.generateAudioButton(self.mediaName, 0, 0, False)
+        audioLabel = self.textDict['play_button']
+        htmlText %= audio.generateAudioButton(self.mediaName, 0, audioLabel,
+                                              0, False)
         htmlText += "<br />"
         
         if self.audioOrVideo == "audio":
@@ -400,7 +405,7 @@ class MediaTestEndPage(abstract_pages.NonValidatingPage):
         
         # Strings used in this page
         txtKeyList = ['mediaTest_no_audio', ]
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
         
         # Variables that all pages need to define
         self.numAudioButtons = 0
@@ -422,7 +427,7 @@ class EndPage(abstract_pages.NonValidatingPage):
         
         # Strings used in this page
         txtKeyList = ["test_complete"]
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
         
         # Variables that all pages need to define
         self.numAudioButtons = 0

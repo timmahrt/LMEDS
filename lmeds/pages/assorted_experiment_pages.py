@@ -245,7 +245,7 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         txtKeyList += _buttonLabelCheck(mediaListOfLists, mediaButtonLabelList)
         
         txtKeyList.extend(abstract_pages.audioTextKeys)
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
         
         self.numAudioButtons = len(mediaListOfLists)
         if all([len(subList) == 0 for subList in mediaListOfLists]):
@@ -346,7 +346,9 @@ class MediaChoicePage(abstract_pages.AbstractPage):
             if len(self.mediaList[i]) == 0:
                 continue
             
+            audioLabel = self.textDict['play_button']
             mediaButtonHTML = audio.generateAudioButton(self.mediaList[i], i,
+                                                        audioLabel,
                                                         self.pauseDuration,
                                                         False)
             if self.buttonLabelList is not None:
@@ -488,7 +490,7 @@ class MediaSliderPage(abstract_pages.AbstractPage):
             txtKeyList.append(rightRangeLabel)
         
         txtKeyList.extend(abstract_pages.audioTextKeys)
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
         
         self.numAudioButtons = 1
         self.processSubmitList = ["audioLoader.verifyAudioPlayed()", ]
@@ -548,7 +550,9 @@ class MediaSliderPage(abstract_pages.AbstractPage):
         sentenceList = loader.loadTxtFile(txtFN)
         transcriptTxt = "<br /><br />\n\n".join(sentenceList)
 
+        audioLabel = self.textDict['play_button']
         playBtnSnippet = audio.generateAudioButton(self.mediaName, 0,
+                                                   audioLabel,
                                                    0,
                                                    False)
         
@@ -599,7 +603,7 @@ class MediaListPage(abstract_pages.AbstractPage):
         # Strings used in this page
         txtKeyList = ["memory_instruct", "memory_a", "memory_b"]
         txtKeyList.extend(abstract_pages.audioTextKeys)
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
 
         # Variables that all pages need to define
         
@@ -621,8 +625,10 @@ class MediaListPage(abstract_pages.AbstractPage):
         htmlText = self._getHTMLTxt()
         pageTemplate = join(self.webSurvey.htmlDir, "axbTemplate.html")
         
+        audioLabel = self.textDict['play_button']
         htmlText %= audio.generateAudioButton(self.mediaList,
                                               0,
+                                              audioLabel,
                                               self.pauseDuration,
                                               False, True) + "<br />"
         

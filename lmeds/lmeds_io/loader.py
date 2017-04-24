@@ -17,7 +17,7 @@ class BadlyFormattedTextError(Exception):
     improperly formatted.
     '''
     
-    def __init__(self, errorTxt, txtKey):
+    def __init__(self, errorTxt, txtKey, textDict):
         super(BadlyFormattedTextError, self).__init__()
         
         self.errorTxt = errorTxt
@@ -47,7 +47,7 @@ class SpaceInKeyError(Exception):
 
 class TextNotInDictionaryException(Exception):
     
-    def __init__(self, txtKey):
+    def __init__(self, txtKey, textDict):
         super(TextNotInDictionaryException, self).__init__()
         self.txtKey = txtKey
         self.dictionaryFN = textDict.sourceFN
@@ -216,48 +216,39 @@ class TextDict(object):
         return sectionDictionary
         
     def getText(self, key):
-        return self.textDict[str(key)]
+        if " " in key:
+            raise SpaceInKeyError(key)
+        
+        try:
+            returnText = self.textDict[key]
+        except KeyError:
+            raise TextNotInDictionaryException(key, self)
+        
+        return returnText
+
+    def batchGetText(self, keyList):
+        errorList = []
+        retDict = {}
+        for key in keyList:
+            try:
+                retDict[key] = self.getText(key)
+            except TextNotInDictionaryException:
+                errorList.append(key)
+    
+        if len(errorList) > 0:
+            raise TextNotInDictionaryException(errorList, self)
+        
+        return retDict
 
 
 class EmptyDict(object):
     
     def getText(self, key):
         return None
-
-
-textDict = None  # textDict singleton
-
-
-def initTextDict(fn=None):
-    global textDict
-    if fn is not None:
-        textDict = TextDict(fn)
-    else:
-        textDict = EmptyDict()
     
-
-def getText(key):
-    if " " in key:
-        raise SpaceInKeyError(key)
-    
-    try:
-        returnText = textDict.getText(key)
-    except KeyError:
-        raise TextNotInDictionaryException(key)
-    
-    return returnText
-
-
-def batchGetText(keyList):
-    errorList = []
-    retDict = {}
-    for key in keyList:
-        try:
-            retDict[key] = getText(key)
-        except TextNotInDictionaryException:
-            errorList.append(key)
-
-    if len(errorList) > 0:
-        raise TextNotInDictionaryException(errorList)
-    
-    return retDict
+    def batchGetText(self, keyList):
+        retDict = {}
+        for key in keyList:
+            retDict[key] = self.getText(key)
+        
+        return retDict

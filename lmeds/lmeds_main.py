@@ -80,11 +80,14 @@ class WebSurvey(object):
             videoExtList = [".ogg", ".mp4"]
         self.videoExtList = videoExtList
         
-        loader.initTextDict(self.languageFileFN)
+        if self.languageFileFN is None:
+            self.langDict = loader.EmptyDict()
+        else:
+            self.langDict = loader.TextDict(self.languageFileFN)
         
         self.disableRefreshFlag = disableRefreshFlag
         
-        self.textDict = loader.batchGetText(TXT_KEY_LIST)
+        self.textDict = self.langDict.batchGetText(TXT_KEY_LIST)
         
         # The sourceCGIFN is the CGI file that was requested from the server
         # (basically the cgi file that started the websurvey)
@@ -232,7 +235,8 @@ class WebSurvey(object):
         percentComplete = int(100 * (pageNum) / (totalNumPages - 1))
         
         htmlTxt, pageTemplateFN, updateDict = page.getHTML()
-        htmlTxt = html.getLoadingNotification() + htmlTxt
+        loadingProgressTxt = self.textDict["loading_progress"]
+        htmlTxt = html.getLoadingNotification(loadingProgressTxt) + htmlTxt
         testType = page.pageName
         
         numItems = page.getNumOutputs()
@@ -328,7 +332,8 @@ class WebSurvey(object):
             
         progressBarDict = {'percentComplete': percentComplete,
                            'percentUnfinished': 100 - percentComplete, }
-        progressBarHTML = html.getProgressBar() % progressBarDict
+        progressTxt = self.textDict["progress"]
+        progressBarHTML = html.getProgressBar(progressTxt) % progressBarDict
 
         metaDescription = self.textDict["metadata_description"]
                 

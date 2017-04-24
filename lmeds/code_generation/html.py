@@ -245,8 +245,8 @@ def createWidget(widgetType, argList, i):
     return widgetHTML, i
 
 
-def getLoadingNotification():
-    loadingText = "- %s - " % loader.getText("loading_progress")
+def getLoadingNotification(loadingProgressTxt):
+    loadingText = "- %s - " % loadingProgressTxt
     progressBarTemplate = """
     <div id="loading_status_indicator" class="centered_splash">
     <div class="centered_splash_inner">
@@ -270,8 +270,8 @@ def getLoadingNotification():
     return progressBarTemplate % loadingText
     
 
-def getProgressBar():
-    progressBarText = "- %s - <br />" % loader.getText("progress")
+def getProgressBar(progressTxt):
+    progressBarText = "- %s - <br />" % progressTxt
     
     progressBarTemplate = progressBarText + """
     <dl class="progress">

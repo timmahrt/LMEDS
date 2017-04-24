@@ -120,8 +120,8 @@ audioLoader.audioList = %(nameList)s;\n
     return embedTxt
 
     
-def generateAudioButton(name, idNum, pauseDurationSec=0, example=False,
-                        autoSubmit=False):
+def generateAudioButton(name, idNum, buttonLabel, pauseDurationSec=0,
+                        example=False, autoSubmit=False):
     
     # Accept 'name' to be a list, but if it is, convert it into a string
     
@@ -140,7 +140,7 @@ def generateAudioButton(name, idNum, pauseDurationSec=0, example=False,
     elif autoSubmit is True:
         autoSubmit = "true"
 
-    template = template % {'button_label': loader.getText('play_button')}
+    template = template % {'button_label': buttonLabel}
 
     return template % (idNum, idNum, float(pauseDurationSec), name, autoSubmit)
 

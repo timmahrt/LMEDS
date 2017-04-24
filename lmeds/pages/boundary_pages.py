@@ -18,7 +18,7 @@ from lmeds.pages import abstract_pages
 
 
 def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textNameStr,
-                          sentenceList, presentAudioFlag, token,
+                          audioLabel, sentenceList, presentAudioFlag, token,
                           syllableDemarcator):
     '''
     This is a helper function.  It does not construct a full page.
@@ -33,7 +33,7 @@ def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textNameStr,
     htmlTxt += html.makeWrap(instrMsg)
     
     if presentAudioFlag is True:
-        htmlTxt += audio.generateAudioButton(name, audioNum, False)
+        htmlTxt += audio.generateAudioButton(name, audioNum, audioLabel, False)
         htmlTxt += "<br /><br />\n\n"
     else:
         htmlTxt += "<br /><br />\n\n"
@@ -205,7 +205,7 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         if minNumSelected != -1 and maxNumSelected != -1:
             txtKeyList.append("pbMinMaxSelectedErrorMsg")
         
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
         
         # Variables that all pages need to define
         if presentAudio is True:
@@ -293,9 +293,11 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         testType = self.pageName
         
         # Construct the HTML here
+        
         htmlTxt = _doBreaksOrProminence(testType, 0, 0,
                                         self.name,
                                         self.textDict[self.instructText],
+                                        self.textDict['play_button'],
                                         sentenceList, self.presentAudio,
                                         self.boundaryToken,
                                         self.syllableDemarcator)[0]
@@ -403,7 +405,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         if minNumSelected != -1 and maxNumSelected != -1:
             txtKeyList.append("pbMinMaxSelectedErrorMsg")
         
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
         
         # Variables that all pages need to define
         if presentAudio is True:
@@ -468,11 +470,13 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         htmlTxt = '<div id="ShownDiv" style="DISPLAY: block">'
     
         # HTML boundaries
+        audioLabel = self.textDict['play_button']
         stepOneInstructText = self.textDict[self.stepOneInstructText]
         tmpHTMLTxt, numWords = _doBreaksOrProminence(self.pageName,
                                                      wordIDNum, 0,
                                                      self.name,
                                                      stepOneInstructText,
+                                                     audioLabel,
                                                      sentenceList,
                                                      self.presentAudio,
                                                      self.boundaryToken,
@@ -492,6 +496,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         htmlTxt += _doBreaksOrProminence(self.pageName, numWords, 1,
                                          self.name,
                                          stepTwoInstructText,
+                                         audioLabel,
                                          sentenceList,
                                          self.presentAudio,
                                          self.boundaryToken,
