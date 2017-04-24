@@ -158,7 +158,7 @@ def generateLanguageDictionary(mode, testName, sequenceFN, outputFN):
         outputPageNameList.insert(0, nullSectionTuple)
     
     # Build output
-    outputTxt = "\n\n"
+    outputTxt = u"\n\n"
     for pageTuple in outputPageNameList:
         # Some pages don't have any unique keys
         if pageTuple not in invKeyDict.keys():
@@ -175,7 +175,7 @@ def generateLanguageDictionary(mode, testName, sequenceFN, outputFN):
             if keepTextStrings and keyString in oldDictionary.textDict.keys():
                 textString = oldDictionary.textDict[keyString]
             
-                outputTxt += keywordTemplate % (keyString, textString)
+            outputTxt += keywordTemplate % (keyString, textString)
     
     # Exit without doing anything if the old dictionary exists and
     # we're in 'new' mode
