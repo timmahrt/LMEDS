@@ -26,7 +26,7 @@ os.chdir(_root)
 class UserScriptIntegrationTests2(unittest.TestCase):
     """Integration tests"""       
     def test_get_duration(self):
-        """Running 'get_duration_demo'"""
+        """Running 'user_script_get_duration'"""
         import user_script_get_duration
 
 

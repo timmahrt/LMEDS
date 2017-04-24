@@ -27,7 +27,7 @@ os.chdir(_root)
 class UserScriptIntegrationTests4(unittest.TestCase):
     """Integration tests"""
     def test_sequence_check(self):
-        """Running 'get_duration_demo'"""
+        """Running 'user_script_sequence_check'"""
         import user_script_sequence_check
 
 if __name__ == '__main__':

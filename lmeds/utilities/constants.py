@@ -8,7 +8,6 @@ DON'T CHANGE UNLESS YOU KNOW WHAT YOU'RE DOING
 '''
 
 import types
-import os
 from os.path import join
 
 # EDITING THESE ONLY MODIFIES METADATA AND WILL NOT IMPAIR LMEDS
@@ -22,7 +21,7 @@ rootURL = ""
 
 # EDITING THE BELOW MIGHT PREVENT LMEDS FROM FUNCTIONING
 
-rootDir = os.path.abspath("..")
+rootDir = ".."
 
 #
 htmlDir = join(rootDir, "html")

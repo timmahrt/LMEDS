@@ -26,7 +26,7 @@ os.chdir(_root)
 class UserScriptIntegrationTests3(unittest.TestCase):
     """Integration tests"""
     def test_post_process(self):
-        """Running 'get_duration_demo'"""
+        """Running 'user_script_post_process'"""
         import user_script_post_process
 
 

@@ -27,7 +27,7 @@ class UserScriptIntegrationTests(unittest.TestCase):
     """Integration tests"""
  
     def test_gen_dictionary(self):
-        """Running 'lmeds_virtual_demo'"""
+        """Running 'user_script_gen_dictionary'"""
         import user_script_gen_dictionary
 
 
