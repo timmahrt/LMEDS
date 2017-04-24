@@ -82,7 +82,8 @@ class LoginPage(abstract_pages.NonRecordingPage):
         
     def getHTML(self):
         htmlText = self._getHTMLTxt()
-        pageTemplate = join(constants.htmlDir, "blankPageWValidation.html")
+        pageTemplate = join(self.webSurvey.htmlDir,
+                            "blankPageWValidation.html")
     
         embedTxt = "isSupportedBrowser()\n\n"
     
@@ -123,7 +124,8 @@ class LoginErrorPage(LoginPage):
     
     def getHTML(self):
         htmlText = self._getHTMLTxt() % self.userName
-        pageTemplate = join(constants.htmlDir, "blankPageWValidation.html")
+        pageTemplate = join(self.webSurvey.htmlDir,
+                            "blankPageWValidation.html")
         
         return htmlText, pageTemplate, {}
 
@@ -154,7 +156,7 @@ class ConsentPage(abstract_pages.NonRecordingPage):
     
     def _getHTMLTxt(self):
         
-        fn = join(constants.htmlSnippetsDir, "consent.html")
+        fn = join(self.webSurvey.htmlSnippetsDir, "consent.html")
         with io.open(fn, "r", encoding='utf-8') as fd:
             consentText = fd.read()
         consentText %= (self.textDict["title"],
@@ -186,7 +188,8 @@ class ConsentPage(abstract_pages.NonRecordingPage):
     
     def getHTML(self):
         htmlText = self._getHTMLTxt()
-        pageTemplate = join(constants.htmlDir, "blankPageWValidation.html")
+        pageTemplate = join(self.webSurvey.htmlDir,
+                            "blankPageWValidation.html")
     
         return htmlText, pageTemplate, {}
 
@@ -209,7 +212,7 @@ class ConsentEndPage(abstract_pages.NonValidatingPage):
     
     def getHTML(self):
         htmlText = self.textDict['consent_opt_out']
-        pageTemplate = join(constants.htmlDir, "finalPageTemplate.html")
+        pageTemplate = join(self.webSurvey.htmlDir, "finalPageTemplate.html")
     
         return htmlText, pageTemplate, {}
 
@@ -248,7 +251,7 @@ class TextPage(abstract_pages.NonValidatingPage):
 
     def getHTML(self):
         htmlText = self._getHTMLTxt()
-        pageTemplate = join(constants.htmlDir, "basicTemplate.html")
+        pageTemplate = join(self.webSurvey.htmlDir, "basicTemplate.html")
         
         return htmlText, pageTemplate, {}
 
@@ -306,7 +309,7 @@ class TextAndMediaPage(abstract_pages.NonValidatingPage):
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, mediaNameList,
                                                  extList, self.audioOrVideo)
         
-        pageTemplate = join(constants.htmlDir, "basicTemplate.html")
+        pageTemplate = join(self.webSurvey.htmlDir, "basicTemplate.html")
         
         return htmlText, pageTemplate, {'embed': embedTxt}
 
@@ -368,7 +371,8 @@ class MediaTestPage(abstract_pages.NonRecordingPage):
     def getHTML(self):
     
         htmlText = self._getHTMLTxt()
-        pageTemplate = join(constants.htmlDir, "blankPageWValidation.html")
+        pageTemplate = join(self.webSurvey.htmlDir,
+                            "blankPageWValidation.html")
         
         htmlText %= audio.generateAudioButton(self.mediaName, 0, 0, False)
         htmlText += "<br />"
@@ -404,7 +408,7 @@ class MediaTestEndPage(abstract_pages.NonValidatingPage):
     
     def getHTML(self):
         htmlText = self.textDict['mediaTest_no_audio']
-        pageTemplate = join(constants.htmlDir, "finalPageTemplate.html")
+        pageTemplate = join(self.webSurvey.htmlDir, "finalPageTemplate.html")
         
         return htmlText, pageTemplate, {}
 
@@ -426,6 +430,6 @@ class EndPage(abstract_pages.NonValidatingPage):
         
     def getHTML(self):
         htmlText = self.textDict['test_complete']
-        pageTemplate = join(constants.htmlDir, "finalPageTemplate.html")
+        pageTemplate = join(self.webSurvey.htmlDir, "finalPageTemplate.html")
     
         return htmlText, pageTemplate, {}

@@ -160,7 +160,7 @@ class SurveyPage(abstract_pages.NonValidatingPage):
 
     def getHTML(self):
         htmlText, embedTxt = self._getHTMLTxt()
-        pageTemplate = join(constants.htmlDir, "basicTemplate.html")
+        pageTemplate = join(self.webSurvey.htmlDir, "basicTemplate.html")
         
         return htmlText, pageTemplate, {'embed': embedTxt}
 
@@ -333,7 +333,7 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         '''
         Listeners hear two files and decide if they are the same or different
         '''
-        pageTemplate = join(constants.htmlDir, "axbTemplate.html")
+        pageTemplate = join(self.webSurvey.htmlDir, "axbTemplate.html")
         availableFunctions = getToggleButtonsJS(len(self.responseButtonList))
         
         # Generate the media buttons
@@ -541,7 +541,7 @@ class MediaSliderPage(abstract_pages.AbstractPage):
         '''
         Listeners hear two files and decide if they are the same or different
         '''
-        pageTemplate = join(constants.htmlDir, "axbTemplate.html")
+        pageTemplate = join(self.webSurvey.htmlDir, "axbTemplate.html")
         availableFunctions = getToggleButtonsJS(1, "range%d")
         
         txtFN = join(self.txtDir, self.transcriptName + ".txt")
@@ -619,7 +619,7 @@ class MediaListPage(abstract_pages.AbstractPage):
     def getHTML(self):
     
         htmlText = self._getHTMLTxt()
-        pageTemplate = join(constants.htmlDir, "axbTemplate.html")
+        pageTemplate = join(self.webSurvey.htmlDir, "axbTemplate.html")
         
         htmlText %= audio.generateAudioButton(self.mediaList,
                                               0,

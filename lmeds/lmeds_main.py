@@ -53,6 +53,9 @@ class WebSurvey(object):
                  individualSequences=False
                  ):
         
+        self.htmlDir = constants.htmlDir
+        self.htmlSnippetsDir = constants.htmlSnippetsDir
+        
         self.surveyRoot = join(constants.rootDir, "tests", surveyName)
         self.wavDir = join(self.surveyRoot, "audio_and_video")
         self.txtDir = join(self.surveyRoot, "txt")
