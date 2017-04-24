@@ -29,6 +29,22 @@ class IntegrationTests(unittest.TestCase):
     def test_run_lmeds_demo(self):
         """Running 'lmeds_virtual_demo'"""
         import lmeds_virtual_demo
+        
+    def test_gen_dictionary(self):
+        """Running 'user_script_gen_dictionary'"""
+        import user_script_gen_dictionary
+        
+    def test_get_duration(self):
+        """Running 'user_script_get_duration'"""
+        import user_script_get_duration
+        
+    def test_post_process(self):
+        """Running 'user_script_post_process'"""
+        import user_script_post_process
+        
+    def test_sequence_check(self):
+        """Running 'user_script_sequence_check'"""
+        import user_script_sequence_check
  
 
 
