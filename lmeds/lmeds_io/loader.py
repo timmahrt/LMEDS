@@ -136,12 +136,16 @@ class TextDict(object):
         # Special case -- no section before the first text entries
         # insert a dummy section
         i = data.index('---')
-        j = data.index('===')
-        if j < i:
-            demarc = "-" * 20
-            sectionName = NULL_SECTION
-            newSection = "\n%s\n%s\n%s\n\n" % (demarc, sectionName, demarc)
-            data = newSection + data
+        try:
+            j = data.index('===')
+        except ValueError:
+            pass
+        else:
+            if j < i:
+                demarc = "-" * 20
+                sectionName = NULL_SECTION
+                newSection = "\n%s\n%s\n%s\n\n" % (demarc, sectionName, demarc)
+                data = newSection + data
         
         testItemList = data.splitlines()
         
