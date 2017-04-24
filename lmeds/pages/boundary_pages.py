@@ -220,9 +220,13 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         
         self.processSubmitList = ["audioLoader.verifyAudioPlayed()"]
         
-        verifyNumSelected = _getTogglableWordEmbed(self)
-        if verifyNumSelected is not None:
-            self.processSubmitList.append(verifyNumSelected)
+        try:
+            verifyNumSelected = _getTogglableWordEmbed(self)
+        except TypeError:
+            pass
+        else:
+            if verifyNumSelected is not None:
+                self.processSubmitList.append(verifyNumSelected)
         
         prominenceStr = "true" if self.doProminence else "false"
         self.runOnLoad = "makeWordsVisibleCheckboxes(%s);\n" % prominenceStr
@@ -416,9 +420,13 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
             
         self.processSubmitList = ["audioLoader.verifyAudioPlayed()", ]
         
-        verifyNumSelected = _getTogglableWordEmbed(self)
-        if verifyNumSelected is not None:
-            self.processSubmitList.append(verifyNumSelected)
+        try:
+            verifyNumSelected = _getTogglableWordEmbed(self)
+        except TypeError:
+            pass
+        else:
+            if verifyNumSelected is not None:
+                self.processSubmitList.append(verifyNumSelected)
         
         self.runOnLoad = "makeWordsVisibleCheckboxes(false);\n"
     
