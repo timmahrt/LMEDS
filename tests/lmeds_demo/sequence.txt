@@ -1,7 +1,7 @@
 *LMEDS_Demo
 login
 
-text_page first_page
+text_page first_page bindSubmitKeyIDList=space
 media_test audio apples
 
 text_page speed_warning

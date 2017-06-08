@@ -191,17 +191,11 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         
         # Normalize variables
         if bindPlayKeyIDList is not None:
-            tmpKeyIDList = []
-            for keyID in bindPlayKeyIDList:
-                keyID = html.keyboardletterToChar(keyID)
-                tmpKeyIDList.append(keyID)
+            tmpKeyIDList = html.mapKeylist(bindPlayKeyIDList)
             bindPlayKeyIDList = tmpKeyIDList
         
         if bindResponseKeyIDList is not None:
-            tmpKeyIDList = []
-            for keyID in bindResponseKeyIDList:
-                keyID = html.keyboardletterToChar(keyID)
-                tmpKeyIDList.append(keyID)
+            tmpKeyIDList = html.mapKeylist(bindResponseKeyIDList)
             bindResponseKeyIDList = tmpKeyIDList
         
         self.instructionText = instructionText

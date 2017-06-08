@@ -163,12 +163,12 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
                  *args, **kargs):
         
         super(BoundaryOrProminenceAbstractPage, self).__init__(*args, **kargs)
-        
+
         # Normalize variables
         if bindPlayKeyID is not None:
-            bindPlayKeyID = html.keyboardletterToChar(bindPlayKeyID)
+            bindPlayKeyID = html.mapKeylist(bindPlayKeyID)
         if bindSubmitID is not None:
-            bindSubmitID = html.keyboardletterToChar(bindSubmitID)
+            bindSubmitID = html.mapKeylist(bindSubmitID)
         presentAudio = presentAudio.lower() == "true"
         
         minNumSelected = int(minNumSelected)
@@ -370,9 +370,9 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         
         # Normalize variables
         if bindPlayKeyID is not None:
-            bindPlayKeyID = html.keyboardletterToChar(bindPlayKeyID)
+            bindPlayKeyID = html.mapKeylist(bindPlayKeyID)
         if bindSubmitID is not None:
-            bindSubmitID = html.keyboardletterToChar(bindSubmitID)
+            bindSubmitID = html.mapKeylist(bindSubmitID)
         presentAudio = presentAudio.lower() == "true"
         
         minNumSelected = int(minNumSelected)

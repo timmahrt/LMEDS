@@ -222,10 +222,17 @@ class TextPage(abstract_pages.NonValidatingPage):
 
     pageName = "text_page"
     
-    def __init__(self, textName, *args, **kargs):
+    def __init__(self, textName, bindSubmitKeyIDList, *args, **kargs):
 
         super(TextPage, self).__init__(*args, **kargs)
+        
+        # Normalize variables
+        if bindSubmitKeyIDList is not None:
+            tmpKeyIDList = html.mapKeylist(bindSubmitKeyIDList)
+            bindSubmitKeyIDList = tmpKeyIDList
+        
         self.textName = textName
+        self.bindSubmitKeyIDList = bindSubmitKeyIDList
     
         # Strings used in this page
         txtKeyList = ['title', self.textName]
@@ -234,6 +241,23 @@ class TextPage(abstract_pages.NonValidatingPage):
         # Variables that all pages need to define
         self.numAudioButtons = 0
         self.processSubmitList = []
+
+    def _getKeyPressEmbed(self):
+        
+        bindKeyTxt = ""
+
+        # Bind key press to play button?
+        if self.bindSubmitKeyIDList is not None:
+            for _, keyID in enumerate(self.bindSubmitKeyIDList):
+                clickJS = 'document.getElementById("submitButton").click();'
+                bindTuple = (keyID, clickJS)
+                bindKeyTxt += ("\n" + html.bindKeySubSnippetJS % bindTuple)
+        
+        returnJS = ""
+        if bindKeyTxt != "":
+            returnJS = html.bindKeyJSTemplate % bindKeyTxt
+        
+        return returnJS
     
     def _getHTMLTxt(self):
         
@@ -254,7 +278,10 @@ class TextPage(abstract_pages.NonValidatingPage):
         htmlText = self._getHTMLTxt()
         pageTemplate = join(self.webSurvey.htmlDir, "basicTemplate.html")
         
-        return htmlText, pageTemplate, {}
+        embedTxt = ""
+        embedTxt += self._getKeyPressEmbed()
+        
+        return htmlText, pageTemplate, {'embed': embedTxt}
 
 
 class TextAndMediaPage(abstract_pages.NonValidatingPage):
@@ -262,14 +289,21 @@ class TextAndMediaPage(abstract_pages.NonValidatingPage):
     pageName = "text_and_media_page"
     
     def __init__(self, audioOrVideo, minPlays, maxPlays, textName,
-                 mediaList, *args, **kargs):
+                 mediaList, bindSubmitKeyIDList=None, *args, **kargs):
         
         super(TextAndMediaPage, self).__init__(*args, **kargs)
+        
+        # Normalize variables
+        if bindSubmitKeyIDList is not None:
+            tmpKeyIDList = html.mapKeylist(bindSubmitKeyIDList)
+            bindSubmitKeyIDList = tmpKeyIDList
+        
         self.audioOrVideo = audioOrVideo
         self.minPlays = minPlays
         self.maxPlays = maxPlays
         self.textName = textName
         self.mediaList = mediaList
+        self.bindSubmitKeyIDList = bindSubmitKeyIDList
         self.wavDir = self.webSurvey.wavDir
         
         assert(audioOrVideo in ["audio", "video"])
@@ -282,6 +316,23 @@ class TextAndMediaPage(abstract_pages.NonValidatingPage):
         # Variables that all pages need to define
         self.numAudioButtons = len(mediaList)
         self.processSubmitList = []
+
+    def _getKeyPressEmbed(self):
+        
+        bindKeyTxt = ""
+
+        # Bind key press to play button?
+        if self.bindSubmitKeyIDList is not None:
+            for _, keyID in enumerate(self.bindSubmitKeyIDList):
+                clickJS = 'document.getElementById("submitButton").click();'
+                bindTuple = (keyID, clickJS)
+                bindKeyTxt += ("\n" + html.bindKeySubSnippetJS % bindTuple)
+        
+        returnJS = ""
+        if bindKeyTxt != "":
+            returnJS = html.bindKeyJSTemplate % bindKeyTxt
+        
+        return returnJS
     
     def getHTML(self):
         
@@ -309,6 +360,7 @@ class TextAndMediaPage(abstract_pages.NonValidatingPage):
             extList = self.webSurvey.videoExtList
         
         embedTxt = ""
+        embedTxt += self._getKeyPressEmbed()
         embedTxt += "\n\n" + audio.generateEmbed(self.wavDir, mediaNameList,
                                                  extList, self.audioOrVideo)
         

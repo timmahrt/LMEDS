@@ -125,6 +125,22 @@ def keyboardletterToChar(letter):
     return retVal
 
 
+def mapKeylist(keyIDList):
+    try:
+        if isinstance(keyIDList, basestring):
+            keyIDList = [keyIDList, ]
+    except NameError:
+        if isinstance(keyIDList, str):
+            keyIDList = [keyIDList, ]
+    
+    tmpKeyIDList = []
+    for keyID in keyIDList:
+        keyID = keyboardletterToChar(keyID)
+        tmpKeyIDList.append(keyID)
+    
+    return tmpKeyIDList
+
+
 def getWidgetSubmit(widgetName):
     '''
     Associates all widgets with a provided name (%s) with the submit function
