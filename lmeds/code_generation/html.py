@@ -126,12 +126,6 @@ def keyboardletterToChar(letter):
 
 
 def mapKeylist(keyIDList):
-    try:
-        if isinstance(keyIDList, basestring):
-            keyIDList = [keyIDList, ]
-    except NameError:
-        if isinstance(keyIDList, str):
-            keyIDList = [keyIDList, ]
     
     tmpKeyIDList = []
     for keyID in keyIDList:
