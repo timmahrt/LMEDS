@@ -76,16 +76,7 @@ class SurveyPage(abstract_pages.NonValidatingPage):
         
         surveyHTML = "<br /><br />\n".join(itemHTMLList)
         
-        javascript = """document.getElementById("%d").selectedIndex = -1;"""
-        javascriptList = [javascript % i for i in choiceBoxIndexList]
-        
-        embedTxt = ('\n<script type="text/javascript">\n'
-                    'function setchoiceboxes() {\n'
-                    '%s\n'
-                    '}\n'
-                    'window.addEventListener("load", setchoiceboxes);\n'
-                    '</script>\n')
-        embedTxt %= "\n".join(javascriptList)
+        embedTxt = 'window.addEventListener("load", setchoiceboxes);\n'
         
         htmlTxt = "<div id='longText'>%s</div>" % surveyHTML
         return htmlTxt, embedTxt
@@ -169,7 +160,7 @@ class SurveyPage(abstract_pages.NonValidatingPage):
 
     def getHTML(self):
         htmlText, embedTxt = self._getHTMLTxt()
-        pageTemplate = join(constants.htmlDir, "basicTemplate.html")
+        pageTemplate = join(self.webSurvey.htmlDir, "basicTemplate.html")
         
         return htmlText, pageTemplate, {'embed': embedTxt}
 
@@ -200,17 +191,11 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         
         # Normalize variables
         if bindPlayKeyIDList is not None:
-            tmpKeyIDList = []
-            for keyID in bindPlayKeyIDList:
-                keyID = html.keyboardletterToChar(keyID)
-                tmpKeyIDList.append(keyID)
+            tmpKeyIDList = html.mapKeylist(bindPlayKeyIDList)
             bindPlayKeyIDList = tmpKeyIDList
         
         if bindResponseKeyIDList is not None:
-            tmpKeyIDList = []
-            for keyID in bindResponseKeyIDList:
-                keyID = html.keyboardletterToChar(keyID)
-                tmpKeyIDList.append(keyID)
+            tmpKeyIDList = html.mapKeylist(bindResponseKeyIDList)
             bindResponseKeyIDList = tmpKeyIDList
         
         self.instructionText = instructionText
@@ -222,6 +207,8 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         self.bindPlayKeyIDList = bindPlayKeyIDList
         self.bindResponseKeyIDList = bindResponseKeyIDList
         self.timeout = None
+        
+        self.playOnMinList = ['enable_checkboxes', ]
         
         if bindPlayKeyIDList is not None:
             assert(len(mediaListOfLists) == len(bindPlayKeyIDList))
@@ -252,15 +239,20 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         txtKeyList += _buttonLabelCheck(mediaListOfLists, mediaButtonLabelList)
         
         txtKeyList.extend(abstract_pages.audioTextKeys)
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
         
         self.numAudioButtons = len(mediaListOfLists)
-        self.processSubmitList = ["verifyAudioPlayed()", ]
+        if all([len(subList) == 0 for subList in mediaListOfLists]):
+            self.numAudioButtons = 0
+        
+        self.processSubmitList = []
+        if self.numAudioButtons > 0:
+            self.processSubmitList.append("audioLoader.verifyAudioPlayed()")
 
     def _getKeyPressEmbed(self):
         
         bindKeyTxt = ""
-        
+
         # Bind key press to play button?
         if self.bindPlayKeyIDList is not None:
             for i, keyID in enumerate(self.bindPlayKeyIDList):
@@ -322,11 +314,10 @@ class MediaChoicePage(abstract_pages.AbstractPage):
             value = super(MediaChoicePage, self).getOutput(form)
             if not self._doPlayMedia():
                 value += ",0"
-        except abstract_pages.KeyNotInFormError:  # User timeed-out
+
+        except abstract_pages.KeyNotInFormError:  # User timed-out
             value = ",".join(['0'] * self.getNumOutputs()) + ",1"
-        
-        
-        
+
         return value
     
     def getNumOutputs(self):
@@ -336,7 +327,7 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         '''
         Listeners hear two files and decide if they are the same or different
         '''
-        pageTemplate = join(constants.htmlDir, "axbTemplate.html")
+        pageTemplate = join(self.webSurvey.htmlDir, "axbTemplate.html")
         availableFunctions = getToggleButtonsJS(len(self.responseButtonList))
         
         # Generate the media buttons
@@ -349,7 +340,9 @@ class MediaChoicePage(abstract_pages.AbstractPage):
             if len(self.mediaList[i]) == 0:
                 continue
             
+            audioLabel = self.textDict['play_button']
             mediaButtonHTML = audio.generateAudioButton(self.mediaList[i], i,
+                                                        audioLabel,
                                                         self.pauseDuration,
                                                         False)
             if self.buttonLabelList is not None:
@@ -378,9 +371,7 @@ class MediaChoicePage(abstract_pages.AbstractPage):
         playBtnSnippet = ('<table class="center">%s</table>') % playBtnSnippet
         
         runOnMinThresholdJS = "enable_checkboxes();"
-        embedTxt = audio.getPlaybackJS(True, self.numAudioButtons,
-                                       self.maxPlays, self.minPlays,
-                                       runOnMinThreshold=runOnMinThresholdJS)
+        embedTxt = ""
         
         mediaNames = [mediaName for mediaSubList in self.mediaList
                       for mediaName in mediaSubList]
@@ -440,14 +431,12 @@ def getToggleButtonsJS(numItems, idFormat=None):
         enabledSnippet += (enabledJS % idStr)
         disabledSnippet += (disabledJS % idStr)
     
-    jsCode = ('<script>\n'
-              'function enable_checkboxes() {\n'
+    jsCode = ('function enable_checkboxes() {\n'
               '%s'
               '}\n'
               'function disable_checkboxes() {\n'
               '%s'
               '}\n'
-              '</script>\n'
               ) % (enabledSnippet, disabledSnippet)
     
     return jsCode
@@ -474,6 +463,8 @@ class MediaSliderPage(abstract_pages.AbstractPage):
         self.leftRangeLabel = leftRangeLabel
         self.rightRangeLabel = rightRangeLabel
         
+        self.playOnMinList = ['enable_checkboxes', ]
+        
         if sliderLabel is None:
             sliderLabel = ""
         self.sliderLabel = sliderLabel
@@ -493,10 +484,10 @@ class MediaSliderPage(abstract_pages.AbstractPage):
             txtKeyList.append(rightRangeLabel)
         
         txtKeyList.extend(abstract_pages.audioTextKeys)
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
         
         self.numAudioButtons = 1
-        self.processSubmitList = ["verifyAudioPlayed()", ]
+        self.processSubmitList = ["audioLoader.verifyAudioPlayed()", ]
         
     def _getHTMLTxt(self):
         
@@ -546,21 +537,21 @@ class MediaSliderPage(abstract_pages.AbstractPage):
         '''
         Listeners hear two files and decide if they are the same or different
         '''
-        pageTemplate = join(constants.htmlDir, "axbTemplate.html")
+        pageTemplate = join(self.webSurvey.htmlDir, "axbTemplate.html")
         availableFunctions = getToggleButtonsJS(1, "range%d")
         
         txtFN = join(self.txtDir, self.transcriptName + ".txt")
         sentenceList = loader.loadTxtFile(txtFN)
         transcriptTxt = "<br /><br />\n\n".join(sentenceList)
 
+        audioLabel = self.textDict['play_button']
         playBtnSnippet = audio.generateAudioButton(self.mediaName, 0,
+                                                   audioLabel,
                                                    0,
                                                    False)
         
         runOnMinThresholdJS = "enable_checkboxes();"
-        embedTxt = audio.getPlaybackJS(True, self.numAudioButtons,
-                                       self.maxPlays, self.minPlays,
-                                       runOnMinThreshold=runOnMinThresholdJS)
+        embedTxt = ""
         
         mediaNames = [self.mediaName, ]
         
@@ -595,6 +586,8 @@ class MediaListPage(abstract_pages.AbstractPage):
         self.minPlays = minPlays
         self.maxPlays = maxPlays
         
+        self.autoSubmit = True
+        
         assert(audioOrVideo in ["audio", "video"])
         
         self.wavDir = self.webSurvey.wavDir
@@ -604,13 +597,13 @@ class MediaListPage(abstract_pages.AbstractPage):
         # Strings used in this page
         txtKeyList = ["memory_instruct", "memory_a", "memory_b"]
         txtKeyList.extend(abstract_pages.audioTextKeys)
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
 
         # Variables that all pages need to define
         
         # Although there are many files, there is just one button
         self.numAudioButtons = 1
-        self.processSubmitList = ["verifyAudioPlayed()", ]
+        self.processSubmitList = ["audioLoader.verifyAudioPlayed()", ]
     
     def _getHTMLTxt(self):
         return "%s<br /><br />"
@@ -624,15 +617,16 @@ class MediaListPage(abstract_pages.AbstractPage):
     def getHTML(self):
     
         htmlText = self._getHTMLTxt()
-        pageTemplate = join(constants.htmlDir, "axbTemplate.html")
+        pageTemplate = join(self.webSurvey.htmlDir, "axbTemplate.html")
         
+        audioLabel = self.textDict['play_button']
         htmlText %= audio.generateAudioButton(self.mediaList,
                                               0,
+                                              audioLabel,
                                               self.pauseDuration,
-                                              False) + "<br />"
+                                              False, True) + "<br />"
         
-        embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays, self.minPlays,
-                                       autosubmit=True)
+        embedTxt = ""
         
         if self.audioOrVideo == "audio":
             extList = self.webSurvey.audioExtList

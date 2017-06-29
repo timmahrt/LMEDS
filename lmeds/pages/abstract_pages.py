@@ -107,6 +107,8 @@ class AbstractPage(object):
         self.orderSI = orderSI
         self.orderAI = orderAI
         
+        self.autoSubmit = False
+        
         # These are variables that all pages can define
         
         # e.g. [('widget', 'myWidget'), ('timeout', 1.0)]
@@ -132,6 +134,12 @@ class AbstractPage(object):
     
     def getNumOutputs(self):
         raise NotImplementedError("Should have implemented this")
+    
+    def getText(self, txtKey):
+        return self.webSurvey.langDict.getText(txtKey)
+    
+    def batchGetText(self, txtKeyList):
+        return self.webSurvey.langDict.batchGetText(txtKeyList)
     
     def getOutput(self, form):
         

@@ -33,7 +33,16 @@ jqueryCode = ('''<script type="text/javascript" src='''
               ''''../html/jquery-1.11.0.min.js' '''
               '''type='text/javascript'%3E%3C/script%3E"));'''
               '''\n}\n'''
-              '''</script>''')
+              '''</script>\n'''
+              '''<script type="text/javascript" src='''
+              '''"../html/lmeds-audio.js"></script>\n'''
+              '''<script type="text/javascript" src='''
+              '''"../html/lmeds-utils.js"></script>\n'''
+              '''<script type="text/javascript" src='''
+              '''"../html/lmeds-forms.js"></script>\n'''
+              '''<script type="text/javascript" src='''
+              '''"../html/b-p-scores.js"></script>\n'''
+              )
 
 
 class WebSurvey(object):
@@ -43,6 +52,9 @@ class WebSurvey(object):
                  videoExtList=None, allowUsersToRelogin=False,
                  individualSequences=False
                  ):
+        
+        self.htmlDir = constants.htmlDir
+        self.htmlSnippetsDir = constants.htmlSnippetsDir
         
         self.surveyRoot = join(constants.rootDir, "tests", surveyName)
         self.wavDir = join(self.surveyRoot, "audio_and_video")
@@ -68,11 +80,14 @@ class WebSurvey(object):
             videoExtList = [".ogg", ".mp4"]
         self.videoExtList = videoExtList
         
-        loader.initTextDict(self.languageFileFN)
+        if self.languageFileFN is None:
+            self.langDict = loader.EmptyDict()
+        else:
+            self.langDict = loader.TextDict(self.languageFileFN)
         
         self.disableRefreshFlag = disableRefreshFlag
         
-        self.textDict = loader.batchGetText(TXT_KEY_LIST)
+        self.textDict = self.langDict.batchGetText(TXT_KEY_LIST)
         
         # The sourceCGIFN is the CGI file that was requested from the server
         # (basically the cgi file that started the websurvey)
@@ -205,12 +220,14 @@ class WebSurvey(object):
         self._testSequenceOverride(userName)
             
         html.printCGIHeader(cookieTracker, self.disableRefreshFlag)
-
-        validateText = page.getValidation()
+        
+        validationTemplate = ('// Validate page form before submitting\n'
+                              'function validateForm()\n{\n%s\n}\n\n')
+        validateText = validationTemplate % page.getValidation()
         
         # Defaults
-        embedTxt = audio.generateEmbed(self.wavDir, [], self.audioExtList,
-                                       "audio")
+        jsHeader = jqueryCode
+        embedTxt = jsHeader
         
         # Estimate our current progress (this doesn't work well if the user
         #    can jump around)
@@ -218,7 +235,8 @@ class WebSurvey(object):
         percentComplete = int(100 * (pageNum) / (totalNumPages - 1))
         
         htmlTxt, pageTemplateFN, updateDict = page.getHTML()
-        htmlTxt = html.getLoadingNotification() + htmlTxt
+        loadingProgressTxt = self.textDict["loading_progress"]
+        htmlTxt = html.getLoadingNotification(loadingProgressTxt) + htmlTxt
         testType = page.pageName
         
         numItems = page.getNumOutputs()
@@ -243,23 +261,79 @@ class WebSurvey(object):
         
         submitWidgetList.extend(page.nonstandardSubmitProcessList)
 
-        runOnLoad = ""
+        # Javascript to run once the page has loaded
+        runOnLoad = "document.myTimer = new Timer();"
         submitAssociation = html.constructSubmitAssociation(submitWidgetList)
         runOnLoad += submitAssociation
-    
+        
         if page.getNumAudioButtons() > 0:
+#             audioLoadingJSCmd = audio.generateEmbed(self.wavDir, [],
+#                                                     self.audioExtList,
+#                                                     "audio")
+#             runOnLoad += audioLoadingJSCmd
             runOnLoad += audio.loadAudioSnippet
-        processSubmitHTML += html.taskDurationCode % runOnLoad
-        processSubmitHTML = jqueryCode + processSubmitHTML
+            pushTemplate = "audioLoader.minPlayFuncList.push(%s)\n"
+            try:
+                funcList = page.playOnMinList
+            except AttributeError:
+                pass
+            else:
+                for func in funcList:
+                    runOnLoad += pushTemplate % func
             
+            for flagName in ["silenceFlag", "listenPartial"]:
+                try:
+                    boolVal = getattr(page, flagName)
+                except AttributeError:
+                    pass
+                else:
+                    txtVal = "true" if boolVal else "false"
+                    runOnLoad += ("audioLoader.%s = %s;" % (flagName, txtVal))
+        
+        try:
+            runOnLoad += page.runOnLoad
+        except AttributeError:
+            pass
+        
+        processSubmitHTML += html.runOnPageLoad % runOnLoad
+        processSubmitHTML += validateText
+        
+        scriptFmt = '<script type="text/javascript">\n%s\n</script>'
         if 'embed' in updateDict.keys():
-            updateDict['embed'] = processSubmitHTML + updateDict['embed']
+            
+            # Add page-specific constraints on audio playback if
+            # this page has audio
+            if "audioLoader" in updateDict["embed"]:
+                minMaxTxt = ""
+                try:
+                    minMaxTxt += ("audioLoader.minNumPlays = %s;\n" %
+                                  page.minPlays)
+                except AttributeError:
+                    pass
+                try:
+                    minMaxTxt += ("audioLoader.maxNumPlays = %s;\n" %
+                                  page.maxPlays)
+                except AttributeError:
+                    pass
+                try:
+                    minMaxTxt += ("audioLoader.numAudioButtons = %s;\n" %
+                                  page.numAudioButtons)
+                except AttributeError:
+                    pass
+
+                minMaxTxt += ("audioLoader.numUniqueSoundFiles = "
+                              "countUnique(audioLoader.audioList);\n")
+                updateDict['embed'] += minMaxTxt
+            
+            tmpEmbed = scriptFmt % (processSubmitHTML + updateDict['embed'])
+            updateDict['embed'] = jqueryCode + tmpEmbed
         else:
-            embedTxt += processSubmitHTML
+            embedTxt += scriptFmt % processSubmitHTML
             
         progressBarDict = {'percentComplete': percentComplete,
                            'percentUnfinished': 100 - percentComplete, }
-        progressBarHTML = html.getProgressBar() % progressBarDict
+        progressTxt = self.textDict["progress"]
+        progressBarHTML = html.getProgressBar(progressTxt) % progressBarDict
 
         metaDescription = self.textDict["metadata_description"]
                 
@@ -272,7 +346,6 @@ class WebSurvey(object):
                     'cookieTracker': cookieTracker,
                     'page': page,
                     'user_name': userName,
-                    'validate': validateText,
                     'embed': embedTxt,
                     'metadata_description': metaDescription,
                     'websiteRootURL': constants.rootURL,

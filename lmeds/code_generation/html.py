@@ -81,19 +81,17 @@ formTemplate2 = """
 # Otherwise, there are lots of imcompatibilities.  See
 # http://unixpapa.com/js/key.html
 bindKeyJSTemplate = ("""
-<script>
 $(document).on('keypress', function(e) {
     var tag = e.target.tagName.toLowerCase();
     if (tag != 'input' && tag != 'textarea') {
     %s
     }
-});
-</script>""")
+});""")
 
-bindKeySubSnippetJS = """if (e.which == %s) {%s}"""
+bindKeySubSnippetJS = """if (e.which == %d) {%s}"""
 
 bindToSubmitButtonJS = """
-if (e.which == %s) {document.getElementById("submitButton").click();}
+if (e.which == %d) {document.getElementById("submitButton").click();}
 """
 
 submitButtonHTML = ('<input name="submitButton" id="submitButton" '
@@ -127,14 +125,25 @@ def keyboardletterToChar(letter):
     return retVal
 
 
+def mapKeylist(keyIDList):
+    
+    tmpKeyIDList = []
+    for keyID in keyIDList:
+        keyID = keyboardletterToChar(keyID)
+        tmpKeyIDList.append(keyID)
+    
+    return tmpKeyIDList
+
+
 def getWidgetSubmit(widgetName):
     '''
     Associates all widgets with a provided name (%s) with the submit function
     '''
-    widgetSubmit = ('var radios = document.getElementsByName("%s");\n'
+    widgetSubmit = ('// Set the radio buttons to submit the page on click\n'
+                    'var radios = document.getElementsByName("%s");\n'
                     'for (var i = [0]; i < radios.length; i++) {\n'
                     'radios[i].onclick=processSubmit;\n'
-                    '}\n')
+                    '}\n\n')
     widgetSubmit %= widgetName
     
     return widgetSubmit
@@ -157,32 +166,14 @@ def constructSubmitAssociation(tupleList):
 
 
 # Associates a submit button with
-taskDurationCode = """
-<script type="text/javascript">
-
-var start = new Date().getTime();
-
+runOnPageLoad = """
+// The code that runs when the page is finished loading
 window.onload=function() {
+timer = new Timer()
 
 %s
-
-
 }
 
-function calcDuration() {
-    var time = new Date().getTime() - start;
-
-    var seconds = Math.floor(time / 100) / 10;
-    var minutes = Math.floor(seconds / 60);
-    seconds = seconds - (minutes * 60);
-    if(Math.round(seconds) == seconds) {
-        seconds += '.0';
-    }
-    var param1 = minutes.toString();
-    var param2 = Number(seconds).toFixed(1);
-    document.getElementById("task_duration").value = param1 + ":" + param2;
-}
-</script>
 """
 
 audioPlayTrackingTemplate = ('<input TYPE="hidden" '
@@ -264,8 +255,8 @@ def createWidget(widgetType, argList, i):
     return widgetHTML, i
 
 
-def getLoadingNotification():
-    loadingText = "- %s - " % loader.getText("loading_progress")
+def getLoadingNotification(loadingProgressTxt):
+    loadingText = "- %s - " % loadingProgressTxt
     progressBarTemplate = """
     <div id="loading_status_indicator" class="centered_splash">
     <div class="centered_splash_inner">
@@ -289,8 +280,8 @@ def getLoadingNotification():
     return progressBarTemplate % loadingText
     
 
-def getProgressBar():
-    progressBarText = "- %s - <br />" % loader.getText("progress")
+def getProgressBar(progressTxt):
+    progressBarText = "- %s - <br />" % progressTxt
     
     progressBarTemplate = progressBarText + """
     <dl class="progress">
@@ -365,24 +356,6 @@ def printCGIHeader(pageNum, disableRefreshFlag):
     print("\n\n")
 
 
-def checkForAudioTag():
-    txt = '''
-    <script type="text/javascript">
-    
-function isSupportedBrowser() {
-
-if(!!document.createElement('audio').canPlayType == false) {
-    document.getElementById("submit").disabled = true;
-    document.getElementById("unsupported_warning").style.display='block';
-}
-
-    }
-    </script>
-    '''
-
-    return txt
-
-
 def makeNoWrap(htmlTxt):
     return '<div id="noTextWrapArea">\n\n%s\n\n</div>' % htmlTxt
 
@@ -392,22 +365,19 @@ def makeWrap(htmlTxt):
 
 
 processSubmitHTML = """
-<script  type="text/javascript">
+// The code that gets run when the page is submitted
 function processSubmit()
 {
-calcDuration();
-var returnValue = true;
-
-%s
-
-
-if (returnValue == true) {
-document.languageSurvey.submit()
-}
-
-return returnValue;
-}
-</script>
+    document.getElementById("task_duration").value = document.myTimer.calcDuration();
+    var returnValue = true;
+    
+    %s
+    
+    if (returnValue == true) {
+        document.languageSurvey.submit()
+    }
+    return returnValue;
+}\n
 """
 
 if __name__ == "__main__":

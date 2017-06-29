@@ -18,7 +18,7 @@ from lmeds.pages import abstract_pages
 
 
 def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textNameStr,
-                          sentenceList, presentAudioFlag, token,
+                          audioLabel, sentenceList, presentAudioFlag, token,
                           syllableDemarcator):
     '''
     This is a helper function.  It does not construct a full page.
@@ -33,7 +33,7 @@ def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textNameStr,
     htmlTxt += html.makeWrap(instrMsg)
     
     if presentAudioFlag is True:
-        htmlTxt += audio.generateAudioButton(name, audioNum, False)
+        htmlTxt += audio.generateAudioButton(name, audioNum, audioLabel, False)
         htmlTxt += "<br /><br />\n\n"
     else:
         htmlTxt += "<br /><br />\n\n"
@@ -81,71 +81,6 @@ def _doBreaksOrProminence(testType, wordIDNum, audioNum, name, textNameStr,
     return htmlTxt, wordIDNum
 
 
-def _getProminenceOrBoundaryWordEmbed(isProminence):
-    
-    boundaryEmbed = """
-    $(this).closest("label").css({
-        borderRight: this.checked ? "3px solid #000000":"0px solid #FFFFFF"
-    });
-    $(this).closest("label").css({ paddingRight: this.checked ? "0px":"3px"});
-    """
-    
-    prominenceEmbed = """
-    $(this).closest("label").css({ color: this.checked ? "red":"black"});
-    """
-    
-    javascript = """
-<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js">
-</script>
-<script>if (!window.jQuery) { document.write(
-'<script src="../html/jquery-1.11.0.min.js"><\/script>'); }
-</script>
-    
-<style type="text/css">
-           /* Style the label so it looks like a button */
-           .rptWordPadding {
-                padding-right: 3px;
-                padding-left: 3px;
-           }
-           label.syllable {
-                border-right: 0px solid #FFFFFF;
-                position: relative;
-                z-index: 3;
-                padding-right: 0px;
-                padding-left: 0px;
-           }
-           label.word {
-                border-right: 0px solid #FFFFFF;
-                position: relative;
-                z-index: 3;
-                padding-right: 3px;
-                padding-left: 3px;
-           }
-           /* CSS to make the checkbox disappear (but remain functional) */
-           label input {
-                position: absolute;
-                visibility: hidden;
-           }
-</style>
-    
-    
-<script>
-$(document).ready(function(){
-  $('input[type=checkbox]').click(function(){
-%s
-  });
-});
-</script>
-"""
-    
-    if isProminence:
-        javascript %= prominenceEmbed
-    else:
-        javascript %= boundaryEmbed
-
-    return javascript
-
-
 def _makeTogglableWord(testType, word, idNum, boundaryToken, labelClass):
     
     tokenTxt = ""
@@ -166,123 +101,31 @@ def _makeTogglableWord(testType, word, idNum, boundaryToken, labelClass):
                       "class": labelClass}
 
 
-def _getTogglableWordEmbed(numWords, boundaryMarking, minV, maxV):
+def _getTogglableWordEmbed(page):
     
-    doMinMaxClickedCheck = ""
-    if minV != -1 and maxV != -1:
-        doMinMaxClickedCheck = "didPlay &= verifySelectedWithinRange(%d,%d,'%s');"
-        doMinMaxClickedCheck %= (minV, maxV, "boundary_and_prominence")
+    # Add javascript that checks user markings
+    minErrMsg = ""
+    maxErrMsg = ""
+    minMaxErrMsg = ""
+    if page.minNumSelected != -1 or page.maxNumSelected != -1:
+        if page.minNumSelected != -1:
+            minErrMsg = page.textDict['pbMinSelectedErrorMsg']
+            minErrMsg %= page.minNumSelected
+        if page.maxNumSelected != -1:
+            maxErrMsg = page.textDict['pbMaxSelectedErrorMsg']
+            maxErrMsg %= page.maxNumSelected
+        if page.minNumSelected != -1 and page.maxNumSelected != -1:
+            minMaxErrMsg = page.textDict['pbMinMaxSelectedErrorMsg']
+            minMaxErrMsg %= (page.minNumSelected, page.maxNumSelected)
     
-    boundaryMarkingCode_showHide = """
-        $("#"+x).closest("label").css({
-        borderRight: "3px solid #000000"
-        });
-        $("#"+x).closest("label").css({ paddingRight: "0px"});
-        """
-    
-    boundaryMarkingCode_toggle = """
-        $(this).closest("label").css({
-        borderRight: this.checked ? "3px solid #000000":"0px solid #FFFFFF"
-        });
-        $(this).closest("label").css({
-        paddingRight: this.checked ? "0px":"3px"
-        });"""
-    
-    if boundaryMarking is not None:
-        boundaryMarkingCode_toggle = """
-            $(this).next("span").css({
-                visibility: this.checked ? "visible":"hidden"
-            });"""
-        boundaryMarkingCode_showHide = """
-            $("#"+x).next("span").css({ visibility: "visible"});
-            """
-    
-    javascript = """
-<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js">
-</script>
-<script>if (!window.jQuery) { document.write(
-'<script src="../html/jquery-1.11.0.min.js"><\/script>'); }
-</script>
+    doMinMaxClickedCheck = ("verifySelectedWithinRange("
+                            "%d,%d,'%s','%s','%s','%s')")
+    doMinMaxClickedCheck %= (page.minNumSelected,
+                             page.maxNumSelected,
+                             page.pageName,
+                             minErrMsg, maxErrMsg, minMaxErrMsg)
 
-<script>
-var didShowHide = false;
-function ShowHide()
-{
-var didPlay = verifyFirstAudioPlayed();
-%(verifyMinMaxClicked)s
-
-if(didPlay == true) {
-    didShowHide = true;
-    document.getElementById("ShownDiv").style.display='none';
-    document.getElementById("HiddenDiv").style.display='block';
-    document.getElementById("HiddenForm").style.display='block';
-    for (e=0;e<%(numWords)d;e++) {
-        var x = e+%(numWords)d;
-
-        if (document.getElementById(e).checked==true) {
-%(boundaryMarkingCode_showHide)s
-            }
-        }
-    }
-
-    $('html, body').animate({ scrollTop: 0 }, 'fast');
-}
-</script>
-    
-<style type="text/css">
-           /* Style the label so it looks like a button */
-           rptWordPadding {
-                padding-right: 3px;
-                padding-left: 3px;
-           }
-           label.syllable {
-                border-right: 0px solid #FFFFFF;
-                position: relative;
-                z-index: 3;
-                padding-right: 0px;
-                padding-left: 0px;
-           }
-           label.word {
-                border-right: 0px solid #FFFFFF;
-                position: relative;
-                z-index: 3;
-                padding-right: 3px;
-                padding-left: 3px;
-           }
-           /* CSS to make the checkbox disappear (but remain functional) */
-           label input {
-                position: absolute;
-                visibility: hidden;
-           }
-</style>
-    
-    
-<script>
-$(document).ready(function(){
-  $('input[type=checkbox]').click(function(){
-    
-    if (this.value < %(numWords)d)
-    {
-    /* Boundary marking */
-%(boundaryMarkingCode_toggle)s
-    }
-    else
-    {
-    /* Prominence marking */
-    $(this).closest("label").css({ color: this.checked ? "red":"black"});
-    }
-  });
-});
-</script>"""
-
-    return javascript % {"numWords":
-                         numWords,
-                         "verifyMinMaxClicked":
-                         doMinMaxClickedCheck,
-                         "boundaryMarkingCode_toggle":
-                         boundaryMarkingCode_toggle,
-                         "boundaryMarkingCode_showHide":
-                         boundaryMarkingCode_showHide}
+    return doMinMaxClickedCheck
 
 
 def _getKeyPressEmbed(playID, submitID, doBoundariesAndProminences=False):
@@ -298,7 +141,7 @@ def _getKeyPressEmbed(playID, submitID, doBoundariesAndProminences=False):
     # Bind key press to submit event?
     if submitID is not None:
         if doBoundariesAndProminences is True:
-            js = bindToSubmitButtonBoundaryAndProminenceJS
+            js = "bpProcessKeyboardPress(e,%d)"
         else:
             js = html.bindToSubmitButtonJS
         bindKeyTxt += ("\n" + js % submitID)
@@ -308,97 +151,6 @@ def _getKeyPressEmbed(playID, submitID, doBoundariesAndProminences=False):
         returnJS = html.bindKeyJSTemplate % bindKeyTxt
     
     return returnJS
-
-bindToSubmitButtonBoundaryAndProminenceJS = """
-if (e.which == %s) {
-    if (didShowHide == false)
-        {document.getElementById("halfwaySubmitButton").click();}
-    else
-        {document.getElementById("submitButton").click();}
-}
-"""
-
-_verifySelectedWithinRangeJS = """
-function getHowManyMarked(startI, endI, widgetName) {
-  var numMarked = 0;
-  var chboxList = document.getElementsByName(widgetName);
-  for(var i=startI; i<endI; i++) {
-    if(chboxList[i].checked == true) {
-        numMarked++;
-    }
-  }
-  return numMarked;
-}
-function isPBMarkingTask() {
-  var markingTaskArray = [false, false];
-  if (document.getElementById("submitButton") !== null)
-    {
-      if (document.getElementById("halfwaySubmitButton") !== null)
-      {
-        markingTaskArray[0] = true;
-        if (didShowHide == true)
-        {
-          markingTaskArray[1] = true;
-        }
-      }
-    }
-
-  return markingTaskArray;
-}
-function verifySelectedWithinRange(min_to_mark, max_to_mark, widgetName) {
-    
-    var returnValue = true;
-    var min = 0;
-    var max = document.getElementsByName(widgetName).length;
-    
-    // If doing both b and p marking, we need to divide the max value by two.
-    // If doing the 2nd half (p marking) we need to shift the min and max value
-    var shiftArray = isPBMarkingTask();
-    var isPBTask = shiftArray[0];
-    var doShift = shiftArray[1];
-    
-    if (isPBTask == true) {
-        max = max / 2;
-    }
-    if (doShift == true) {
-        min = max;
-        max = (2 * max);
-    }
-    
-    var numMarked = getHowManyMarked(min, max, widgetName);
-    var alertMsg = "";
-
-    if (min_to_mark > 0 && numMarked < min_to_mark)
-    {
-        returnValue = false;
-        if (max_to_mark == -1)
-        {
-            alertMsg = "%(pbMinSelectedErrorMsg)s";
-        }
-        else
-        {
-            alertMsg = "%(pbMinMaxSelectedErrorMsg)s";
-        }
-    }
-    else if (max_to_mark > 0 && numMarked > max_to_mark)
-    {
-        returnValue = false;
-        if (min_to_mark == -1) {
-            alertMsg = "%(pbMaxSelectedErrorMsg)s";
-        }
-        else
-        {
-            alertMsg = "%(pbMinMaxSelectedErrorMsg)s";
-        }
-    }
-        
-    if (alertMsg != "") {
-        alert(alertMsg);
-    }
-    
-    return returnValue;
-}
-"""
 
 
 class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
@@ -411,7 +163,7 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
                  *args, **kargs):
         
         super(BoundaryOrProminenceAbstractPage, self).__init__(*args, **kargs)
-        
+
         # Normalize variables
         if bindPlayKeyID is not None:
             bindPlayKeyID = html.keyboardletterToChar(bindPlayKeyID)
@@ -453,7 +205,7 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         if minNumSelected != -1 and maxNumSelected != -1:
             txtKeyList.append("pbMinMaxSelectedErrorMsg")
         
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
         
         # Variables that all pages need to define
         if presentAudio is True:
@@ -466,14 +218,18 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         else:
             taskStr = "boundary"
         
-        self.processSubmitList = []
-        if self.presentAudio is True:
-            self.processSubmitList.append("verifyAudioPlayed()")
+        self.processSubmitList = ["audioLoader.verifyAudioPlayed()"]
         
-        if minNumSelected != -1 or maxNumSelected != -1:
-            verifyNumSelected = 'verifySelectedWithinRange(%d, %d, "%s")'
-            verifyNumSelected %= (minNumSelected, maxNumSelected, taskStr)
-            self.processSubmitList.append(verifyNumSelected)
+        try:
+            verifyNumSelected = _getTogglableWordEmbed(self)
+        except TypeError:
+            pass
+        else:
+            if verifyNumSelected is not None:
+                self.processSubmitList.append(verifyNumSelected)
+        
+        prominenceStr = "true" if self.doProminence else "false"
+        self.runOnLoad = "makeWordsVisibleCheckboxes(%s);\n" % prominenceStr
         
         self.checkArgs()
         
@@ -541,16 +297,17 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         testType = self.pageName
         
         # Construct the HTML here
+        
         htmlTxt = _doBreaksOrProminence(testType, 0, 0,
                                         self.name,
                                         self.textDict[self.instructText],
+                                        self.textDict['play_button'],
                                         sentenceList, self.presentAudio,
                                         self.boundaryToken,
                                         self.syllableDemarcator)[0]
     
         if self.presentAudio is True:
-            embedTxt = audio.getPlaybackJS(True, 1, self.maxPlays,
-                                           self.minPlays)
+            embedTxt = ""
             embed = audio.generateEmbed(self.wavDir,
                                         [self.name, ],
                                         self.webSurvey.audioExtList,
@@ -561,31 +318,6 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
         else:
             embedTxt = ""
         embedTxt += "\n\n"
-        embedTxt += _getProminenceOrBoundaryWordEmbed(self.doProminence)
-        
-        # Add javascript that checks user markings
-        if self.minNumSelected != -1 or self.maxNumSelected != -1:
-            minErrMsg = ""
-            maxErrMsg = ""
-            minMaxErrMsg = ""
-            if self.minNumSelected != -1:
-                minErrMsg = self.textDict['pbMinSelectedErrorMsg']
-                minErrMsg %= self.minNumSelected
-            if self.maxNumSelected != -1:
-                maxErrMsg = self.textDict['pbMaxSelectedErrorMsg']
-                maxErrMsg %= self.maxNumSelected
-            if self.minNumSelected != -1 and self.maxNumSelected != -1:
-                minMaxErrMsg = self.textDict['pbMinMaxSelectedErrorMsg']
-                minMaxErrMsg %= (self.minNumSelected, self.maxNumSelected)
-            
-            verificationDict = {'pbMinSelectedErrorMsg': minErrMsg,
-                                'pbMaxSelectedErrorMsg': maxErrMsg,
-                                'pbMinMaxSelectedErrorMsg': minMaxErrMsg,
-                                }
-            
-            embedTxt += "\n<script>\n"
-            embedTxt += _verifySelectedWithinRangeJS % verificationDict
-            embedTxt += "\n</script>"
         
         htmlTxt = html.makeNoWrap(htmlTxt)
         
@@ -677,7 +409,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         if minNumSelected != -1 and maxNumSelected != -1:
             txtKeyList.append("pbMinMaxSelectedErrorMsg")
         
-        self.textDict.update(loader.batchGetText(txtKeyList))
+        self.textDict.update(self.batchGetText(txtKeyList))
         
         # Variables that all pages need to define
         if presentAudio is True:
@@ -686,12 +418,17 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         else:
             self.numAudioButtons = 0
             
-        self.processSubmitList = ["verifyAudioPlayed()", ]
-        if minNumSelected != -1 or maxNumSelected != -1:
-            verifyNumSelected = "verifySelectedWithinRange(%d, %d, '%s')"
-            verifyNumSelected %= (minNumSelected, maxNumSelected,
-                                  "boundary_and_prominence")
-            self.processSubmitList.append(verifyNumSelected)
+        self.processSubmitList = ["audioLoader.verifyAudioPlayed()", ]
+        
+        try:
+            verifyNumSelected = _getTogglableWordEmbed(self)
+        except TypeError:
+            pass
+        else:
+            if verifyNumSelected is not None:
+                self.processSubmitList.append(verifyNumSelected)
+        
+        self.runOnLoad = "makeWordsVisibleCheckboxes(false);\n"
     
     def checkResponseCorrect(self, responseList, correctResponse):
         raise abstract_pages.NoCorrectResponseError()
@@ -741,11 +478,13 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         htmlTxt = '<div id="ShownDiv" style="DISPLAY: block">'
     
         # HTML boundaries
+        audioLabel = self.textDict['play_button']
         stepOneInstructText = self.textDict[self.stepOneInstructText]
         tmpHTMLTxt, numWords = _doBreaksOrProminence(self.pageName,
                                                      wordIDNum, 0,
                                                      self.name,
                                                      stepOneInstructText,
+                                                     audioLabel,
                                                      sentenceList,
                                                      self.presentAudio,
                                                      self.boundaryToken,
@@ -757,7 +496,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         continueButtonTxt = self.textDict['continue_button']
         htmlTxt += '''<br /><br /><input type="button" value="%s"
                     id="halfwaySubmitButton"
-                    onclick="ShowHide()"></button>''' % continueButtonTxt
+                    onclick="ShowHide(audioLoader.verifyFirstAudioPlayed(), %s)"></button>''' % (continueButtonTxt, _getTogglableWordEmbed(self))
         htmlTxt += '</div>\n\n<div id="HiddenDiv" style="DISPLAY: none">\n\n'
         
         # HTML prominence
@@ -765,6 +504,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         htmlTxt += _doBreaksOrProminence(self.pageName, numWords, 1,
                                          self.name,
                                          stepTwoInstructText,
+                                         audioLabel,
                                          sentenceList,
                                          self.presentAudio,
                                          self.boundaryToken,
@@ -773,8 +513,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
                     
         # Add the javascript and style sheets here
         if self.presentAudio is True:
-            embedTxt = audio.getPlaybackJS(True, 2, self.maxPlays,
-                                           self.minPlays)
+            embedTxt = ""
             embed = audio.generateEmbed(self.wavDir,
                                         [self.name, ],
                                         self.webSurvey.audioExtList,
@@ -786,35 +525,6 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
                 
         else:
             embedTxt = ""
-        
-        embedTxt += "\n\n" + _getTogglableWordEmbed(numWords,
-                                                    self.boundaryToken,
-                                                    self.minNumSelected,
-                                                    self.maxNumSelected)
-        
-        # Add javascript that checks user markings
-        if self.minNumSelected != -1 or self.maxNumSelected != -1:
-            minErrMsg = ""
-            maxErrMsg = ""
-            minMaxErrMsg = ""
-            if self.minNumSelected != -1:
-                minErrMsg = self.textDict['pbMinSelectedErrorMsg']
-                minErrMsg %= self.minNumSelected
-            if self.maxNumSelected != -1:
-                maxErrMsg = self.textDict['pbMaxSelectedErrorMsg']
-                maxErrMsg %= self.maxNumSelected
-            if self.minNumSelected != -1 and self.maxNumSelected != -1:
-                minMaxErrMsg = self.textDict['pbMinMaxSelectedErrorMsg']
-                minMaxErrMsg %= (self.minNumSelected, self.maxNumSelected)
-            
-            verificationDict = {'pbMinSelectedErrorMsg': minErrMsg,
-                                'pbMaxSelectedErrorMsg': maxErrMsg,
-                                'pbMinMaxSelectedErrorMsg': minMaxErrMsg,
-                                }
-            
-            embedTxt += "\n<script>\n"
-            embedTxt += _verifySelectedWithinRangeJS % verificationDict
-            embedTxt += "\n</script>"
         
         htmlTxt = html.makeNoWrap(htmlTxt)
         

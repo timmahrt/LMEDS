@@ -13,7 +13,7 @@ from lmeds.utilities import constants
 
 survey = base_demo.survey
 
-rootPath = join(constants.rootDir, "tests", "LMEDS_Demo")
+rootPath = join(constants.rootDir, "tests", "lmeds_demo")
 tmpSequence = sequence.TestSequence(None, join(rootPath, "sequence.txt"))
 fullPath = join(rootPath, "output", tmpSequence.sequenceTitle)
 get_test_duration.printTestDuration(fullPath)

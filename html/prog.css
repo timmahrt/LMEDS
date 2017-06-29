@@ -1,4 +1,31 @@
 
+/* Style the label so it looks like a button */
+.rptWordPadding {
+     padding-right: 3px;
+     padding-left: 3px;
+}
+label.syllable {
+     border-right: 0px solid #FFFFFF;
+     position: relative;
+     z-index: 3;
+     padding-right: 0px;
+     padding-left: 0px;
+}
+label.word {
+     border-right: 0px solid #FFFFFF;
+     position: relative;
+     z-index: 3;
+     padding-right: 3px;
+     padding-left: 3px;
+}
+/* CSS to make the checkbox disappear (but remain functional) */
+label input {
+     position: absolute;
+     visibility: hidden;
+}
+
+
+
 .centered_content_outer {
 	float:left; 
 	height:50%; 
