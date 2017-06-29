@@ -638,3 +638,276 @@ class MediaListPage(abstract_pages.AbstractPage):
                                                  self.audioOrVideo)
         
         return htmlText, pageTemplate, {'embed': embedTxt}
+
+
+class MediaChoicePage2(abstract_pages.AbstractPage):
+    '''
+    This is a customized version of a MediaChoicePage.  In a 
+    MediaChoicePage2 the user hears a sentence.  After the audio plays,
+    the audio disappears and a list of responses appears.
+    '''
+    pageName = "media_choice2"
+    
+    def __init__(self, instructionText, audioOrVideo, pauseDuration,
+                 minPlays, maxPlays, mediaListOfLists, responseButtonList,
+                 mediaButtonLabelList=None, transcriptList=None,
+                 responseTranscriptList=None,
+                 bindPlayKeyIDList=None, bindResponseKeyIDList=None,
+                 timeout=None, hideResponses=False,
+                 *args, **kargs):
+        super(MediaChoicePage2, self).__init__(*args, **kargs)
+        
+        # Normalize variables
+        if bindPlayKeyIDList is not None:
+            tmpKeyIDList = html.mapKeylist(bindPlayKeyIDList)
+            bindPlayKeyIDList = tmpKeyIDList
+        
+        if bindResponseKeyIDList is not None:
+            tmpKeyIDList = html.mapKeylist(bindResponseKeyIDList)
+            bindResponseKeyIDList = tmpKeyIDList
+        
+        self.instructionText = instructionText
+        self.pauseDuration = pauseDuration
+        self.mediaList = mediaListOfLists
+        self.minPlays = minPlays
+        self.maxPlays = maxPlays
+        self.responseButtonList = responseButtonList
+        self.bindPlayKeyIDList = bindPlayKeyIDList
+        self.bindResponseKeyIDList = bindResponseKeyIDList
+        self.timeout = None
+        self.hideResponses = hideResponses
+        
+        self.playOnMinList = ['enable_checkboxes', 'basic_show_hide', ]
+        
+        if hideResponses is True:
+            self.playOnMinList.append('unhide_response')
+        
+        if bindPlayKeyIDList is not None:
+            assert(len(mediaListOfLists) == len(bindPlayKeyIDList))
+        
+        if bindResponseKeyIDList is not None:
+            assert(len(responseButtonList) == len(bindResponseKeyIDList))
+        
+        assert(audioOrVideo in ["audio", "video"])
+        self.audioOrVideo = audioOrVideo
+        self.buttonLabelList = mediaButtonLabelList
+        
+        self.transcriptList = transcriptList
+        if transcriptList is not None:
+            assert(len(mediaListOfLists) == len(transcriptList))
+            
+        self.responseTranscriptList = responseTranscriptList
+        if responseTranscriptList is not None:
+            assert(len(responseButtonList) == len(responseTranscriptList))
+        
+        self.wavDir = self.webSurvey.wavDir
+        self.txtDir = self.webSurvey.txtDir
+        
+        self.submitProcessButtonFlag = False
+        self.nonstandardSubmitProcessList = [('widget',
+                                              'media_choice2')]
+        
+        if timeout is not None:
+            self.nonstandardSubmitProcessList.append(('timeout', timeout))
+        
+        # Strings used in this page
+        txtKeyList = [instructionText, ]
+        txtKeyList += responseButtonList
+        txtKeyList += _buttonLabelCheck(mediaListOfLists, mediaButtonLabelList)
+        
+        txtKeyList.extend(abstract_pages.audioTextKeys)
+        self.textDict.update(self.batchGetText(txtKeyList))
+        
+        self.numAudioButtons = len(mediaListOfLists)
+        if all([len(subList) == 0 for subList in mediaListOfLists]):
+            self.numAudioButtons = 0
+        
+        self.processSubmitList = []
+        if self.numAudioButtons > 0:
+            self.processSubmitList.append("audioLoader.verifyAudioPlayed()")
+
+    def _getKeyPressEmbed(self):
+        
+        bindKeyTxt = ""
+
+        # Bind key press to play button?
+        if self.bindPlayKeyIDList is not None:
+            for i, keyID in enumerate(self.bindPlayKeyIDList):
+                clickJS = 'document.getElementById("button%d").click();' % i
+                bindTuple = (keyID, clickJS)
+                bindKeyTxt += ("\n" + html.bindKeySubSnippetJS % bindTuple)
+            
+        # Bind key press to submit event?
+        if self.bindResponseKeyIDList is not None:
+            for i, keyID in enumerate(self.bindResponseKeyIDList):
+                clickJS = 'document.getElementById("%d").click();' % i
+                bindTuple = (keyID, clickJS)
+                bindKeyTxt += ("\n" + html.bindKeySubSnippetJS % bindTuple)
+        
+        returnJS = ""
+        if bindKeyTxt != "":
+            returnJS = html.bindKeyJSTemplate % bindKeyTxt
+        
+        return returnJS
+
+    def _getHTMLTxt(self):
+        radioButton = ('<p>\n'
+                       '<input type="radio" name="media_choice2"'
+                       'value="%(id)s" id="%(id)s" %(disabled)s />\n'
+                       '<label for="%(id)s">.</label>\n'
+                       '</p>\n'
+                       )
+        
+        disabledTxt = ""
+        if self._doPlayMedia():
+            disabledTxt = "disabled"
+                # Add optional speech transcripts
+        labelRow = ""
+        buttonRow = ""
+        if self.responseTranscriptList is not None:
+            transcriptList = [loader.loadTxtFile(join(self.txtDir,
+                                                      transcript + ".txt"))
+                              for transcript in self.responseTranscriptList]
+            transcriptList = ["<td>%s</td>" % "<br />".join(transcript)
+                              for transcript in transcriptList]
+                              
+            transcriptTxt = "<tr>%s</tr>" % "".join(transcriptList)
+            htmlTxt = ('<br /><br />%%s<br /><br />\n'
+                       '<table class="center">\n'
+                       '<tr>%s</tr>\n'
+                       '<tr>%s</tr>\n'
+                       '<tr>%s</tr>\n'
+                       '</table>\n'
+                       )
+            
+            for i in range(len(self.responseButtonList)):
+                radioButtonTxt = radioButton % {'id': i, "disabled": disabledTxt}
+                text = self.textDict[self.responseButtonList[i]]
+                labelRow += "<td class='responses'>%s</td>" % text
+                buttonRow += "<td class='responses'>%s</td>" % radioButtonTxt
+            
+            retHTML = htmlTxt % (transcriptTxt, labelRow, buttonRow)
+        else:
+            htmlTxt = ('<br /><br />%%s<br /><br />\n'
+                       '<table class="center">\n'
+                       '<tr>%s</tr>\n'
+                       '<tr>%s</tr>\n'
+                       '</table>\n'
+                       )
+            
+            for i in range(len(self.responseButtonList)):
+                radioButtonTxt = radioButton % {'id': i, "disabled": disabledTxt}
+                text = self.textDict[self.responseButtonList[i]]
+                labelRow += "<td class='responses'>%s</td>" % text
+                buttonRow += "<td class='responses'>%s</td>" % radioButtonTxt
+            retHTML = htmlTxt % (labelRow,
+                                 buttonRow)
+        return retHTML
+    
+    def getValidation(self):
+        template = ""
+        
+        return template
+    
+#     def getOutput(self, form):
+#         
+#         try:
+#             value = super(MediaChoicePage2, self).getOutput(form)
+#             if not self._doPlayMedia():
+#                 value += ",0"
+# 
+#         except abstract_pages.KeyNotInFormError:  # User timed-out
+#             value = ",".join(['0'] * self.getNumOutputs()) + ",1"
+# 
+#         return value
+    
+    def getNumOutputs(self):
+        return len(self.responseButtonList)
+    
+    def getHTML(self):
+        '''
+        Listeners hear two files and decide if they are the same or different
+        '''
+        pageTemplate = join(self.webSurvey.htmlDir, "axbTemplate.html")
+        availableFunctions = getToggleButtonsJS(len(self.responseButtonList))
+        
+        # Generate the media buttons
+        playBtnLabelRow = ''
+        playBtnSnippet = ''
+        template = "<td class='buttons'>%s</td>"
+        for i in range(len(self.mediaList)):
+            
+            # Don't generate an audio button if the list is empty
+            if len(self.mediaList[i]) == 0:
+                continue
+            
+            audioLabel = self.textDict['play_button']
+            mediaButtonHTML = audio.generateAudioButton(self.mediaList[i], i,
+                                                        audioLabel,
+                                                        self.pauseDuration,
+                                                        False,
+                                                        hidden=True)
+            if self.buttonLabelList is not None:
+                label = self.textDict[self.buttonLabelList[i]]
+                playBtnLabelRow += template % label
+            playBtnSnippet += template % mediaButtonHTML
+        
+        # Add optional button labels
+        playBtnSnippet = '<tr>%s</tr>' % playBtnSnippet
+        if self.buttonLabelList is not None:
+            playBtnLabelRow = '<tr>%s</tr>' % playBtnLabelRow
+        
+        playBtnSnippet = playBtnLabelRow + playBtnSnippet
+        
+        # Add optional speech transcripts
+        if self.transcriptList is not None:
+            transcriptList = [loader.loadTxtFile(join(self.txtDir,
+                                                      transcript + ".txt"))
+                              for transcript in self.transcriptList]
+            transcriptList = ["<td>%s</td>" % "<br />".join(transcript)
+                              for transcript in transcriptList]
+                              
+            transcriptTxt = "<tr>%s</tr>" % "".join(transcriptList)
+            playBtnSnippet = playBtnSnippet + transcriptTxt
+        
+        playBtnSnippet = ('<table class="center">%s</table>') % playBtnSnippet
+        
+        runOnMinThresholdJS = "enable_checkboxes();"
+        embedTxt = ""
+        
+        mediaNames = [mediaName for mediaSubList in self.mediaList
+                      for mediaName in mediaSubList]
+        if self._doPlayMedia():
+            if self.audioOrVideo == "video":
+                extList = self.webSurvey.videoExtList
+            else:
+                extList = self.webSurvey.audioExtList
+            embedTxt += "\n\n" + audio.generateEmbed(self.wavDir,
+                                                     list(set(mediaNames)),
+                                                     extList,
+                                                     self.audioOrVideo)
+        
+        embedTxt += "\n\n" + availableFunctions
+        embedTxt += self._getKeyPressEmbed()
+        
+        description = self.textDict[self.instructionText]
+        
+        if self.hideResponses is False:
+            htmlText = description + self._getHTMLTxt()
+        else:
+            template = ('<div id="ShownDiv" style="DISPLAY: block">'
+                        '<div>%s</div></div>\n\n'
+                        '<div id="HiddenDiv" style="DISPLAY: none">'
+                        '%s</div>')
+            htmlText = template % (description, self._getHTMLTxt())
+        
+        htmlText += (playBtnSnippet + "<br />")
+        
+        htmlText %= "Press <b>'a'</b> for the left option or <b>'b'</b> for the right option"
+    
+        return htmlText, pageTemplate, {'embed': embedTxt}
+    
+    def _doPlayMedia(self):
+        mediaNames = [mediaName for mediaSubList in self.mediaList
+                      for mediaName in mediaSubList]
+        return len(mediaNames) > 0

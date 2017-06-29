@@ -31,6 +31,7 @@ def loadPage(webSurvey, pageName, args=None, kargs=None):
     kargs['webSurvey'] = webSurvey
     
     pageClassList = [assorted_experiment_pages.MediaChoicePage,
+                     assorted_experiment_pages.MediaChoicePage2,
                      assorted_experiment_pages.MediaSliderPage,
                      assorted_experiment_pages.MediaListPage,
                      assorted_experiment_pages.SurveyPage,

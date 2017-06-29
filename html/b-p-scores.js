@@ -41,14 +41,18 @@ blah2 = function() {
     });
 }
 
+var basic_show_hide = function() {
+    document.getElementById("ShownDiv").style.display = 'none';
+    document.getElementById("HiddenDiv").style.display = 'block';
+}
+
 var didShowHide = false;
 ShowHide = function(didAudioPlay, isWithinRange) {
     var didPlay = didAudioPlay;
     didPlay &= isWithinRange;
     if (didPlay == true) {
         didShowHide = true;
-        document.getElementById("ShownDiv").style.display = 'none';
-        document.getElementById("HiddenDiv").style.display = 'block';
+        basic_show_hide();
         document.getElementById("HiddenForm").style.display = 'block';
         for (e = 0; e < 8; e++) {
             var x = e + 8;
@@ -72,7 +76,6 @@ ShowHide = function(didAudioPlay, isWithinRange) {
         scrollTop: 0
     }, 'fast');
 }
-
 
 getHowManyMarked = function(startI, endI, widgetName) {
     var numMarked = 0;

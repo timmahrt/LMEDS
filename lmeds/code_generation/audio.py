@@ -14,6 +14,7 @@ from lmeds.utilities import utils
 
 _tmpButton = ('<input type="button" id="button%%d" '
               'value="%(button_label)s" '
+              '%(extension)s '
               '''onClick="audioLoader.evalSound(this, '%%d', %%f, '%%s', %%s)">'''
               )
 
@@ -121,7 +122,7 @@ audioLoader.audioList = %(nameList)s;\n
 
     
 def generateAudioButton(name, idNum, buttonLabel, pauseDurationSec=0,
-                        example=False, autoSubmit=False):
+                        example=False, autoSubmit=False, hidden=False):
     
     # Accept 'name' to be a list, but if it is, convert it into a string
     
@@ -140,7 +141,12 @@ def generateAudioButton(name, idNum, buttonLabel, pauseDurationSec=0,
     elif autoSubmit is True:
         autoSubmit = "true"
 
-    template = template % {'button_label': buttonLabel}
+    extension = ""
+    if hidden is True:
+        extension += 'style="display: none;"'
+    
+    template = template % {'button_label': buttonLabel,
+                           'extension': extension, }
 
     return template % (idNum, idNum, float(pauseDurationSec), name, autoSubmit)
 
