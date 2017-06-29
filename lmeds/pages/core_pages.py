@@ -222,7 +222,7 @@ class TextPage(abstract_pages.NonValidatingPage):
 
     pageName = "text_page"
     
-    def __init__(self, textName, bindSubmitKeyIDList, *args, **kargs):
+    def __init__(self, textName, bindSubmitKeyIDList=None, *args, **kargs):
 
         super(TextPage, self).__init__(*args, **kargs)
         
