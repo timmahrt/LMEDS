@@ -1,9 +1,5 @@
 
 ---------
-
-.. image:: https://badges.gitter.im/LMEDS/Lobby.svg
-   :alt: Join the chat at https://gitter.im/LMEDS/Lobby
-   :target: https://gitter.im/LMEDS/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 LMEDS
 ---------
 
@@ -15,6 +11,10 @@ LMEDS
     
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg?
    :target: http://opensource.org/licenses/MIT
+   
+.. image:: https://badges.gitter.im/LMEDS/Lobby.svg
+   :alt: Join the chat at https://gitter.im/LMEDS/Lobby
+   :target: https://gitter.im/LMEDS/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
 A web platform for collecting text annotation and experiment data online.
 
