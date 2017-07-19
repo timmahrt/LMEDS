@@ -1,5 +1,9 @@
 
 ---------
+
+.. image:: https://badges.gitter.im/LMEDS/Lobby.svg
+   :alt: Join the chat at https://gitter.im/LMEDS/Lobby
+   :target: https://gitter.im/LMEDS/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 LMEDS
 ---------
 
