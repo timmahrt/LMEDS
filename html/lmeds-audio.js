@@ -60,12 +60,16 @@ LmedsAudio.prototype.load_audio = function() {
         var source = document.createElement('source');
 
         for (var k = 0; k < this.extensionList.length; k++) {
-            // Audio acts in a FILO manner, so iterate the list backwards
-            // to get the user's order preference.
-            var tmpExt = this.extensionList[this.extensionList.length - (k + 1)];
-            source.type = this.media_type + '/' + this.mime_type_dict[tmpExt];
-            source.src = this.media_path + '/' + audioName + tmpExt;
-            audio.appendChild(source)
+        	var tmpExt = this.extensionList[k];
+        	var mimeType = this.media_type + '/' + this.mime_type_dict[tmpExt];
+        	
+        	// Choose the first type available that will work with this browser
+        	if (audio.canPlayType(mimeType + ';')) {
+        	    source.type = mimeType;
+        	    source.src= this.media_path + '/' + audioName + tmpExt;
+        	    audio.appendChild(source)
+        	    break;
+        	}
         }
 
         audio.preload = 'auto';
@@ -74,6 +78,7 @@ LmedsAudio.prototype.load_audio = function() {
         audio.addEventListener('canplay', this.increment_audio_loaded_count);
         audio.addEventListener('error', this.loadErrorHandler);
         this.audio_list.push(audio);
+        
         audio.load();
     }
 }
