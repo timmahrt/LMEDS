@@ -118,11 +118,11 @@ LmedsAudio.prototype.minButtonPressSatisfied = function() {
     return allGreater;
 }
 
-LmedsAudio.prototype.audio_buttons_enable = function(e = null) {
+LmedsAudio.prototype.audio_buttons_enable = function(e) {
     // if audio_buttons_enable is a handler for an event listener, once it is
     // called, it should remove itself as a handler until it is told to listen
     // again.
-    if (e != null) {
+    if (typeof e != 'undefined' && e != null) {
         e.target.removeEventListener('ended', this.audio_buttons_enable);
     }
 
