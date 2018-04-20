@@ -6,7 +6,8 @@ var LmedsAudio = function() {
         ".mp3": "mpeg",
         ".mp4": "mpeg",
         ".webm": "webm",
-        ".ogg": "ogg"
+        ".ogg": "ogg",
+        ".wav": "wav",
     };
     this.media_type_dict = {
         AUDIO: "audio",
