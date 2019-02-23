@@ -219,7 +219,7 @@ class WebSurvey(object):
         
         self._testSequenceOverride(userName)
             
-        html.printCGIHeader(cookieTracker, self.disableRefreshFlag)
+        cgiHeader = html.getCGIHeader(cookieTracker, self.disableRefreshFlag)
         
         validationTemplate = ('// Validate page form before submitting\n'
                               'function validateForm()\n{\n%s\n}\n\n')
@@ -366,7 +366,7 @@ class WebSurvey(object):
     
         htmlOutput = pageTemplate % htmlDict
         
-        utils.outputUnicode(htmlOutput)
+        utils.outputUnicode(cgiHeader + htmlOutput)
     
     def _testSequenceOverride(self, userName):
         '''

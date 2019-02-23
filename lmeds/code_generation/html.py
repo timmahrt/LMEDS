@@ -334,7 +334,7 @@ def validateAndUpdateCookie(pageNum):
     return cookie, oldPageNum, pageNum
 
 
-def printCGIHeader(pageNum, disableRefreshFlag):
+def getCGIHeader(pageNum, disableRefreshFlag):
     '''
     Prints the html header
     
@@ -343,17 +343,18 @@ def printCGIHeader(pageNum, disableRefreshFlag):
     
     A double newline '\n\n' indicates the end of the header.
     '''
-    print('Content-Type: text/html')
+    header = 'Content-Type: text/html'
     
     if disableRefreshFlag:
-        print("Pragma-directive: no-cache\n"
-              "Cache-directive: no-cache\n"
-              "Cache-Control: no-cache, no-store, must-revalidate\n"
-              "Pragma: no-cache\n"
-              "Expires: 0\n")
+        header += ("Pragma-directive: no-cache\n"
+                   "Cache-directive: no-cache\n"
+                   "Cache-Control: no-cache, no-store, must-revalidate\n"
+                   "Pragma: no-cache\n"
+                   "Expires: 0\n")
         cookieStr = validateAndUpdateCookie(pageNum)[0]
-        print(cookieStr)
-    print("\n\n")
+        header += cookieStr
+    header += "\n\n"
+    return header
 
 
 def makeNoWrap(htmlTxt):
