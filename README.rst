@@ -36,6 +36,7 @@ Major revisions
 Ver 2.5.2 (Feb 23, 2019)
 
 - Critical bugfix for Python 3.  Cgi was not executing properly.
+- Test support for Python 2.6 was removed.
 
 Ver 2.5 (Jun 29, 2017)
 
@@ -112,7 +113,7 @@ Ver 1.0 (December 04, 2013)
 Requirements
 ==============
 
-``Python 2.6.*`` or above
+``Python 2.7.*`` or above
 
 ``Python 3.3.*`` or above
 
