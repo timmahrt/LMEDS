@@ -10,4 +10,3 @@ experiment_runner.runExperiment("lmeds_demo",
                                 videoExtList=[".ogg", ".mp4"],
                                 allowUtilityScripts=True,
                                 allowUsersToRelogin=True)
-    

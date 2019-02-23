@@ -33,6 +33,10 @@ different types of perceptual experiments (memory tasks, AXB-type tasks, etc.).
 Major revisions
 ================
 
+Ver 2.5.2 (Feb 23, 2019)
+
+- Critical bugfix for Python 3.  Cgi was not executing properly.
+
 Ver 2.5 (Jun 29, 2017)
 
 - 'Javascript refactor' (no new features) - the Javascript code used to
