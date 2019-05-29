@@ -496,7 +496,7 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         continueButtonTxt = self.textDict['continue_button']
         htmlTxt += '''<br /><br /><input type="button" value="%s"
                     id="halfwaySubmitButton"
-                    onclick="ShowHide(audioLoader.verifyFirstAudioPlayed(), %s)"></button>''' % (continueButtonTxt, _getTogglableWordEmbed(self))
+                    onclick="ShowHide(audioLoader.verifyFirstAudioPlayed(), %s, %d)"></button>''' % (continueButtonTxt, _getTogglableWordEmbed(self), numWords)
         htmlTxt += '</div>\n\n<div id="HiddenDiv" style="DISPLAY: none">\n\n'
         
         # HTML prominence

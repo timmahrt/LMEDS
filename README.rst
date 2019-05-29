@@ -33,6 +33,10 @@ different types of perceptual experiments (memory tasks, AXB-type tasks, etc.).
 Major revisions
 ================
 
+Ver 2.5.3 (May 29, 2019)
+
+- Bugfix for boundary and prominence sequences not rendering properly.
+
 Ver 2.5.2 (Feb 23, 2019)
 
 - Critical bugfix for Python 3.  Cgi was not executing properly.

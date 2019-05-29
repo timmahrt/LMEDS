@@ -42,7 +42,7 @@ blah2 = function() {
 }
 
 var didShowHide = false;
-ShowHide = function(didAudioPlay, isWithinRange) {
+ShowHide = function(didAudioPlay, isWithinRange, numWords) {
     var didPlay = didAudioPlay;
     didPlay &= isWithinRange;
     if (didPlay == true) {
@@ -50,8 +50,8 @@ ShowHide = function(didAudioPlay, isWithinRange) {
         document.getElementById("ShownDiv").style.display = 'none';
         document.getElementById("HiddenDiv").style.display = 'block';
         document.getElementById("HiddenForm").style.display = 'block';
-        for (e = 0; e < 8; e++) {
-            var x = e + 8;
+        for (e = 0; e < numWords; e++) {
+            var x = e + numWords;
 
             if (document.getElementById(e).checked == true) {
 

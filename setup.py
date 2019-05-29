@@ -8,7 +8,7 @@ Created on Apr 29, 2016
 from distutils.core import setup
 import io
 setup(name='lmeds',
-      version='2.5.2',
+      version='2.5.3',
       author='Tim Mahrt',
       author_email='timmahrt@gmail.com',
       package_dir={'lmeds': 'lmeds'},
