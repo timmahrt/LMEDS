@@ -206,19 +206,21 @@ class BoundaryOrProminenceAbstractPage(abstract_pages.AbstractPage):
             txtKeyList.append("pbMinMaxSelectedErrorMsg")
         
         self.textDict.update(self.batchGetText(txtKeyList))
-        
+
         # Variables that all pages need to define
         if presentAudio is True:
             self.numAudioButtons = 1
         else:
             self.numAudioButtons = 0
         
+        self.processSubmitList = []
+        if self.numAudioButtons > 0:
+            self.processSubmitList.append("audioLoader.verifyAudioPlayed()")
+
         if self.doProminence is True:
             taskStr = "prominence"
         else:
             taskStr = "boundary"
-        
-        self.processSubmitList = ["audioLoader.verifyAudioPlayed()"]
         
         try:
             verifyNumSelected = _getTogglableWordEmbed(self)
@@ -418,7 +420,9 @@ class BoundaryAndProminencePage(abstract_pages.AbstractPage):
         else:
             self.numAudioButtons = 0
             
-        self.processSubmitList = ["audioLoader.verifyAudioPlayed()", ]
+        self.processSubmitList = []
+        if self.numAudioButtons > 0:
+            self.processSubmitList.append("audioLoader.verifyAudioPlayed()")
         
         try:
             verifyNumSelected = _getTogglableWordEmbed(self)
