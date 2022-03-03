@@ -1,8 +1,8 @@
-'''
+"""
 Created on May 16, 2016
 
 @author: tmahrt
-'''
+"""
 
 import os
 from os.path import join
@@ -20,5 +20,6 @@ languageFile = "english.txt"
 disableRefresh = False
 audioExtList = [".ogg", ".mp3"]
 
-survey = lmeds_main.WebSurvey(leafFolder, sequenceFile, languageFile,
-                              disableRefresh, audioExtList=audioExtList)
+survey = lmeds_main.WebSurvey(
+    leafFolder, sequenceFile, languageFile, disableRefresh, audioExtList=audioExtList
+)
